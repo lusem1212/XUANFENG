@@ -1,0 +1,29 @@
+{
+  "name": "notes-mvp",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "便签 + 日记联动 本地 Web 应用 MVP（纯前端 + IndexedDB）",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "deploy": "npm run build && gh-pages -d dist"
+  },
+  "dependencies": {
+    "idb": "^8.0.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.0.0",
+    "@vitejs/plugin-react": "^4.3.4",
+    "fake-indexeddb": "^6.2.5",
+    "jsdom": "^25.0.1",
+    "tailwindcss": "^4.0.0",
+    "vite": "^5.4.11",
+    "vitest": "^2.1.8",
+    "gh-pages": "^6.3.0"
+  }
+}
