@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>美术样张 v1 · 工作站 B方向(暗壳浅心)</title>
+<style>
+  :root{
+    /* ── 深壳 ── */
+    --shell:#47361C;        /* 外壳底 色卡29%主色 */
+    --shell-deep:#3A2B15;   /* 外壳深 下拉/抽屉 */
+    --shell-line:rgba(117,97,58,.55); /* 壳描边 */
+    --shell-text:#E8DFC8;   /* 壳上正文 */
+    --shell-weak:#A89A78;   /* 壳上弱字 */
+    /* ── 浅心 ── */
+    --paper:#F4EEE2;        /* 卡片底 奶油白 */
+    --paper-2:#EBE3D1;      /* 卡片层次 */
+    --ink:#2E261A;          /* 文字主 */
+    --ink-2:#6E6248;        /* 文字次 */
+    --ink-3:#9A8F77;        /* 文字弱 */
+    --line:#C9BCA0;         /* 浅描边 */
+    /* ── 语义 ── */
+    --active:#75613A;       /* 当前阶段/激活 橄榄棕 */
+    --done:#52672A;         /* 已完成 深橄榄绿 */
+    --warn:#6D4020;         /* 重要/提醒 锈棕 */
+    --mute:#878775;         /* 弱化 灰橄榄 */
+    /* ── 阶段色条 ── */
+    --s1:#6D4020; /* 拆除 */
+    --s2:#49503F; /* 水电 */
+    --s3:#75613A; /* 泥工 */
+    --s4:#52672A; /* 木工 */
+    --s5:#878775; /* 油漆 */
+    --s6:#8A6B4F; /* 安装 */
+    --s7:#B08A4E; /* 完工 */
+    --shadow:0 10px 30px rgba(58,43,21,.22), 0 2px 8px rgba(58,43,21,.10);
+    --shadow-sm:0 2px 10px rgba(58,43,21,.12);
+    --r:10px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",sans-serif;
+    font-size:14px;line-height:1.6;
+  }
+  .serif{font-family:"Noto Serif SC","Source Han Serif SC","Songti SC","SimSun",serif}
+  .mono{font-family:ui-monospace,Consolas,"Courier New",monospace}
+
+  /* ═══════ 页面骨架 ═══════ */
+  .topbar{
+    background:var(--shell);color:var(--shell-text);
+    display:flex;align-items:center;gap:28px;
+    padding:14px 40px;
+    border-bottom:1px solid var(--shell-line);
+    position:relative;
+  }
+  .topbar::before{ /* 深壳噪点 */
+    content:"";position:absolute;inset:0;pointer-events:none;opacity:.5;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .05 0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  .logo{font-size:19px;letter-spacing:2px;position:relative;z-index:1}
+  .logo b{font-weight:700}
+  .logo .dot{color:#B08A4E}
+  .search{
+    flex:1;max-width:340px;position:relative;z-index:1;
+    background:rgba(234,223,200,.08);
+    border:1px solid var(--shell-line);border-radius:999px;
+    padding:7px 16px;color:var(--shell-text);font-size:13px;
+    display:flex;align-items:center;gap:8px;
+  }
+  .search::before{content:"⌕";color:var(--shell-weak);font-size:15px}
+  .search span{color:var(--shell-weak)}
+  .tabs{display:flex;gap:6px;margin-left:auto;position:relative;z-index:1}
+  .tab{
+    padding:7px 18px;border-radius:999px;font-size:13.5px;
+    color:var(--shell-weak);cursor:pointer;border:1px solid transparent;
+  }
+  .tab.on{background:var(--active);color:#F2EAD6;font-weight:600}
+
+  .hero{
+    background:var(--shell);color:var(--shell-text);
+    padding:36px 40px 30px;
+    display:flex;align-items:flex-end;justify-content:space-between;gap:40px;
+    position:relative;overflow:hidden;
+  }
+  .hero::before{ /* 噪点 */
+    content:"";position:absolute;inset:0;pointer-events:none;opacity:.5;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .05 0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  .hero .date{display:flex;align-items:baseline;gap:18px;position:relative;z-index:1}
+  .hero .day{font-size:96px;font-weight:800;line-height:1;color:#F2EAD6;letter-spacing:2px}
+  .hero .ym{font-size:15px;color:var(--shell-weak);letter-spacing:3px;line-height:1.5}
+  .hero .stats{display:flex;gap:14px;position:relative;z-index:1}
+  .stat{
+    background:rgba(234,223,200,.06);border:1px solid var(--shell-line);
+    border-radius:var(--r);padding:12px 20px;min-width:110px;text-align:center;
+  }
+  .stat .n{font-size:26px;font-weight:700;color:#F2EAD6;font-family:"Noto Serif SC","Source Han Serif SC",serif}
+  .stat .t{font-size:12px;color:var(--shell-weak);margin-top:2px;letter-spacing:1px}
+  .stat.hot .n{color:#C98E5E} /* 提醒数字用锈调点亮 */
+
+  .slogan{
+    position:relative;z-index:1;margin-top:22px;
+    font-size:13px;color:var(--shell-weak);letter-spacing:6px;border-top:1px solid var(--shell-line);
+    padding-top:14px;font-family:"Noto Serif SC","Source Han Serif SC",serif;
+  }
+
+  .main{
+    max-width:1180px;margin:0 auto;padding:36px 40px 60px;
+    display:grid;grid-template-columns:1.6fr 1fr;gap:28px;
+  }
+  .panel{background:var(--paper-2);border:1px solid var(--line);border-radius:var(--r);padding:22px;box-shadow:var(--shadow-sm)}
+  .panel h3{font-size:15px;color:var(--ink);letter-spacing:2px;margin-bottom:16px;display:flex;align-items:center;gap:10px}
+  .panel h3::before{content:"";width:4px;height:15px;background:var(--active);border-radius:2px}
+
+  /* 日历周网格 */
+  .week{display:grid;grid-template-columns:repeat(7,1fr);gap:8px}
+  .wday{text-align:center;font-size:11.5px;color:var(--ink-3);letter-spacing:1px;margin-bottom:6px}
+  .wcell{
+    aspect-ratio:1;border-radius:8px;border:1px solid transparent;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+    font-size:15px;color:var(--ink);position:relative;cursor:pointer;
+  }
+  .wcell .fut{color:var(--ink-3)}
+  .wcell .dot{width:4px;height:4px;border-radius:50%;background:var(--active)}
+  .wcell.today{background:var(--active);color:#F2EAD6;font-weight:700;box-shadow:var(--shadow-sm)}
+  .wcell.today .dot{background:#F2EAD6}
+  .wcell.tag{border-color:var(--line)}
+
+  /* 计划列表 */
+  .plans{margin-top:20px;display:flex;flex-direction:column;gap:10px}
+  .plan{
+    display:flex;align-items:center;gap:14px;background:var(--paper);
+    border:1px solid var(--line);border-radius:8px;padding:11px 16px;
+  }
+  .plan .time{font-family:ui-monospace,Consolas,monospace;font-size:13px;color:var(--ink-2);min-width:74px}
+  .plan .txt{flex:1;font-size:13.5px}
+  .plan .tag-mini{font-size:11px;padding:2px 9px;border-radius:999px;background:rgba(117,97,58,.14);color:#5D4E31}
+  .plan .tag-mini.warn{background:rgba(109,64,32,.13);color:var(--warn)}
+  .ck{
+    width:19px;height:19px;border-radius:50%;border:1.5px solid var(--line);
+    display:flex;align-items:center;justify-content:center;font-size:11px;color:transparent;flex-shrink:0;
+  }
+  .plan.done .ck{background:var(--done);border-color:var(--done);color:#F2EAD6}
+  .plan.done .txt{color:var(--ink-3);text-decoration:line-through}
+
+  /* 工地卡 */
+  .sites{display:flex;flex-direction:column;gap:14px}
+  .site{
+    background:var(--paper);border:1px solid var(--line);border-radius:var(--r);
+    overflow:hidden;box-shadow:var(--shadow-sm);cursor:pointer;transition:transform .15s, box-shadow .15s;
+  }
+  .site:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+  .site .hd{display:flex;align-items:baseline;justify-content:space-between;padding:15px 18px 8px}
+  .site .nm{font-size:16px;font-weight:700;font-family:"Noto Serif SC","Source Han Serif SC",serif}
+  .site .st{font-size:12px;color:var(--ink-2)}
+  .site .st b{color:var(--active);font-weight:600}
+  .site .bd{display:flex;align-items:center;justify-content:space-between;padding:0 18px 14px}
+  .site .rem{display:flex;gap:6px;font-size:12px}
+  .site .rem .b{
+    background:rgba(109,64,32,.12);color:var(--warn);padding:2px 9px;border-radius:999px;font-weight:600;
+  }
+  .site .rem .b.ok{background:rgba(82,103,42,.12);color:var(--done)}
+  /* 阶段进度色条 */
+  .stripe{display:grid;grid-template-columns:repeat(7,1fr);height:7px}
+  .stripe i{display:block}
+  .stripe .f{background:var(--line);opacity:.55}
+  .stripe .s1{background:var(--s1)} .stripe .s2{background:var(--s2)} .stripe .s3{background:var(--s3)}
+  .stripe .s4{background:var(--s4)} .stripe .s5{background:var(--s5)} .stripe .s6{background:var(--s6)}
+  .stripe .s7{background:var(--s7)}
+  .stripe .cur{position:relative}
+  .stripe .cur::after{
+    content:"";position:absolute;top:-3px;bottom:-3px;left:0;right:0;
+    box-shadow:0 0 0 1.5px #F2EAD6 inset, 0 0 10px rgba(240,220,180,.6);
+  }
+
+  /* 便签角 */
+  .notes{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .note{
+    background:var(--paper);border-radius:8px;padding:13px 15px;
+    border-top:3px solid var(--s3);box-shadow:var(--shadow-sm);font-size:12.5px;
+  }
+  .note.g{background:rgba(82,103,42,.07);border-top-color:var(--s4)}
+  .note .d{font-size:11px;color:var(--ink-3);margin-top:8px;letter-spacing:.5px}
+
+  /* ═══════ 验收区 ═══════ */
+  .accept{max-width:1180px;margin:0 auto;padding:10px 40px 80px}
+  .sec-title{font-size:17px;letter-spacing:3px;color:var(--ink);margin:48px 0 20px;display:flex;align-items:center;gap:12px}
+  .sec-title::after{content:"";flex:1;height:1px;background:var(--line)}
+  .sec-title small{font-size:12px;color:var(--ink-3);letter-spacing:1px}
+
+  .swatch-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px}
+  .swatch{border-radius:var(--r);overflow:hidden;border:1px solid var(--line);background:var(--paper-2);box-shadow:var(--shadow-sm)}
+  .swatch .c{height:86px;position:relative}
+  .swatch .c .hex{position:absolute;bottom:8px;left:12px;font-size:12px;font-weight:600;font-family:ui-monospace,Consolas,monospace}
+  .swatch .m{padding:9px 12px}
+  .swatch .m .n{font-size:13px;font-weight:600}
+  .swatch .m .u{font-size:11.5px;color:var(--ink-3)}
+  .swatch.dark .m{background:var(--shell-deep);color:var(--shell-text)}
+  .swatch.dark .m .u{color:var(--shell-weak)}
+  .swatch .c.on-dark{color:#E8DFC8}
+  .swatch .c.on-light{color:#2E261A}
+
+  /* 字体区 */
+  .type-demo{display:grid;grid-template-columns:1.1fr 1fr;gap:28px;background:var(--paper-2);border:1px solid var(--line);border-radius:var(--r);padding:30px 34px;box-shadow:var(--shadow-sm)}
+  .type-demo .big{font-size:120px;font-weight:800;line-height:1;color:var(--shell);letter-spacing:4px}
+  .type-demo .row{margin-bottom:18px}
+  .type-demo .lbl{font-size:11px;color:var(--ink-3);letter-spacing:2px;margin-bottom:6px}
+  .td-title{font-family:"Noto Serif SC","Source Han Serif SC",serif;font-size:26px;font-weight:700}
+  .td-body{font-size:14.5px;color:var(--ink-2)}
+  .td-num{font-family:ui-monospace,Consolas,monospace;font-size:15px;color:var(--ink)}
+
+  /* 组件区 */
+  .kit{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px}
+  .kitcard{background:var(--paper-2);border:1px solid var(--line);border-radius:var(--r);padding:20px;box-shadow:var(--shadow-sm);display:flex;flex-direction:column;gap:12px}
+  .kitcard .kt{font-size:11px;color:var(--ink-3);letter-spacing:2px;margin-bottom:2px}
+  .btn{display:inline-flex;align-items:center;gap:8px;padding:9px 22px;border-radius:8px;font-size:13.5px;border:none;cursor:pointer}
+  .btn.primary{background:var(--active);color:#F2EAD6;font-weight:600;box-shadow:var(--shadow-sm)}
+  .btn.ghost{background:transparent;border:1px solid var(--line);color:var(--ink-2)}
+  .chip{display:inline-flex;align-items:center;padding:4px 12px;border-radius:999px;font-size:12px}
+  .chip.normal{background:rgba(135,135,117,.14);color:#5C5C50}
+  .chip.warn{background:rgba(109,64,32,.13);color:var(--warn);font-weight:600}
+  .chip.done{background:rgba(82,103,42,.13);color:var(--done)}
+  .chip.cross{border:1px dashed var(--line);color:var(--ink-3)}
+  .banner{
+    display:flex;align-items:center;gap:12px;background:rgba(109,64,32,.08);
+    border:1px solid rgba(109,64,32,.25);border-left:4px solid var(--warn);
+    border-radius:8px;padding:11px 16px;font-size:13px;
+  }
+  .banner b{color:var(--warn)}
+  .note2{
+    background:var(--paper);border-radius:8px;padding:14px 16px;border-top:3px solid var(--s3);
+    box-shadow:var(--shadow-sm);font-size:12.5px;
+  }
+  .note2 .d{font-size:11px;color:var(--ink-3);margin-top:7px}
+
+  .checklist{margin-top:36px;background:var(--paper-2);border:1px dashed var(--line);border-radius:var(--r);padding:26px 30px}
+  .checklist h4{font-size:15px;letter-spacing:2px;margin-bottom:14px}
+  .checklist li{list-style:none;font-size:13.5px;color:var(--ink-2);padding:7px 0;border-bottom:1px dashed rgba(201,188,160,.5)}
+  .checklist li:last-child{border:none}
+  .checklist li b{color:var(--ink)}
+
+  footer{max-width:1180px;margin:0 auto;padding:20px 40px 50px;text-align:center;font-size:12px;color:var(--ink-3);letter-spacing:1px}
+</style>
+</head>
+<body>
+
+<!-- ═══ 第一屏:真实模拟 ═══ -->
+<header class="topbar">
+  <div class="logo serif"><b>L·<span class="dot">工</span>作站</b></div>
+  <div class="search"><span>搜工地、便签、计划…</span></div>
+  <nav class="tabs">
+    <span class="tab on">日历</span>
+    <span class="tab">便签</span>
+    <span class="tab">工地</span>
+  </nav>
+</header>
+
+<section class="hero">
+  <div class="date">
+    <div class="day serif">08</div>
+    <div class="ym">八月 · 星期六<br>2026</div>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="n serif">3</div><div class="t">今日计划</div></div>
+    <div class="stat hot"><div class="n serif">2</div><div class="t">工地提醒</div></div>
+    <div class="stat"><div class="n serif">5</div><div class="t">待办便签</div></div>
+  </div>
+</section>
+<div class="slogan">从图纸到落地的每一站</div>
+
+<main class="main">
+  <!-- 左:日历 + 计划 -->
+  <div>
+    <div class="panel">
+      <h3>本周 · 八月</h3>
+      <div class="week">
+        <div class="wday">一</div><div class="wday">二</div><div class="wday">三</div><div class="wday">四</div><div class="wday">五</div><div class="wday">六</div><div class="wday">日</div>
+        <div class="wcell fut">3</div><div class="wcell tag">4</div><div class="wcell">5</div><div class="wcell tag">6</div><div class="wcell">7</div>
+        <div class="wcell today">8<span class="dot"></span></div><div class="wcell tag">9</div>
+      </div>
+      <div class="plans">
+        <div class="plan done"><span class="ck">✓</span><span class="time">09:00</span><span class="txt">张宅 泥工进场交底</span><span class="tag-mini">工地</span></div>
+        <div class="plan"><span class="ck"></span><span class="time">14:30</span><span class="txt">李总别墅 水电验收</span><span class="tag-mini warn">重要</span></div>
+        <div class="plan"><span class="ck"></span><span class="time">16:00</span><span class="txt">陈小姐公寓 木工复尺</span><span class="tag-mini">工地</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 右:工地速览 + 便签角 -->
+  <div style="display:flex;flex-direction:column;gap:28px">
+    <div class="panel" style="padding:0;background:transparent;border:none;box-shadow:none">
+      <h3 style="padding:0 4px">工地速览</h3>
+      <div class="sites">
+        <div class="site">
+          <div class="hd"><span class="nm serif">张宅 · 装修</span><span class="st">当前 <b>泥工</b></span></div>
+          <div class="bd">
+            <div class="rem"><span class="b">⚠ 2</span></div>
+            <span style="font-size:11.5px;color:var(--ink-3)">提醒待处理</span>
+          </div>
+          <div class="stripe">
+            <i class="s1"></i><i class="s2"></i><i class="s3 cur"></i><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i>
+          </div>
+        </div>
+        <div class="site">
+          <div class="hd"><span class="nm serif">李总 · 别墅</span><span class="st">当前 <b>水电</b></span></div>
+          <div class="bd">
+            <div class="rem"><span class="b">⚠ 1</span></div>
+            <span style="font-size:11.5px;color:var(--ink-3)">水电验收今日</span>
+          </div>
+          <div class="stripe">
+            <i class="s1"></i><i class="s2 cur"></i><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i>
+          </div>
+        </div>
+        <div class="site">
+          <div class="hd"><span class="nm serif">王工 · 商业</span><span class="st" style="color:var(--done)">已完工 ✓</span></div>
+          <div class="bd">
+            <div class="rem"><span class="b ok">✓ 交付</span></div>
+            <span style="font-size:11.5px;color:var(--ink-3)">2026-07-28</span>
+          </div>
+          <div class="stripe">
+            <i class="s1"></i><i class="s2"></i><i class="s3"></i><i class="s4"></i><i class="s5"></i><i class="s6"></i><i class="s7"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3>便签角</h3>
+      <div class="notes">
+        <div class="note"><b>防水刷两遍</b><div class="d">泥工阶段 · 07-20</div></div>
+        <div class="note g"><b>客户预算紧张</b><div class="d">全局 · 长期</div></div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- ═══ 验收区:色彩系统 ═══ -->
+<div class="accept">
+
+  <div class="sec-title">色彩系统 · 深壳 <small>dark shell · 骨架约 25% 面积</small></div>
+  <div class="swatch-grid">
+    <div class="swatch dark"><div class="c on-dark" style="background:#47361C"><span class="hex">#47361C</span></div><div class="m"><div class="n">外壳底</div><div class="u">顶栏 · Hero · 页头 (色卡主色29%)</div></div></div>
+    <div class="swatch dark"><div class="c on-dark" style="background:#3A2B15"><span class="hex">#3A2B15</span></div><div class="m"><div class="n">外壳深</div><div class="u">下拉 · 抽屉 · 浮层</div></div></div>
+    <div class="swatch dark"><div class="c on-dark" style="background:rgba(117,97,58,.55)"><span class="hex">#75613A 55%</span></div><div class="m"><div class="n">壳描边</div><div class="u">深底上的分隔线</div></div></div>
+    <div class="swatch dark"><div class="c on-dark" style="background:#E8DFC8"><span class="hex" style="color:#2E261A">#E8DFC8</span></div><div class="m"><div class="n">壳上文字</div><div class="u">深底正文</div></div></div>
+    <div class="swatch dark"><div class="c on-dark" style="background:#A89A78"><span class="hex" style="color:#2E261A">#A89A78</span></div><div class="m"><div class="n">壳上弱字</div><div class="u">辅助文字</div></div></div>
+  </div>
+
+  <div class="sec-title">色彩系统 · 浅心 <small>light heart · 内容区约 75% 面积</small></div>
+  <div class="swatch-grid">
+    <div class="swatch"><div class="c on-light" style="background:#F4EEE2"><span class="hex">#F4EEE2</span></div><div class="m"><div class="n">卡片底</div><div class="u">内容卡片 · 奶油白</div></div></div>
+    <div class="swatch"><div class="c on-light" style="background:#EBE3D1"><span class="hex">#EBE3D1</span></div><div class="m"><div class="n">卡片层次</div><div class="u">次级块 · hover 底</div></div></div>
+    <div class="swatch"><div class="c on-light" style="background:#2E261A"><span class="hex" style="color:#F4EEE2">#2E261A</span></div><div class="m"><div class="n">文字主</div><div class="u">正文</div></div></div>
+    <div class="swatch"><div class="c on-light" style="background:#6E6248"><span class="hex" style="color:#F4EEE2">#6E6248</span></div><div class="m"><div class="n">文字次</div><div class="u">辅助信息</div></div></div>
+    <div class="swatch"><div class="c on-light" style="background:#9A8F77"><span class="hex" style="color:#F4EEE2">#9A8F77</span></div><div class="m"><div class="n">文字弱</div><div class="u">占位 · 时间戳</div></div></div>
+    <div class="swatch"><div class="c on-light" style="background:#C9BCA0"><span class="hex">#C9BCA0</span></div><div class="m"><div class="n">浅描边</div><div class="u">卡片边框</div></div></div>
+  </div>
+
+  <div class="sec-title">语义色 <small>semantic · 全站唯一带情绪的颜色</small></div>
+  <div class="swatch-grid">
+    <div class="swatch"><div class="c on-light" style="background:#75613A"><span class="hex" style="color:#F4EEE2">#75613A</span></div><div class="m"><div class="n">当前阶段 / 激活</div><div class="u">橄榄棕 · tab · 今天</div></div></div>
+    <div class="swatch"><div class="c on-light" style="background:#52672A"><span class="hex" style="color:#F4EEE2">#52672A</span></div><div class="m"><div class="n">已完成 / 成功</div><div class="u">深橄榄绿 · 打勾</div></div></div>
+    <div class="swatch"><div class="c on-light" style="background:#6D4020"><span class="hex" style="color:#F4EEE2">#6D4020</span></div><div class="m"><div class="n">重要 / 提醒</div><div class="u">锈棕 · 警示 · 工地重要标签</div></div></div>
+    <div class="swatch"><div class="c on-light" style="background:#878775"><span class="hex" style="color:#F4EEE2">#878775</span></div><div class="m"><div class="n">弱化 / 待办</div><div class="u">灰橄榄 · 未到阶段</div></div></div>
+  </div>
+
+  <div class="sec-title">阶段进度色条 <small>site stripe · 7 阶段色</small></div>
+  <div class="swatch-grid">
+    <div class="swatch"><div class="c on-light" style="background:#6D4020"><span class="hex" style="color:#F4EEE2">#6D4020</span></div><div class="m"><div class="n">拆除</div><div class="u">锈棕</div></div></div>
+    <div class="swatch"><div class="c on-light" style="background:#49503F"><span class="hex" style="color:#F4EEE2">#49503F</span></div><div class="m"><div class="n">水电</div><div class="u">灰绿</div></div></div>
+    <div class="swatch"><div class="c on-light" style="background:#75613A"><span class="hex" style="color:#F4EEE2">#75613A</span></div><div class="m"><div class="n">泥工</div><div class="u">橄榄棕</div></div></div>
+    <div class="swatch"><div class="c on-light" style="background:#52672A"><span class="hex" style="color:#F4EEE2">#52672A</span></div><div class="m"><div class="n">木工</div><div class="u">橄榄绿</div></div></div>
+    <div class="swatch"><div class="c on-light" style="background:#878775"><span class="hex" style="color:#F4EEE2">#878775</span></div><div class="m"><div class="n">油漆</div><div class="u">灰橄榄</div></div></div>
+    <div class="swatch"><div class="c on-light" style="background:#8A6B4F"><span class="hex" style="color:#F4EEE2">#8A6B4F</span></div><div class="m"><div class="n">安装</div><div class="u">焦糖</div></div></div>
+    <div class="swatch"><div class="c on-light" style="background:#B08A4E"><span class="hex" style="color:#F4EEE2">#B08A4E</span></div><div class="m"><div class="n">完工</div><div class="u">琥珀</div></div></div>
+  </div>
+
+  <div class="sec-title">字体系统 <small>typography</small></div>
+  <div class="type-demo">
+    <div>
+      <div class="lbl">超大数字 · 衬线 Heavy</div>
+      <div class="big serif">08</div>
+      <div class="row" style="margin-top:20px"><div class="lbl">标题 · 衬线 SemiBold</div><div class="td-title">张宅 · 装修</div></div>
+    </div>
+    <div>
+      <div class="lbl">正文 · 无衬线</div>
+      <div class="td-body">防水刷两遍 · 瓷砖排版图已确认 · 阳台东侧离地 30cm 多留一个五孔插座,用于后期安装电动晾衣架。</div>
+      <div class="row" style="margin-top:16px"><div class="lbl">数字/时间 · 等宽</div><div class="td-num">09:00 · 07-20 · 2026-08-08</div></div>
+      <div class="row"><div class="lbl">深底弱字 · 衬线窄字距</div><div style="color:#A89A78;letter-spacing:3px;font-size:12.5px" class="serif">从图纸到落地的每一站</div></div>
+    </div>
+  </div>
+
+  <div class="sec-title">组件样板 <small>kit</small></div>
+  <div class="kit">
+    <div class="kitcard">
+      <div class="kt">按钮 BUTTON</div>
+      <div><button class="btn primary">＋ 新建工地</button></div>
+      <div><button class="btn ghost">导出备份</button></div>
+    </div>
+    <div class="kitcard">
+      <div class="kt">标签 CHIP</div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px">
+        <span class="chip normal">#防水刷两遍</span>
+        <span class="chip warn">#阳台多留插座</span>
+        <span class="chip done">✓ 已确认</span>
+        <span class="chip cross">#待定事项</span>
+      </div>
+    </div>
+    <div class="kitcard">
+      <div class="kt">提醒横幅 BANNER</div>
+      <div class="banner">⚑ <span><b>#阳台多留插座</b> 已到达 · 泥工阶段执行</span></div>
+    </div>
+    <div class="kitcard">
+      <div class="kt">便签 NOTE</div>
+      <div class="note2"><b>瓷砖排版图已确认</b><div class="d">客户微信确认 · 07-20</div></div>
+    </div>
+  </div>
+
+  <div class="checklist">
+    <h4 class="serif">验收清单 · 请你看三件事</h4>
+    <ul>
+      <li><b>① 深壳浅心的比例</b> —— 骨架是深棕电影感,内容区是奶油米,这个「暗壳浅心」的呼吸感对不对?</li>
+      <li><b>② 锈棕的警示力</b> —— 提醒数字、重要标签、提醒横幅都用锈棕,够不够醒目又不刺眼?</li>
+      <li><b>③ 阶段色条</b> —— 工地卡底部那条 7 格色条,一眼能不能看懂「这工地到哪了」?</li>
+      <li style="border:none;color:var(--ink-3)">另外:顶栏 Hero 底部那句「从图纸到落地的每一站」是待定 slogan,要不要留、要不要换,一并告诉我。</li>
+    </ul>
+  </div>
+</div>
+
+<footer>LUSEM 工作站 · 美术样张 v1 · 配色《寄生虫》(2019) · 布局参考 野果子 yeguozi.com</footer>
+
+</body>
+</html>
