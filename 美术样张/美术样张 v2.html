@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>美术样张 v2 · 工作站 (编辑杂志感)</title>
+<style>
+  :root{
+    /* ── 深壳(寄生虫色卡) ── */
+    --shell:#47361C;
+    --shell-deep:#2E2413;
+    --shell-line:rgba(117,97,58,.55);
+    --shell-text:#E8DFC8;
+    --shell-weak:#A89A78;
+    /* ── 浅心 ── */
+    --paper:#F4EEE2;
+    --paper-2:#EBE3D1;
+    --ink:#2E261A;
+    --ink-2:#6E6248;
+    --ink-3:#9A8F77;
+    --line:#C9BCA0;
+    /* ── 语义 ── */
+    --active:#75613A;
+    --done:#52672A;
+    --warn:#6D4020;
+    --mute:#878775;
+    /* ── 新:暖橙点缀(个人网站橙色体系) ── */
+    --accent:#C05A2A;      /* 点睛橙 替代亮橙 更沉稳 */
+    --accent-soft:rgba(192,90,42,.12);
+    /* ── 阶段色 ── */
+    --s1:#6D4020; --s2:#49503F; --s3:#75613A; --s4:#52672A;
+    --s5:#878775; --s6:#8A6B4F; --s7:#B08A4E;
+    --shadow:0 10px 30px rgba(58,43,21,.20), 0 2px 8px rgba(58,43,21,.10);
+    --shadow-sm:0 2px 10px rgba(58,43,21,.10);
+    --r:4px; /* 编辑感:小圆角 */
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    background:var(--paper);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",sans-serif;
+    font-size:14px;line-height:1.65;
+  }
+  .serif{font-family:"Noto Serif SC","Source Han Serif SC","Songti SC","SimSun",serif}
+  .mono{font-family:ui-monospace,Consolas,"Courier New",monospace}
+  .caps{font-family:ui-monospace,Consolas,"Courier New",monospace;text-transform:uppercase;letter-spacing:3px;font-size:11px}
+
+  /* ═══ 顶栏 ═══ */
+  .topbar{
+    background:var(--shell);color:var(--shell-text);
+    display:flex;align-items:center;gap:30px;padding:13px 40px;
+    border-bottom:1px solid var(--shell-line);position:relative;
+  }
+  .topbar::before{
+    content:"";position:absolute;inset:0;pointer-events:none;opacity:.5;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .05 0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  .logo{font-size:16px;letter-spacing:4px;font-weight:700;position:relative;z-index:1}
+  .logo .orange{color:var(--accent)}
+  .search{
+    flex:1;max-width:320px;position:relative;z-index:1;
+    background:rgba(234,223,200,.07);border:1px solid var(--shell-line);
+    padding:6px 14px;font-size:12.5px;color:var(--shell-weak);letter-spacing:1px;
+  }
+  .nav{display:flex;gap:4px;margin-left:auto;position:relative;z-index:1}
+  .nav a{
+    padding:6px 14px;font-size:11px;letter-spacing:2px;cursor:pointer;
+    color:var(--shell-weak);text-decoration:none;border-bottom:2px solid transparent;
+  }
+  .nav a em{color:var(--accent);font-style:normal;margin-right:5px}
+  .nav a.on{color:var(--shell-text);border-bottom-color:var(--accent)}
+  .nav .lang{margin-left:12px;color:var(--shell-weak);border:1px solid var(--shell-line);padding:3px 10px}
+
+  /* ═══ 跑马灯 ═══ */
+  .marquee{
+    background:var(--shell-deep);color:var(--shell-text);
+    overflow:hidden;border-bottom:1px solid var(--shell-line);
+    padding:9px 0;position:relative;
+  }
+  .marquee .track{display:flex;width:max-content;animation:scroll 28s linear infinite}
+  .marquee .item{
+    font-size:12px;letter-spacing:3px;white-space:nowrap;
+    padding:0 22px;color:var(--shell-text);
+  }
+  .marquee .item b{color:#E8DFC8;font-weight:600}
+  .marquee .item .star{color:var(--accent);margin:0 14px}
+  @keyframes scroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+
+  /* ═══ Hero ═══ */
+  .hero{
+    background:var(--shell);color:var(--shell-text);
+    padding:44px 40px 34px;position:relative;overflow:hidden;
+    display:flex;align-items:flex-end;justify-content:space-between;gap:40px;
+  }
+  .hero::before{
+    content:"";position:absolute;inset:0;pointer-events:none;opacity:.5;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .05 0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  .hero .date{position:relative;z-index:1;display:flex;align-items:flex-end;gap:20px}
+  .hero .day{font-size:110px;font-weight:800;line-height:.9;color:#F2EAD6;letter-spacing:2px}
+  .hero .meta{font-size:12px;color:var(--shell-weak);letter-spacing:4px;line-height:2;padding-bottom:10px}
+  .hero .meta .orange{color:var(--accent)}
+  .hero .stats{display:flex;gap:0;position:relative;z-index:1}
+  .stat{padding:0 24px;border-left:1px solid var(--shell-line);text-align:center}
+  .stat:last-child{border-right:1px solid var(--shell-line)}
+  .stat .n{font-size:30px;font-weight:700;color:#F2EAD6;line-height:1.1}
+  .stat .t{font-size:10px;color:var(--shell-weak);letter-spacing:3px;margin-top:4px}
+  .stat.hot .n{color:var(--accent)}
+  .scroll-hint{
+    position:relative;z-index:1;margin-top:26px;display:flex;align-items:center;gap:14px;
+    font-size:11px;color:var(--shell-weak);letter-spacing:4px;border-top:1px solid var(--shell-line);padding-top:14px;
+  }
+  .scroll-hint .line{flex:1;height:1px;background:var(--shell-line)}
+  .scroll-hint .star{color:var(--accent)}
+
+  /* ═══ 内容区 ═══ */
+  .main{max-width:1180px;margin:0 auto;padding:44px 40px 70px}
+  .section{margin-bottom:52px}
+  .sec-head{display:flex;align-items:baseline;gap:16px;margin-bottom:24px;border-bottom:1px solid var(--line);padding-bottom:12px}
+  .sec-head .num{font-size:14px;color:var(--accent);font-family:ui-monospace,Consolas,monospace;letter-spacing:2px}
+  .sec-head .en{font-size:11px;letter-spacing:4px;color:var(--ink-3);font-family:ui-monospace,Consolas,monospace;text-transform:uppercase}
+  .sec-head h2{font-size:20px;letter-spacing:3px;margin-left:auto;font-family:"Noto Serif SC","Source Han Serif SC",serif;font-weight:700}
+  .sec-head h2 small{font-size:11px;color:var(--ink-3);letter-spacing:2px;margin-left:10px;font-family:-apple-system,sans-serif}
+
+  .grid2{display:grid;grid-template-columns:1.55fr 1fr;gap:28px}
+  .panel{background:var(--paper-2);border:1px solid var(--line);border-radius:var(--r);padding:22px;box-shadow:var(--shadow-sm)}
+
+  /* 日历 */
+  .week{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+  .wday{text-align:center;font-size:10px;color:var(--ink-3);letter-spacing:2px;margin-bottom:4px;font-family:ui-monospace,Consolas,monospace}
+  .wcell{
+    aspect-ratio:1;border-radius:var(--r);border:1px solid transparent;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+    font-size:14px;color:var(--ink);cursor:pointer;
+  }
+  .wcell.fut{color:var(--ink-3)}
+  .wcell .dot{width:4px;height:4px;border-radius:50%;background:var(--accent)}
+  .wcell.today{background:var(--shell);color:#F2EAD6;font-weight:700}
+  .wcell.today .dot{background:var(--accent)}
+  .wcell.tag{border-color:var(--line)}
+
+  /* 计划 */
+  .plans{margin-top:18px;display:flex;flex-direction:column;gap:8px}
+  .plan{
+    display:flex;align-items:center;gap:14px;background:var(--paper);
+    border:1px solid var(--line);border-radius:var(--r);padding:10px 14px;
+  }
+  .plan .time{font-family:ui-monospace,Consolas,monospace;font-size:12.5px;color:var(--ink-2);min-width:66px}
+  .plan .txt{flex:1;font-size:13.5px}
+  .plan .tag-mini{font-size:10px;padding:2px 9px;background:rgba(117,97,58,.13);color:#5D4E31;letter-spacing:1px}
+  .plan .tag-mini.warn{background:var(--accent-soft);color:var(--accent);font-weight:600}
+  .ck{width:18px;height:18px;border-radius:50%;border:1.5px solid var(--line);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:10px;color:transparent}
+  .plan.done .ck{background:var(--done);border-color:var(--done);color:#F2EAD6}
+  .plan.done .txt{color:var(--ink-3);text-decoration:line-through}
+
+  /* 工地卡 */
+  .sites{display:flex;flex-direction:column;gap:12px}
+  .site{
+    background:var(--paper);border:1px solid var(--line);border-radius:var(--r);
+    overflow:hidden;box-shadow:var(--shadow-sm);cursor:pointer;transition:transform .15s, box-shadow .15s;
+  }
+  .site:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+  .site .hd{display:flex;align-items:baseline;justify-content:space-between;padding:13px 16px 7px}
+  .site .nm{font-size:15.5px;font-weight:700;font-family:"Noto Serif SC","Source Han Serif SC",serif}
+  .site .st{font-size:10px;color:var(--ink-2);letter-spacing:2px}
+  .site .st b{color:var(--active);font-weight:700}
+  .site .bd{display:flex;align-items:center;justify-content:space-between;padding:0 16px 12px}
+  .site .rem{display:flex;gap:6px;font-size:11px}
+  .site .rem .b{background:var(--accent-soft);color:var(--accent);padding:2px 9px;font-weight:700;letter-spacing:1px}
+  .site .rem .b.ok{background:rgba(82,103,42,.12);color:var(--done)}
+  .stripe{display:grid;grid-template-columns:repeat(7,1fr);height:7px}
+  .stripe i{display:block}
+  .stripe .f{background:var(--line);opacity:.5}
+  .stripe .s1{background:var(--s1)} .stripe .s2{background:var(--s2)} .stripe .s3{background:var(--s3)}
+  .stripe .s4{background:var(--s4)} .stripe .s5{background:var(--s5)} .stripe .s6{background:var(--s6)}
+  .stripe .s7{background:var(--s7)}
+  .stripe .cur{position:relative}
+  .stripe .cur::after{
+    content:"";position:absolute;top:-3px;bottom:-3px;left:0;right:0;
+    box-shadow:0 0 0 1.5px #F2EAD6 inset, 0 0 10px rgba(240,220,180,.55);
+  }
+
+  /* 便签 */
+  .notes{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .note{background:var(--paper);border-radius:var(--r);padding:12px 14px;border-top:3px solid var(--s3);box-shadow:var(--shadow-sm);font-size:12.5px}
+  .note.g{background:rgba(82,103,42,.07);border-top-color:var(--s4)}
+  .note .d{font-size:10px;color:var(--ink-3);margin-top:7px;letter-spacing:1px}
+
+  /* ═══ 验收区 ═══ */
+  .accept{max-width:1180px;margin:0 auto;padding:10px 40px 80px}
+  .sec-title{font-size:17px;letter-spacing:3px;color:var(--ink);margin:46px 0 20px;display:flex;align-items:center;gap:12px}
+  .sec-title::after{content:"";flex:1;height:1px;background:var(--line)}
+  .sec-title small{font-size:11px;color:var(--ink-3);letter-spacing:1px}
+
+  .swatch-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
+  .swatch{border-radius:var(--r);overflow:hidden;border:1px solid var(--line);background:var(--paper-2);box-shadow:var(--shadow-sm)}
+  .swatch .c{height:80px;position:relative}
+  .swatch .c .hex{position:absolute;bottom:7px;left:11px;font-size:11.5px;font-weight:600;font-family:ui-monospace,Consolas,monospace}
+  .swatch .m{padding:8px 11px}
+  .swatch .m .n{font-size:12.5px;font-weight:600}
+  .swatch .m .u{font-size:11px;color:var(--ink-3)}
+  .swatch.dark .m{background:var(--shell-deep);color:var(--shell-text)}
+  .swatch.dark .m .u{color:var(--shell-weak)}
+
+  .type-demo{display:grid;grid-template-columns:1.1fr 1fr;gap:28px;background:var(--paper-2);border:1px solid var(--line);border-radius:var(--r);padding:30px 34px;box-shadow:var(--shadow-sm)}
+  .type-demo .big{font-size:120px;font-weight:800;line-height:1;color:var(--shell);letter-spacing:4px}
+  .type-demo .row{margin-bottom:16px}
+  .type-demo .lbl{font-size:10px;color:var(--ink-3);letter-spacing:3px;margin-bottom:6px;font-family:ui-monospace,Consolas,monospace;text-transform:uppercase}
+  .td-title{font-family:"Noto Serif SC","Source Han Serif SC",serif;font-size:26px;font-weight:700}
+  .td-caps{font-size:13px;letter-spacing:4px;color:var(--ink-2);font-family:ui-monospace,Consolas,monospace}
+  .td-body{font-size:14.5px;color:var(--ink-2)}
+  .td-orange{color:var(--accent)}
+
+  .kit{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px}
+  .kitcard{background:var(--paper-2);border:1px solid var(--line);border-radius:var(--r);padding:20px;display:flex;flex-direction:column;gap:12px;box-shadow:var(--shadow-sm)}
+  .kitcard .kt{font-size:10px;color:var(--ink-3);letter-spacing:3px;margin-bottom:2px;font-family:ui-monospace,Consolas,monospace;text-transform:uppercase}
+  .btn{display:inline-flex;align-items:center;gap:8px;padding:9px 22px;border-radius:var(--r);font-size:13px;border:none;cursor:pointer;letter-spacing:1px}
+  .btn.primary{background:var(--shell);color:#F2EAD6;font-weight:600;box-shadow:var(--shadow-sm)}
+  .btn.ghost{background:transparent;border:1px solid var(--line);color:var(--ink-2)}
+  .btn.orange{background:var(--accent);color:#FBF3E4;font-weight:600}
+  .chip{display:inline-flex;align-items:center;padding:3px 11px;font-size:11.5px;border:1px solid var(--line);color:var(--ink-2);border-radius:var(--r)}
+  .chip.warn{border-color:var(--accent);background:var(--accent-soft);color:var(--accent);font-weight:700}
+  .chip.done{border-color:var(--done);background:rgba(82,103,42,.1);color:var(--done)}
+  .chip.cross{border:1px dashed var(--line);color:var(--ink-3)}
+  .banner{
+    display:flex;align-items:center;gap:12px;background:var(--accent-soft);
+    border:1px solid rgba(192,90,42,.3);border-left:4px solid var(--accent);
+    border-radius:var(--r);padding:11px 16px;font-size:13px;
+  }
+  .banner b{color:var(--accent)}
+  .marquee-demo{background:var(--shell);padding:10px 0;overflow:hidden;border-radius:var(--r)}
+  .marquee-demo .track{display:flex;width:max-content;animation:scroll 18s linear infinite}
+  .marquee-demo .item{font-size:11.5px;letter-spacing:3px;color:var(--shell-text);white-space:nowrap;padding:0 18px}
+  .marquee-demo .item .star{color:var(--accent);margin:0 12px}
+
+  .checklist{margin-top:36px;background:var(--paper-2);border:1px dashed var(--line);border-radius:var(--r);padding:26px 30px}
+  .checklist h4{font-size:15px;letter-spacing:2px;margin-bottom:14px}
+  .checklist li{list-style:none;font-size:13.5px;color:var(--ink-2);padding:7px 0;border-bottom:1px dashed rgba(201,188,160,.5)}
+  .checklist li:last-child{border:none}
+  .checklist li b{color:var(--ink)}
+
+  footer{max-width:1180px;margin:0 auto;padding:20px 40px 50px;text-align:center;font-size:11px;color:var(--ink-3);letter-spacing:2px}
+  footer .star{color:var(--accent)}
+</style>
+</head>
+<body>
+
+<!-- ═══ 顶栏:编辑感 ═══ -->
+<header class="topbar">
+  <div class="logo">L<span class="orange">✦</span>WORKSTATION</div>
+  <div class="search">SEARCH 工地 / 便签 / 计划…</div>
+  <nav class="nav">
+    <a class="on"><em>01</em>CALENDAR</a>
+    <a><em>02</em>NOTES</a>
+    <a><em>03</em>SITES</a>
+    <span class="lang">中 / EN</span>
+  </nav>
+</header>
+
+<!-- ═══ 跑马灯:今日工地图 ═══ -->
+<div class="marquee">
+  <div class="track">
+    <div class="item"><b>张宅·装修</b> 泥工进场交底<span class="star">✦</span><b>李总·别墅</b> 水电验收今日<span class="star">✦</span><b>陈小姐·公寓</b> 木工复尺<span class="star">✦</span><b>王工·商业</b> 已交付 ✓<span class="star">✦</span></div>
+    <div class="item"><b>张宅·装修</b> 泥工进场交底<span class="star">✦</span><b>李总·别墅</b> 水电验收今日<span class="star">✦</span><b>陈小姐·公寓</b> 木工复尺<span class="star">✦</span><b>王工·商业</b> 已交付 ✓<span class="star">✦</span></div>
+  </div>
+</div>
+
+<!-- ═══ Hero:超大字号 ═══ -->
+<section class="hero">
+  <div class="date">
+    <div class="day serif">08</div>
+    <div class="meta">SATURDAY <span class="orange">✦</span> AUGUST 2026<br>从图纸到落地的每一站</div>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="n serif">3</div><div class="t caps">今日计划</div></div>
+    <div class="stat hot"><div class="n serif">2</div><div class="t caps">工地提醒</div></div>
+    <div class="stat"><div class="n serif">5</div><div class="t caps">待办便签</div></div>
+  </div>
+</section>
+<div class="scroll-hint" style="max-width:1180px;margin:0 auto;padding:0 40px">
+  <span class="star">✦</span><span>SCROLL</span><span class="line"></span>
+</div>
+
+<!-- ═══ 内容区:编号分区 ═══ -->
+<main class="main">
+
+  <section class="section">
+    <div class="sec-head">
+      <span class="num">01</span>
+      <span class="en">Today · Calendar</span>
+      <h2>今日计划 <small>TODAY</small></h2>
+    </div>
+    <div class="grid2">
+      <div class="panel">
+        <div class="week">
+          <div class="wday">MON</div><div class="wday">TUE</div><div class="wday">WED</div><div class="wday">THU</div><div class="wday">FRI</div><div class="wday">SAT</div><div class="wday">SUN</div>
+          <div class="wcell fut">3</div><div class="wcell tag">4</div><div class="wcell">5</div><div class="wcell tag">6</div><div class="wcell">7</div>
+          <div class="wcell today">8<span class="dot"></span></div><div class="wcell tag">9</div>
+        </div>
+        <div class="plans">
+          <div class="plan done"><span class="ck">✓</span><span class="time">09:00</span><span class="txt">张宅 泥工进场交底</span><span class="tag-mini">SITE</span></div>
+          <div class="plan"><span class="ck"></span><span class="time">14:30</span><span class="txt">李总别墅 水电验收</span><span class="tag-mini warn">重要</span></div>
+          <div class="plan"><span class="ck"></span><span class="time">16:00</span><span class="txt">陈小姐公寓 木工复尺</span><span class="tag-mini">SITE</span></div>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:28px">
+        <div>
+          <div class="sec-head" style="margin-bottom:14px">
+            <span class="num">02</span><span class="en">Sites</span><h2 style="font-size:17px">工地速览 <small>PROJECTS</small></h2>
+          </div>
+          <div class="sites">
+            <div class="site">
+              <div class="hd"><span class="nm serif">张宅 · 装修</span><span class="st">CURRENT <b>泥工</b></span></div>
+              <div class="bd"><div class="rem"><span class="b">⚠ 2</span></div><span style="font-size:10.5px;color:var(--ink-3);letter-spacing:1px">提醒待处理</span></div>
+              <div class="stripe"><i class="s1"></i><i class="s2"></i><i class="s3 cur"></i><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i></div>
+            </div>
+            <div class="site">
+              <div class="hd"><span class="nm serif">李总 · 别墅</span><span class="st">CURRENT <b>水电</b></span></div>
+              <div class="bd"><div class="rem"><span class="b">⚠ 1</span></div><span style="font-size:10.5px;color:var(--ink-3);letter-spacing:1px">水电验收今日</span></div>
+              <div class="stripe"><i class="s1"></i><i class="s2 cur"></i><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i></div>
+            </div>
+            <div class="site">
+              <div class="hd"><span class="nm serif">王工 · 商业</span><span class="st" style="color:var(--done)">DELIVERED ✓</span></div>
+              <div class="bd"><div class="rem"><span class="b ok">✓ 交付</span></div><span style="font-size:10.5px;color:var(--ink-3);letter-spacing:1px">2026-07-28</span></div>
+              <div class="stripe"><i class="s1"></i><i class="s2"></i><i class="s3"></i><i class="s4"></i><i class="s5"></i><i class="s6"></i><i class="s7"></i></div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="sec-head" style="margin-bottom:14px">
+            <span class="num">03</span><span class="en">Notes</span><h2 style="font-size:17px">便签角 <small>MEMO</small></h2>
+          </div>
+          <div class="notes">
+            <div class="note"><b>防水刷两遍</b><div class="d">泥工阶段 · 07-20</div></div>
+            <div class="note g"><b>客户预算紧张</b><div class="d">全局 · 长期</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ═══ 验收区 ═══ -->
+<div class="accept">
+
+  <div class="sec-title">色彩系统 · 深壳 <small>dark shell</small></div>
+  <div class="swatch-grid">
+    <div class="swatch dark"><div class="c" style="background:#47361C"><span class="hex" style="color:#E8DFC8">#47361C</span></div><div class="m"><div class="n">外壳底</div><div class="u">顶栏 · Hero · 跑马灯 (色卡主色)</div></div></div>
+    <div class="swatch dark"><div class="c" style="background:#2E2413"><span class="hex" style="color:#E8DFC8">#2E2413</span></div><div class="m"><div class="n">外壳深</div><div class="u">跑马灯条 · 主按钮</div></div></div>
+    <div class="swatch dark"><div class="c" style="background:#E8DFC8"><span class="hex" style="color:#2E261A">#E8DFC8</span></div><div class="m"><div class="n">壳上文字</div><div class="u">深底正文</div></div></div>
+    <div class="swatch dark"><div class="c" style="background:#A89A78"><span class="hex" style="color:#2E261A">#A89A78</span></div><div class="m"><div class="n">壳上弱字</div><div class="u">辅助文字</div></div></div>
+  </div>
+
+  <div class="sec-title">色彩系统 · 浅心 <small>light heart</small></div>
+  <div class="swatch-grid">
+    <div class="swatch"><div class="c" style="background:#F4EEE2"><span class="hex">#F4EEE2</span></div><div class="m"><div class="n">卡片底</div><div class="u">奶油白</div></div></div>
+    <div class="swatch"><div class="c" style="background:#EBE3D1"><span class="hex">#EBE3D1</span></div><div class="m"><div class="n">卡片层次</div><div class="u">次级块</div></div></div>
+    <div class="swatch"><div class="c" style="background:#2E261A"><span class="hex" style="color:#F4EEE2">#2E261A</span></div><div class="m"><div class="n">文字主</div><div class="u">正文</div></div></div>
+    <div class="swatch"><div class="c" style="background:#6E6248"><span class="hex" style="color:#F4EEE2">#6E6248</span></div><div class="m"><div class="n">文字次</div><div class="u">辅助信息</div></div></div>
+    <div class="swatch"><div class="c" style="background:#C9BCA0"><span class="hex">#C9BCA0</span></div><div class="m"><div class="n">浅描边</div><div class="u">卡片边框</div></div></div>
+  </div>
+
+  <div class="sec-title">语义色 + 新点缀 <small>semantic &amp; accent</small></div>
+  <div class="swatch-grid">
+    <div class="swatch"><div class="c" style="background:#C05A2A"><span class="hex" style="color:#FBF3E4">#C05A2A</span></div><div class="m"><div class="n">点睛橙 (新增)</div><div class="u">重要提醒 · 编号 · ✦ 星标 · 跑马灯点缀 —— 从个人网站橙色体系来</div></div></div>
+    <div class="swatch"><div class="c" style="background:#75613A"><span class="hex" style="color:#F4EEE2">#75613A</span></div><div class="m"><div class="n">当前阶段 / 激活</div><div class="u">橄榄棕</div></div></div>
+    <div class="swatch"><div class="c" style="background:#52672A"><span class="hex" style="color:#F4EEE2">#52672A</span></div><div class="m"><div class="n">已完成 / 成功</div><div class="u">深橄榄绿</div></div></div>
+    <div class="swatch"><div class="c" style="background:#878775"><span class="hex" style="color:#F4EEE2">#878775</span></div><div class="m"><div class="n">弱化 / 待办</div><div class="u">灰橄榄</div></div></div>
+  </div>
+
+  <div class="sec-title">阶段进度色条 <small>site stripe</small></div>
+  <div class="swatch-grid">
+    <div class="swatch"><div class="c" style="background:#6D4020"><span class="hex" style="color:#F4EEE2">#6D4020</span></div><div class="m"><div class="n">拆除</div></div></div>
+    <div class="swatch"><div class="c" style="background:#49503F"><span class="hex" style="color:#F4EEE2">#49503F</span></div><div class="m"><div class="n">水电</div></div></div>
+    <div class="swatch"><div class="c" style="background:#75613A"><span class="hex" style="color:#F4EEE2">#75613A</span></div><div class="m"><div class="n">泥工</div></div></div>
+    <div class="swatch"><div class="c" style="background:#52672A"><span class="hex" style="color:#F4EEE2">#52672A</span></div><div class="m"><div class="n">木工</div></div></div>
+    <div class="swatch"><div class="c" style="background:#878775"><span class="hex" style="color:#F4EEE2">#878775</span></div><div class="m"><div class="n">油漆</div></div></div>
+    <div class="swatch"><div class="c" style="background:#8A6B4F"><span class="hex" style="color:#F4EEE2">#8A6B4F</span></div><div class="m"><div class="n">安装</div></div></div>
+    <div class="swatch"><div class="c" style="background:#B08A4E"><span class="hex" style="color:#F4EEE2">#B08A4E</span></div><div class="m"><div class="n">完工</div></div></div>
+  </div>
+
+  <div class="sec-title">字体系统 <small>typography</small></div>
+  <div class="type-demo">
+    <div>
+      <div class="lbl">超大数字 · 衬线</div>
+      <div class="big serif">08</div>
+      <div class="row" style="margin-top:18px"><div class="lbl">标题 · 中文衬线</div><div class="td-title">张宅 · 装修</div></div>
+    </div>
+    <div>
+      <div class="lbl">全大写英文标签 · 等宽</div>
+      <div class="td-caps">SATURDAY ✦ AUGUST 2026</div>
+      <div class="row" style="margin-top:16px"><div class="lbl">正文</div><div class="td-body">防水刷两遍 · 瓷砖排版图已确认 · 阳台东侧离地 30cm 多留一个五孔插座,用于后期安装电动晾衣架。</div></div>
+      <div class="row"><div class="lbl">橙色点睛</div><div class="td-caps" style="color:var(--accent)">✦ IMPORTANT ✦</div></div>
+    </div>
+  </div>
+
+  <div class="sec-title">编辑感元素 <small>editorial kit</small></div>
+  <div class="kit">
+    <div class="kitcard">
+      <div class="kt">跑马灯 Marquee</div>
+      <div class="marquee-demo">
+        <div class="track">
+          <div class="item">泥工进场<span class="star">✦</span>水电验收<span class="star">✦</span>木工复尺<span class="star">✦</span>已交付<span class="star">✦</span></div>
+          <div class="item">泥工进场<span class="star">✦</span>水电验收<span class="star">✦</span>木工复尺<span class="star">✦</span>已交付<span class="star">✦</span></div>
+        </div>
+      </div>
+      <div style="font-size:12px;color:var(--ink-3)">跑马灯条 = 今日工地动态滚动,顶栏下方常驻</div>
+    </div>
+    <div class="kitcard">
+      <div class="kt">按钮 Button</div>
+      <div style="display:flex;flex-wrap:wrap;gap:10px">
+        <button class="btn primary">+ 新建工地</button>
+        <button class="btn orange">✦ 重要事项</button>
+        <button class="btn ghost">导出备份</button>
+      </div>
+    </div>
+    <div class="kitcard">
+      <div class="kt">标签 Chip</div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px">
+        <span class="chip">#防水刷两遍</span>
+        <span class="chip warn">#阳台多留插座</span>
+        <span class="chip done">✓ 已确认</span>
+        <span class="chip cross">#待定</span>
+      </div>
+    </div>
+    <div class="kitcard">
+      <div class="kt">提醒横幅 Banner</div>
+      <div class="banner">✦ <span><b>#阳台多留插座</b> 已到达 · 泥工阶段执行</span></div>
+    </div>
+  </div>
+
+  <div class="checklist">
+    <h4 class="serif">v2 验收 · 请你看四件事</h4>
+    <ul>
+      <li><b>① 编辑感</b> —— 全大写英文编号分区(01/02/03)、等宽字标签、细线分隔,有没有你的 portfolio 那股「杂志味」?</li>
+      <li><b>② 点睛橙</b> —— 新增暖橙 #C05A2A(个人网站橙色体系的沉稳版),做编号、✦、重要提醒。和锈棕相比,哪个更像你?</li>
+      <li><b>③ 跑马灯</b> —— 顶栏下新增工地动态跑马灯(实时信息滚动),这个动效是保留、还是太吵?</li>
+      <li><b>④ 圆角收窄</b> —— 从 10px 收到 4px,更硬朗的编辑感,手感对不对?</li>
+      <li style="border:none;color:var(--ink-3)">对比 v1:v1 是「暖木卡片感」,v2 是「杂志编辑感」。你选一个方向,或者告诉我哪里混搭。</li>
+    </ul>
+  </div>
+</div>
+
+<footer>LUSEM WORKSTATION <span class="star">✦</span> 配色《寄生虫》(2019) <span class="star">✦</span> 布局参考 lusem1212.github.io/portfolio</footer>
+
+</body>
+</html>
