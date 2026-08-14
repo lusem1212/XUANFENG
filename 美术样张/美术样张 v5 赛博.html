@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>美术样张 v5.1 · 工作站 (赛博朋克 · 字体优化)</title>
+<style>
+  :root{
+    --bg:#070A14;          /* 深空蓝黑 */
+    --panel:#0D1220;       /* 面板底 */
+    --panel-2:#111830;     /* 面板层次 */
+    --line:#24304E;        /* 暗描边 */
+    --cyan:#00F0FF;        /* 霓虹青(主) */
+    --magenta:#FF2A6D;     /* 霓虹品红(警示) */
+    --purple:#9D4EDD;      /* 霓虹紫(辅助) */
+    --yellow:#F9F002;      /* 霓虹黄(点缀) */
+    --green:#00FF9C;       /* 完成绿 */
+    --text:#D8E4FF;        /* 亮文字 */
+    --weak:#5A6B96;        /* 弱文字 */
+    /* ── 字体系统 v2 ── */
+    --font-display:"Bahnschrift","DIN Alternate","Segoe UI",sans-serif;  /* 几何科技感 · 赛博海报 */
+    --font-mono:"Cascadia Mono","Cascadia Code",Consolas,"Courier New",monospace; /* 终端原生 */
+    --font-cn:"Microsoft YaHei","PingFang SC","Noto Sans SC",sans-serif;  /* 中文黑体 */
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    background:var(--bg);color:var(--text);
+    font-family:var(--font-cn);
+    font-size:14px;line-height:1.65;
+    /* 网格地面 */
+    background-image:
+      linear-gradient(rgba(0,240,255,.045) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(0,240,255,.045) 1px,transparent 1px);
+    background-size:34px 34px;
+  }
+  .serif{font-family:"Noto Serif SC","Source Han Serif SC","Songti SC",serif}
+  .display{font-family:var(--font-display)}
+  .mono{font-family:var(--font-mono);font-variant-numeric:tabular-nums}
+  .glow-cyan{color:var(--cyan);text-shadow:0 0 8px rgba(0,240,255,.75),0 0 22px rgba(0,240,255,.35)}
+  .glow-magenta{color:var(--magenta);text-shadow:0 0 8px rgba(255,42,109,.75),0 0 22px rgba(255,42,109,.35)}
+  .glow-green{color:var(--green);text-shadow:0 0 8px rgba(0,255,156,.7),0 0 20px rgba(0,255,156,.3)}
+
+  /* 扫描线覆盖 */
+  .scanlines{pointer-events:none;position:fixed;inset:0;z-index:99;opacity:.5;
+    background:repeating-linear-gradient(0deg,rgba(0,0,0,.22) 0 1px,transparent 1px 3px);}
+
+  /* ═══ 顶栏 ═══ */
+  .topbar{
+    background:rgba(7,10,20,.92);border-bottom:1px solid var(--cyan);
+    display:flex;align-items:center;gap:28px;padding:13px 40px;position:relative;
+    box-shadow:0 0 24px rgba(0,240,255,.12);
+  }
+  .logo{
+    font-family:var(--font-display);font-size:19px;font-weight:700;letter-spacing:3px;
+  }
+  .logo .bracket{color:var(--weak);font-weight:300}
+  .logo .dot{color:var(--cyan);text-shadow:0 0 8px rgba(0,240,255,.8)}
+  .search{
+    flex:1;max-width:330px;background:var(--panel);
+    border:1px solid var(--line);padding:7px 14px;
+    font-size:12px;color:var(--weak);font-family:var(--font-mono);
+    font-variant-numeric:tabular-nums;letter-spacing:1px;
+  }
+  .search::before{content:"▸ ";color:var(--cyan)}
+  .tabs{display:flex;gap:8px;margin-left:auto}
+  .tab{
+    padding:6px 16px;font-size:11px;letter-spacing:2px;cursor:pointer;
+    font-family:var(--font-mono);color:var(--weak);
+    border:1px solid transparent;position:relative;
+  }
+  .tab.on{
+    color:var(--cyan);border-color:rgba(0,240,255,.5);
+    box-shadow:0 0 14px rgba(0,240,255,.25), inset 0 0 14px rgba(0,240,255,.08);
+    text-shadow:0 0 8px rgba(0,240,255,.7);
+  }
+  .tab.on::before{content:"▮ ";font-size:9px}
+  .tab .sys{margin-left:6px;font-size:9px;color:var(--weak)}
+
+  /* ═══ Hero ═══ */
+  .hero{
+    padding:42px 40px 34px;display:flex;align-items:flex-end;justify-content:space-between;gap:40px;
+    border-bottom:1px solid var(--line);position:relative;overflow:hidden;
+  }
+  .hero::after{
+    content:"";position:absolute;left:0;right:0;bottom:0;height:2px;
+    background:linear-gradient(90deg,var(--cyan),var(--purple),var(--magenta),var(--cyan));
+    opacity:.6;box-shadow:0 0 18px rgba(0,240,255,.4);
+  }
+  .hero .date{display:flex;align-items:baseline;gap:22px;position:relative}
+  /* 大数字:Bahnschrift 几何字 + 微斜 + 双层辉光 + 细描边 */
+  .hero .day{
+    font-family:var(--font-display);
+    font-size:106px;font-weight:700;line-height:.92;letter-spacing:4px;
+    color:var(--cyan);
+    transform:skewX(-4deg);
+    text-shadow:
+      0 0 14px rgba(0,240,255,.85),
+      0 0 46px rgba(0,240,255,.4),
+      3px 3px 0 rgba(0,240,255,.25);
+    -webkit-text-stroke:.5px rgba(200,255,255,.7);
+  }
+  .hero .ym{font-size:13px;color:var(--weak);letter-spacing:2px;line-height:2}
+  .hero .ym .en{
+    font-family:var(--font-mono);font-size:11px;letter-spacing:3px;
+    color:var(--cyan);text-shadow:0 0 8px rgba(0,240,255,.5);
+  }
+  .hero .ym .en b{color:var(--magenta);text-shadow:0 0 8px rgba(255,42,109,.6)}
+  .hero .stats{display:flex;gap:12px;position:relative}
+  .stat{
+    background:rgba(13,18,32,.85);border:1px solid var(--line);
+    min-width:116px;text-align:center;padding:13px 18px;position:relative;
+    clip-path:polygon(0 0,calc(100% - 12px) 0,100% 12px,100% 100%,12px 100%,0 calc(100% - 12px));
+  }
+  .stat .n{
+    font-family:var(--font-display);
+    font-size:30px;font-weight:700;line-height:1.15;letter-spacing:1px;
+    color:var(--cyan);text-shadow:0 0 10px rgba(0,240,255,.6);
+  }
+  .stat .t{font-size:10px;color:var(--weak);letter-spacing:2px;margin-top:3px;font-family:var(--font-mono)}
+  .stat.hot{border-color:rgba(255,42,109,.6)}
+  .stat.hot .n{color:var(--magenta);text-shadow:0 0 10px rgba(255,42,109,.7)}
+  .stat.hot::before{content:"!";position:absolute;top:-8px;right:-6px;width:20px;height:20px;background:var(--magenta);color:#fff;font-weight:900;font-size:12px;display:flex;align-items:center;justify-content:center;clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%);box-shadow:0 0 12px rgba(255,42,109,.8)}
+  .slogan{
+    margin-top:26px;font-size:12.5px;letter-spacing:5px;color:var(--weak);
+    border-top:1px solid var(--line);padding-top:14px;font-family:var(--font-mono);
+  }
+  .slogan .star{color:var(--magenta)}
+
+  /* ═══ 内容区 ═══ */
+  .main{max-width:1180px;margin:0 auto;padding:36px 40px 60px;display:grid;grid-template-columns:1.6fr 1fr;gap:26px}
+  .panel{
+    background:rgba(13,18,32,.9);border:1px solid var(--line);
+    padding:22px;backdrop-filter:blur(2px);
+    box-shadow:0 0 30px rgba(0,240,255,.05) inset;
+  }
+  .panel h3{
+    font-size:15px;font-weight:700;letter-spacing:4px;margin-bottom:16px;
+    display:flex;align-items:center;gap:10px;
+  }
+  .panel h3::before{content:"▰";color:var(--cyan);font-size:11px;text-shadow:0 0 8px rgba(0,240,255,.8)}
+  .panel h3 .en{margin-left:auto;font-size:10px;letter-spacing:3px;color:var(--weak);font-family:var(--font-mono)}
+  .panel h3 .en::before{content:"// ";color:var(--cyan)}
+
+  /* 日历 */
+  .week{display:grid;grid-template-columns:repeat(7,1fr);gap:7px}
+  .wday{text-align:center;font-size:10px;color:var(--weak);letter-spacing:2px;margin-bottom:5px;font-family:var(--font-mono)}
+  .wcell{
+    aspect-ratio:1;border:1px solid var(--line);background:rgba(17,24,48,.6);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+    font-size:14px;color:var(--text);cursor:pointer;position:relative;
+    font-family:var(--font-display);font-weight:500;
+  }
+  .wcell .fut{color:#3A4A6E}
+  .wcell .dot{width:4px;height:4px;background:var(--magenta);box-shadow:0 0 6px rgba(255,42,109,.9)}
+  .wcell.today{
+    border-color:var(--cyan);color:var(--cyan);font-weight:700;
+    box-shadow:0 0 16px rgba(0,240,255,.35), inset 0 0 14px rgba(0,240,255,.12);
+    text-shadow:0 0 8px rgba(0,240,255,.7);
+  }
+  .wcell.today .dot{background:var(--cyan);box-shadow:0 0 6px rgba(0,240,255,.9)}
+  .wcell.tag{border-color:#2A3A5E}
+
+  /* 计划 */
+  .plans{margin-top:18px;display:flex;flex-direction:column;gap:9px}
+  .plan{
+    display:flex;align-items:center;gap:13px;background:rgba(17,24,48,.7);
+    border:1px solid var(--line);padding:10px 14px;position:relative;
+  }
+  .plan::before{content:"";position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--line)}
+  .plan .time{font-family:var(--font-mono);font-size:12.5px;color:var(--cyan);min-width:68px;font-variant-numeric:tabular-nums}
+  .plan .txt{flex:1;font-size:13.5px;letter-spacing:.5px}
+  .plan .tag-mini{font-size:9.5px;padding:2px 9px;border:1px solid var(--line);color:var(--weak);letter-spacing:2px;font-family:var(--font-mono)}
+  .plan .tag-mini.warn{border-color:rgba(255,42,109,.7);color:var(--magenta);text-shadow:0 0 8px rgba(255,42,109,.5)}
+  .ck{width:18px;height:18px;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;color:transparent}
+  .plan.done .ck{border-color:var(--green);color:var(--green);box-shadow:0 0 10px rgba(0,255,156,.4)}
+  .plan.done .txt{color:#3A4A6E;text-decoration:line-through}
+
+  /* 工地卡 */
+  .sites{display:flex;flex-direction:column;gap:14px}
+  .site{
+    background:rgba(17,24,48,.75);border:1px solid var(--line);overflow:hidden;
+    cursor:pointer;transition:border-color .15s, box-shadow .15s;position:relative;
+  }
+  .site:hover{border-color:rgba(0,240,255,.5);box-shadow:0 0 20px rgba(0,240,255,.15)}
+  .site .hd{display:flex;align-items:baseline;justify-content:space-between;padding:13px 16px 8px}
+  .site .nm{font-size:15px;font-weight:700;font-family:"Microsoft YaHei","PingFang SC",sans-serif;letter-spacing:1px}
+  .site .st{font-size:9.5px;color:var(--weak);letter-spacing:2px;font-family:var(--font-mono)}
+  .site .st b{color:var(--cyan);text-shadow:0 0 8px rgba(0,240,255,.6)}
+  .site .bd{display:flex;align-items:center;justify-content:space-between;padding:0 16px 12px}
+  .site .rem{display:flex;gap:6px;font-size:11px}
+  .site .rem .b{color:var(--magenta);border:1px solid rgba(255,42,109,.7);padding:2px 9px;font-weight:700;font-family:var(--font-mono);text-shadow:0 0 8px rgba(255,42,109,.5)}
+  .site .rem .b.ok{color:var(--green);border-color:rgba(0,255,156,.6);text-shadow:0 0 8px rgba(0,255,156,.4)}
+  .stripe{display:grid;grid-template-columns:repeat(7,1fr);height:8px;position:relative}
+  .stripe i{display:block}
+  .stripe .s1{background:#6D4020}.stripe .s2{background:var(--purple)}.stripe .s3{background:var(--cyan)}
+  .stripe .s4{background:var(--green)}.stripe .s5{background:var(--yellow)}.stripe .s6{background:#FF9E00}.stripe .s7{background:var(--magenta)}
+  .stripe .f{background:#1A2440}
+  .stripe .cur{position:relative;box-shadow:0 0 12px rgba(0,240,255,.8) inset}
+  .stripe .cur::after{
+    content:"▲";position:absolute;top:-13px;left:50%;transform:translateX(-50%);
+    font-size:9px;color:var(--cyan);text-shadow:0 0 8px rgba(0,240,255,.9);
+  }
+
+  /* 便签 */
+  .notes{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+  .note{
+    background:rgba(17,24,48,.7);border:1px solid var(--line);border-top:2px solid var(--cyan);
+    padding:12px 14px;font-size:12.5px;position:relative;
+  }
+  .note.g{border-top-color:var(--purple)}
+  .note .d{font-size:10px;color:var(--weak);margin-top:8px;font-family:var(--font-mono);letter-spacing:1px}
+
+  /* ═══ 验收区 ═══ */
+  .accept{max-width:1180px;margin:0 auto;padding:10px 40px 80px}
+  .sec-title{font-size:17px;font-weight:700;letter-spacing:3px;color:var(--cyan);text-shadow:0 0 10px rgba(0,240,255,.5);margin:48px 0 20px;display:flex;align-items:center;gap:12px}
+  .sec-title::before{content:"▸ ";font-size:14px}
+  .sec-title small{font-size:11px;color:var(--weak);letter-spacing:2px;font-weight:400}
+  .sec-title::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,var(--line),transparent)}
+
+  .swatch-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
+  .swatch{border:1px solid var(--line);background:var(--panel);overflow:hidden}
+  .swatch .c{height:80px;position:relative}
+  .swatch .c .hex{position:absolute;bottom:7px;left:11px;font-size:11.5px;font-weight:600;font-family:var(--font-mono);background:rgba(7,10,20,.75);padding:1px 6px;color:#fff}
+  .swatch .m{padding:8px 11px}
+  .swatch .m .n{font-size:12.5px;font-weight:600;color:var(--text)}
+  .swatch .m .u{font-size:11px;color:var(--weak)}
+
+  /* 字体系统展示 */
+  .type-demo{border:1px solid var(--line);background:var(--panel);padding:30px 34px;display:grid;grid-template-columns:1.1fr 1fr;gap:28px}
+  .type-demo .big{
+    font-family:var(--font-display);font-size:110px;font-weight:700;line-height:1;letter-spacing:4px;
+    color:var(--cyan);transform:skewX(-4deg);display:inline-block;
+    text-shadow:0 0 14px rgba(0,240,255,.85),0 0 44px rgba(0,240,255,.4),3px 3px 0 rgba(0,240,255,.25);
+    -webkit-text-stroke:.5px rgba(200,255,255,.7);
+  }
+  .type-demo .row{margin-bottom:16px}
+  .type-demo .lbl{font-size:10px;color:var(--weak);letter-spacing:3px;margin-bottom:6px;font-family:var(--font-mono)}
+  .td-title{font-size:25px;font-weight:700;letter-spacing:3px}
+  .td-title .sub{font-family:var(--font-display);font-size:13px;letter-spacing:5px;color:var(--cyan);text-shadow:0 0 8px rgba(0,240,255,.5);margin-left:10px}
+  .td-body{font-size:14px;color:#8FA0C8;letter-spacing:.5px}
+  .td-caps{font-family:var(--font-mono);font-size:12px;letter-spacing:3px;color:var(--cyan);text-shadow:0 0 8px rgba(0,240,255,.5);font-variant-numeric:tabular-nums}
+  .font-stack{display:flex;flex-direction:column;gap:10px;margin-top:4px}
+  .font-stack .fs{display:flex;align-items:baseline;gap:12px;border:1px dashed var(--line);padding:9px 12px}
+  .font-stack .fs .nm{font-family:var(--font-mono);font-size:10px;color:var(--weak);min-width:120px;letter-spacing:1px}
+  .font-stack .fs .demo{font-size:20px;font-weight:700;color:var(--text)}
+
+  .kit{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px}
+  .kitcard{border:1px solid var(--line);background:var(--panel);padding:20px;display:flex;flex-direction:column;gap:12px}
+  .kitcard .kt{font-size:10px;color:var(--weak);letter-spacing:3px;margin-bottom:2px;font-family:var(--font-mono)}
+  .btn{
+    display:inline-flex;align-items:center;gap:8px;padding:9px 20px;font-size:13px;font-weight:600;cursor:pointer;
+    background:transparent;border:1px solid var(--line);color:var(--text);position:relative;
+    font-family:var(--font-cn);letter-spacing:1px;
+  }
+  .btn.primary{border-color:var(--cyan);color:var(--cyan);box-shadow:0 0 14px rgba(0,240,255,.25), inset 0 0 12px rgba(0,240,255,.08);text-shadow:0 0 8px rgba(0,240,255,.5)}
+  .btn.orange{border-color:var(--magenta);color:var(--magenta);box-shadow:0 0 14px rgba(255,42,109,.25);text-shadow:0 0 8px rgba(255,42,109,.5)}
+  .btn.ghost{border-color:var(--line);color:var(--weak)}
+  .chip{display:inline-flex;align-items:center;padding:3px 11px;font-size:11px;border:1px solid var(--line);color:#8FA0C8;font-family:var(--font-mono)}
+  .chip.warn{border-color:rgba(255,42,109,.7);color:var(--magenta);text-shadow:0 0 8px rgba(255,42,109,.4)}
+  .chip.done{border-color:rgba(0,255,156,.6);color:var(--green);text-shadow:0 0 8px rgba(0,255,156,.3)}
+  .chip.cross{border-style:dashed;color:#3A4A6E}
+  .banner{
+    display:flex;align-items:center;gap:12px;border:1px solid rgba(255,42,109,.6);
+    border-left:3px solid var(--magenta);background:rgba(255,42,109,.07);
+    padding:11px 16px;font-size:13px;letter-spacing:.5px;
+  }
+  .banner b{color:var(--magenta);text-shadow:0 0 8px rgba(255,42,109,.5)}
+  .note2{border:1px solid var(--line);border-top:2px solid var(--cyan);background:rgba(17,24,48,.7);padding:13px 15px;font-size:12.5px}
+  .note2 .d{font-size:10px;color:var(--weak);margin-top:7px;font-family:var(--font-mono)}
+
+  .checklist{margin-top:36px;border:1px solid var(--line);background:var(--panel);padding:26px 30px}
+  .checklist h4{font-size:15px;font-weight:700;letter-spacing:2px;color:var(--cyan);text-shadow:0 0 10px rgba(0,240,255,.4);margin-bottom:14px}
+  .checklist li{list-style:none;font-size:13.5px;color:#8FA0C8;padding:7px 0;border-bottom:1px dashed var(--line)}
+  .checklist li:last-child{border:none}
+  .checklist li b{color:var(--text)}
+
+  footer{max-width:1180px;margin:0 auto;padding:20px 40px 50px;text-align:center;font-size:11px;color:var(--weak);letter-spacing:2px;font-family:var(--font-mono)}
+</style>
+</head>
+<body>
+
+<div class="scanlines"></div>
+
+<!-- ═══ 顶栏 ═══ -->
+<header class="topbar">
+  <div class="logo"><span class="bracket">[</span>L<span class="dot">·</span>工作站<span class="bracket">]</span></div>
+  <div class="search">SEARCH // 工地 / 便签 / 计划</div>
+  <nav class="tabs">
+    <span class="tab on">01.CALENDAR<span class="sys">[ACTIVE]</span></span>
+    <span class="tab">02.NOTES</span>
+    <span class="tab">03.SITES</span>
+  </nav>
+</header>
+
+<!-- ═══ Hero ═══ -->
+<section class="hero">
+  <div class="date">
+    <div class="day">08</div>
+    <div class="ym">八月 · 星期六<br><span class="en">SATURDAY <b>✦</b> AUGUST 2026</span></div>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="n">3</div><div class="t">TODAY / 计划</div></div>
+    <div class="stat hot"><div class="n">2</div><div class="t">ALERT / 提醒</div></div>
+    <div class="stat"><div class="n">5</div><div class="t">MEMO / 便签</div></div>
+  </div>
+</section>
+<div class="slogan" style="max-width:1180px;margin:0 auto;padding:0 40px"><span class="star">✦</span> 从图纸到落地的每一站</div>
+
+<main class="main">
+  <!-- 左 -->
+  <div>
+    <div class="panel">
+      <h3>本周 · 八月<span class="en">WEEK.GRID</span></h3>
+      <div class="week">
+        <div class="wday">MON</div><div class="wday">TUE</div><div class="wday">WED</div><div class="wday">THU</div><div class="wday">FRI</div><div class="wday">SAT</div><div class="wday">SUN</div>
+        <div class="wcell fut">3</div><div class="wcell tag">4</div><div class="wcell">5</div><div class="wcell tag">6</div><div class="wcell">7</div>
+        <div class="wcell today">8<span class="dot"></span></div><div class="wcell tag">9</div>
+      </div>
+      <div class="plans">
+        <div class="plan done"><span class="ck">✓</span><span class="time">09:00</span><span class="txt">张宅 泥工进场交底</span><span class="tag-mini">SITE</span></div>
+        <div class="plan"><span class="ck"></span><span class="time">14:30</span><span class="txt">李总别墅 水电验收</span><span class="tag-mini warn">!IMPORTANT</span></div>
+        <div class="plan"><span class="ck"></span><span class="time">16:00</span><span class="txt">陈小姐公寓 木工复尺</span><span class="tag-mini">SITE</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 右 -->
+  <div style="display:flex;flex-direction:column;gap:26px">
+    <div>
+      <div class="panel" style="padding:0;background:transparent;border:none;box-shadow:none">
+        <h3 style="padding:0 4px">工地速览<span class="en">SITE.STATUS</span></h3>
+        <div class="sites">
+          <div class="site">
+            <div class="hd"><span class="nm">张宅 · 装修</span><span class="st">NOW <b>泥工</b></span></div>
+            <div class="bd"><div class="rem"><span class="b">⚠ 2</span></div><span style="font-size:10px;color:var(--weak);font-family:var(--font-mono)">REMINDERS PENDING</span></div>
+            <div class="stripe"><i class="s1"></i><i class="s2"></i><i class="s3 cur"></i><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i></div>
+          </div>
+          <div class="site">
+            <div class="hd"><span class="nm">李总 · 别墅</span><span class="st">NOW <b>水电</b></span></div>
+            <div class="bd"><div class="rem"><span class="b">⚠ 1</span></div><span style="font-size:10px;color:var(--weak);font-family:var(--font-mono)">ACCEPTANCE TODAY</span></div>
+            <div class="stripe"><i class="s1"></i><i class="s2 cur"></i><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i></div>
+          </div>
+          <div class="site">
+            <div class="hd"><span class="nm">王工 · 商业</span><span class="st" style="color:var(--green);text-shadow:0 0 8px rgba(0,255,156,.4)">DONE ✓</span></div>
+            <div class="bd"><div class="rem"><span class="b ok">✓ 交付</span></div><span style="font-size:10px;color:var(--weak);font-family:var(--font-mono)">2026-07-28</span></div>
+            <div class="stripe"><i class="s1"></i><i class="s2"></i><i class="s3"></i><i class="s4"></i><i class="s5"></i><i class="s6"></i><i class="s7"></i></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3>便签角<span class="en">MEMO.BUFFER</span></h3>
+      <div class="notes">
+        <div class="note"><b>防水刷两遍</b><div class="d">STAGE:泥工 · 07-20</div></div>
+        <div class="note g"><b>客户预算紧张</b><div class="d">GLOBAL · 长期</div></div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- ═══ 验收区 ═══ -->
+<div class="accept">
+
+  <div class="sec-title">霓虹配色 <small>deep blue × neon</small></div>
+  <div class="swatch-grid">
+    <div class="swatch"><div class="c" style="background:#070A14"><span class="hex">#070A14</span></div><div class="m"><div class="n">深空蓝黑</div><div class="u">页面底 · 网格地面</div></div></div>
+    <div class="swatch"><div class="c" style="background:#0D1220"><span class="hex">#0D1220</span></div><div class="m"><div class="n">面板底</div><div class="u">卡片 · 表单</div></div></div>
+    <div class="swatch"><div class="c" style="background:#00F0FF"><span class="hex">#00F0FF</span></div><div class="m"><div class="n">霓虹青</div><div class="u">主色 · 激活 · 今天 · 发光</div></div></div>
+    <div class="swatch"><div class="c" style="background:#FF2A6D"><span class="hex">#FF2A6D</span></div><div class="m"><div class="n">霓虹品红</div><div class="u">警示 · 重要提醒 · 警报!</div></div></div>
+    <div class="swatch"><div class="c" style="background:#9D4EDD"><span class="hex">#9D4EDD</span></div><div class="m"><div class="n">霓虹紫</div><div class="u">辅助 · 次级强调</div></div></div>
+    <div class="swatch"><div class="c" style="background:#00FF9C"><span class="hex">#00FF9C</span></div><div class="m"><div class="n">完成绿</div><div class="u">已完成 · 交付</div></div></div>
+    <div class="swatch"><div class="c" style="background:#F9F002"><span class="hex">#F9F002</span></div><div class="m"><div class="n">霓虹黄</div><div class="u">阶段点缀 · 油漆阶段</div></div></div>
+  </div>
+
+  <div class="sec-title">字体系统 v2 <small>display × mono × cn</small></div>
+  <div class="type-demo">
+    <div>
+      <div class="lbl">超大数字 · Bahnschrift 几何字</div>
+      <div class="big">08</div>
+      <div class="row" style="margin-top:18px"><div class="lbl">中文标题 · 雅黑加宽字距</div><div class="td-title">张宅 · 装修<span class="sub">SITE 003</span></div></div>
+    </div>
+    <div>
+      <div class="lbl">等宽终端标签 · Cascadia Mono</div>
+      <div class="td-caps">SATURDAY ✦ AUGUST 2026 // SYS.ONLINE</div>
+      <div class="row" style="margin-top:16px"><div class="lbl">正文</div><div class="td-body">防水刷两遍 · 瓷砖排版图已确认 · 阳台东侧离地 30cm 多留一个五孔插座。</div></div>
+      <div class="row"><div class="lbl">警示辉光</div><div class="td-caps" style="color:var(--magenta);text-shadow:0 0 8px rgba(255,42,109,.5)">! IMPORTANT // 2 ALERTS</div></div>
+      <div class="font-stack">
+        <div class="fs"><span class="nm">DISPLAY / 标题数字</span><span class="demo" style="font-family:var(--font-display)">Bahnschrift 08 A</span></div>
+        <div class="fs"><span class="nm">MONO / 终端标签</span><span class="demo" style="font-family:var(--font-mono);font-size:15px;font-weight:400">Cascadia Mono ▸ 09:00</span></div>
+        <div class="fs"><span class="nm">CN / 中文正文</span><span class="demo" style="font-size:16px">微软雅黑 加宽字距</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-title">组件样板 <small>切角 · 辉光 · 扫描线</small></div>
+  <div class="kit">
+    <div class="kitcard">
+      <div class="kt">BUTTON</div>
+      <div><button class="btn primary">+ 新建工地</button></div>
+      <div><button class="btn orange">! 重要事项</button></div>
+      <div><button class="btn ghost">导出备份</button></div>
+    </div>
+    <div class="kitcard">
+      <div class="kt">CHIP</div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px">
+        <span class="chip">#防水刷两遍</span>
+        <span class="chip warn">#阳台多留插座</span>
+        <span class="chip done">✓ 已确认</span>
+        <span class="chip cross">#待定</span>
+      </div>
+    </div>
+    <div class="kitcard">
+      <div class="kt">BANNER</div>
+      <div class="banner">! <span><b>#阳台多留插座</b> 已到达 · 泥工阶段执行</span></div>
+    </div>
+    <div class="kitcard">
+      <div class="kt">NOTE</div>
+      <div class="note2"><b>瓷砖排版图已确认</b><div class="d">CONFIRMED BY CLIENT · 07-20</div></div>
+    </div>
+  </div>
+
+  <div class="checklist">
+    <h4>v5.1 验收 · 字体优化</h4>
+    <ul>
+      <li><b>① 大数字</b> —— 「08」换成 Bahnschrift 几何字 + 微斜 4° + 双层辉光,有没有赛博海报(Blade Runner 味)的感觉?</li>
+      <li><b>② 终端标签</b> —— 全部换成 Cascadia Mono(Windows 终端原生字体),等宽数字对齐(tabular-nums),`// WEEK.GRID` 是不是更"真终端"了?</li>
+      <li><b>③ 中文</b> —— 标题用雅黑 + 字距拉到 4px,正文保持常规字距,中英文层级是不是分开了?</li>
+      <li><b>④ 日历数字</b> —— 日期格子改用几何数字字体,和手写感无衬线比,哪个更赛博?</li>
+      <li style="border:none;color:#3A4A6E">注:字体全部用 Windows 自带(Bahnschrift / Cascadia Mono / 微软雅黑),离线可用,不依赖在线字体库。</li>
+    </ul>
+  </div>
+</div>
+
+<footer>LUSEM WORKSTATION ▚ CYBERPUNK MODE v5.1 ▚ BAHNSCHRIFT // CASCADIA MONO // GRID</footer>
+
+</body>
+</html>
