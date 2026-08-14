@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>客户页美术模板 · A 编辑档案感 / B 中古档案册</title>
+<style>
+  /* ═══════════ 对比页外壳 ═══════════ */
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:#E9E2D4; font-family:"PingFang SC","Microsoft YaHei",sans-serif; padding:28px 30px 60px; }
+  .cmp-head { max-width:1500px; margin:0 auto 22px; display:flex; align-items:baseline; gap:16px; flex-wrap:wrap; }
+  .cmp-head h1 { font-size:20px; letter-spacing:.04em; color:#4A3B28; }
+  .cmp-head .sub { font-size:12px; color:#8A7A63; letter-spacing:.08em; }
+  .cmp-head .hint { margin-left:auto; font-size:11.5px; color:#A08A6C; }
+  .cmp-wrap { max-width:1500px; margin:0 auto; display:flex; gap:26px; align-items:flex-start; flex-wrap:wrap; }
+  .tpl { flex:1 1 620px; min-width:600px; border-radius:14px; overflow:hidden; box-shadow:0 8px 30px rgba(90,70,40,.16); }
+  .tpl-tag { display:flex; align-items:center; gap:10px; padding:9px 18px; font-size:12px; letter-spacing:.1em; }
+  .tpl-tag b { font-size:13px; }
+  .tpl-a .tpl-tag { background:#3A2E1E; color:#EFE6D3; }
+  .tpl-a .tpl-tag b { color:#E5B65C; }
+  .tpl-b .tpl-tag { background:#4A3B28; color:#EDE3CE; }
+  .tpl-b .tpl-tag b { color:#C9A227; }
+  .tpl-note { padding:10px 18px 14px; font-size:11.5px; line-height:1.7; }
+  .tpl-a .tpl-note { background:#F4EEE2; color:#8A7A63; }
+  .tpl-b .tpl-note { background:#EAE0CE; color:#8D7A5C; }
+
+  /* ═══════════ 共享结构（两模板内部统一骨架） ═══════════ */
+  .ws { height:760px; display:flex; flex-direction:column; }
+  .ws-top { display:flex; align-items:center; gap:10px; padding:10px 16px; }
+  .ws-tabs { display:flex; gap:4px; margin-left:14px; }
+  .ws-tab { font-size:12.5px; font-weight:600; padding:6px 15px; border-radius:999px; display:flex; align-items:center; gap:6px; }
+  .ws-tab .cnt { font-size:10px; font-weight:700; padding:0 6px; border-radius:99px; line-height:15px; }
+  .ws-date { margin-left:auto; font-size:11px; }
+  .ws-body { flex:1; overflow-y:auto; }
+  .ws-inner { max-width:1100px; margin:0 auto; padding:22px 26px 44px; }
+
+  /* 客户页骨架：标题条 + 两区 */
+  .sec-head { display:flex; align-items:baseline; gap:10px; margin:26px 0 12px; }
+  .sec-head:first-child { margin-top:0; }
+  .sec-head .cn { font-size:17px; font-weight:700; letter-spacing:.02em; }
+  .sec-head .en { font-size:9.5px; letter-spacing:3px; font-family:Consolas,monospace; }
+  .sec-head .add { margin-left:auto; font-size:11.5px; font-weight:600; padding:5px 13px; border-radius:7px; cursor:pointer; }
+  .cards { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:14px; }
+
+  .c-name { font-size:16.5px; font-weight:700; display:flex; align-items:center; gap:7px; }
+  .c-phone { font-family:Consolas,monospace; font-size:10.5px; letter-spacing:.06em; margin-top:3px; }
+  .c-need { font-size:12px; line-height:1.65; margin-top:9px; }
+  .c-foot { display:flex; align-items:center; justify-content:space-between; margin-top:11px; font-size:10.5px; }
+  .st-chip { font-size:10px; font-weight:600; padding:2px 9px; border-radius:999px; }
+  .budget { font-family:Consolas,monospace; font-size:10.5px; }
+  .src { font-size:10.5px; }
+  .btn-sign { font-size:10.5px; font-weight:700; padding:4px 12px; border-radius:6px; cursor:pointer; border:none; }
+  .signed-badge { font-size:9.5px; font-weight:700; padding:1.5px 8px; border-radius:99px; letter-spacing:.06em; }
+  .pbar { height:5px; border-radius:99px; margin-top:10px; overflow:hidden; }
+  .pbar i { display:block; height:100%; border-radius:99px; }
+  .p-prog { font-family:Consolas,monospace; font-size:10px; margin-top:5px; display:flex; justify-content:space-between; }
+  .tie { font-size:11px; margin-top:3px; }
+  .empty { font-size:11.5px; padding:26px; text-align:center; border:1px dashed; border-radius:10px; }
+
+  /* ═══════════ 模板 A · 编辑档案感（延续工作站现状语言） ═══════════ */
+  .tpl-a .ws-top { background:#2E261A; border-bottom:1px solid #4A3B28; }
+  .tpl-a .ws-logo { background:#F4EEE2; border-radius:8px; padding:4px 14px; font-family:"STKaiti","KaiTi",serif; font-size:15px; color:#2E261A; font-weight:700; letter-spacing:.12em; box-shadow:0 3px 10px rgba(0,0,0,.35); }
+  .tpl-a .ws-tab { color:#B9AC93; }
+  .tpl-a .ws-tab.active { background:#F4EEE2; color:#2E261A; box-shadow:0 3px 10px rgba(0,0,0,.35); }
+  .tpl-a .ws-tab .cnt { background:rgba(192,90,42,.45); color:#F5D0B8; }
+  .tpl-a .ws-tab.active .cnt { background:#C05A2A; color:#FBF3E4; }
+  .tpl-a .ws-date { color:#B9AC93; } .tpl-a .ws-date b { color:#E5B65C; }
+  .tpl-a .ws-body { background:#F4EEE2; }
+  .tpl-a .sec-head .cn { color:#3A2E1E; font-family:"Songti SC","SimSun",serif; }
+  .tpl-a .sec-head .en { color:#C05A2A; }
+  .tpl-a .sec-head .add { background:#3A2E1E; color:#F4EEE2; }
+  .tpl-a .card { background:#FCF8EE; border:1px solid #D8C9AC; border-radius:10px; padding:15px 16px 13px; box-shadow:0 2px 8px rgba(120,95,55,.08); }
+  .tpl-a .c-name { color:#2E261A; }
+  .tpl-a .c-phone { color:#8A7A63; }
+  .tpl-a .c-need { color:#5A4A35; }
+  .tpl-a .c-foot { color:#A08A6C; }
+  .tpl-a .st-chip.pending { background:#F3DFC8; color:#C05A2A; }
+  .tpl-a .st-chip.quoted { background:#F1E4BC; color:#9A7B1E; }
+  .tpl-a .st-chip.talking { background:#E3E8D0; color:#5F7520; }
+  .tpl-a .budget { color:#8A7A63; }
+  .tpl-a .btn-sign { background:#C05A2A; color:#FBF3E4; }
+  .tpl-a .signed-badge { background:#E3E8D0; color:#5F7520; }
+  .tpl-a .pbar { background:#E4DBC8; } .tpl-a .pbar i { background:#C05A2A; }
+  .tpl-a .p-prog { color:#8A7A63; } .tpl-a .p-prog b { color:#C05A2A; }
+  .tpl-a .tie { color:#8A7A63; }
+  .tpl-a .empty { border-color:#D8C9AC; color:#A08A6C; background:#F8F2E4; }
+
+  /* ═══════════ 模板 B · 中古档案册（暖木底 · 档案编号 · 描边状态章） ═══════════ */
+  .tpl-b .ws-top { background:#4A3B28; border-bottom:2px solid #B09B7F; }
+  .tpl-b .ws-logo { background:#EAE0CE; border:1px solid #B09B7F; border-radius:4px; padding:4px 13px; font-family:"STKaiti","KaiTi",serif; font-size:14.5px; color:#4A3B28; font-weight:700; letter-spacing:.14em; box-shadow:3px 3px 0 rgba(74,59,40,.5); }
+  .tpl-b .ws-tab { color:#C8B894; border:1px solid transparent; }
+  .tpl-b .ws-tab.active { background:#EAE0CE; color:#4A3B28; border:1px solid #B09B7F; box-shadow:2px 2px 0 rgba(74,59,40,.4); }
+  .tpl-b .ws-tab .cnt { background:rgba(176,141,87,.5); color:#F3EAD6; }
+  .tpl-b .ws-tab.active .cnt { background:#B08D57; color:#4A3B28; }
+  .tpl-b .ws-date { color:#C8B894; } .tpl-b .ws-date b { color:#C9A227; }
+  .tpl-b .ws-body { background:#EAE0CE; }
+  .tpl-b .sec-head { border-bottom:2px double #B09B7F; padding-bottom:8px; }
+  .tpl-b .sec-head .cn { color:#4A3B28; font-family:"STKaiti","KaiTi",serif; font-size:19px; }
+  .tpl-b .sec-head .en { color:#B08D57; }
+  .tpl-b .sec-head .add { background:transparent; border:1.5px solid #4A3B28; color:#4A3B28; border-radius:3px; }
+  .tpl-b .card { background:#F6F0E3; border:1.5px solid #B09B7F; border-radius:4px; padding:16px 17px 14px; box-shadow:4px 4px 0 rgba(74,59,40,.16); position:relative; }
+  .tpl-b .card::before { content:attr(data-no); position:absolute; top:9px; right:12px; font-family:Consolas,monospace; font-size:9px; letter-spacing:.14em; color:#B09B7F; }
+  .tpl-b .c-name { color:#4A3B28; }
+  .tpl-b .c-phone { color:#9B8A6C; }
+  .tpl-b .c-need { color:#6B5A42; border-left:2.5px solid #C9A227; padding-left:9px; }
+  .tpl-b .c-foot { color:#9B8A6C; }
+  .tpl-b .st-chip { background:transparent; border:1.2px solid; }
+  .tpl-b .st-chip.pending { border-color:#B0603A; color:#A04F2B; }
+  .tpl-b .st-chip.quoted { border-color:#B08D57; color:#8F6F3C; }
+  .tpl-b .st-chip.talking { border-color:#7A8A4E; color:#64743C; }
+  .tpl-b .budget { color:#9B8A6C; }
+  .tpl-b .btn-sign { background:#4A3B28; color:#F3EAD6; border-radius:3px; box-shadow:2px 2px 0 rgba(74,59,40,.4); }
+  .tpl-b .signed-badge { background:transparent; border:1.2px solid #7A8A4E; color:#64743C; }
+  .tpl-b .pbar { background:#E0D5BE; border:1px solid #C9B894; } .tpl-b .pbar i { background:#B08D57; }
+  .tpl-b .p-prog { color:#9B8A6C; } .tpl-b .p-prog b { color:#8F6F3C; }
+  .tpl-b .tie { color:#9B8A6C; }
+  .tpl-b .empty { border-color:#B09B7F; color:#9B8A6C; background:#F6F0E3; border-radius:4px; }
+
+  @media (max-width:1320px){ .tpl { min-width:520px; } }
+</style>
+</head>
+<body>
+
+<div class="cmp-head">
+  <h1>「客户」页美术模板 · 2 选 1</h1>
+  <span class="sub">LUSEM 个人工作站 · 第 4 大类</span>
+  <span class="hint">选好后告诉我「A」或「B」→ 我再按选定模板执行改造</span>
+</div>
+
+<div class="cmp-wrap">
+
+<!-- ═══════════ 模板 A ═══════════ -->
+<div class="tpl tpl-a">
+  <div class="tpl-tag"><b>模板 A · 编辑档案感</b>延续工作站现有语言（米底 · mono 英文标签 · 暖橙）——与日历/便签/工地天然一致，零适应成本</div>
+  <div class="ws">
+    <div class="ws-top">
+      <div class="ws-logo">家宅有度 · 居想室成</div>
+      <nav class="ws-tabs">
+        <span class="ws-tab">日历</span>
+        <span class="ws-tab">便签</span>
+        <span class="ws-tab">工地<span class="cnt">5</span></span>
+        <span class="ws-tab active">客户<span class="cnt">7</span></span>
+      </nav>
+      <span class="ws-date"><b>2026年8月14日</b> · 星期五</span>
+    </div>
+    <div class="ws-body">
+      <div class="ws-inner">
+        <div class="sec-head">
+          <span class="cn">未签客户</span><span class="en">POTENTIAL CLIENTS</span>
+          <span class="add">＋ 新建客户</span>
+        </div>
+        <div class="cards">
+          <div class="card">
+            <div class="c-name">陈女士</div>
+            <div class="c-phone">138 0000 1234</div>
+            <div class="c-need">180㎡ 复式 · 中古风全屋设计，客厅挑高想保留，偏好暖木色。</div>
+            <div class="c-foot">
+              <span class="st-chip pending">待跟进</span>
+              <span class="budget">40-50w</span>
+              <span class="src">小红书</span>
+            </div>
+            <div class="c-foot" style="margin-top:8px;justify-content:flex-end">
+              <button class="btn-sign">✎ 转签约 →</button>
+            </div>
+          </div>
+          <div class="card">
+            <div class="c-name">张先生</div>
+            <div class="c-phone">186 2222 8899</div>
+            <div class="c-need">120㎡ 三房 · 奶油风，预算卡得紧，想先看平面方案再定。</div>
+            <div class="c-foot">
+              <span class="st-chip quoted">已报价</span>
+              <span class="budget">20-30w</span>
+              <span class="src">朋友介绍</span>
+            </div>
+            <div class="c-foot" style="margin-top:8px;justify-content:flex-end">
+              <button class="btn-sign">✎ 转签约 →</button>
+            </div>
+          </div>
+          <div class="card">
+            <div class="c-name">刘姐</div>
+            <div class="c-phone">139 5555 6677</div>
+            <div class="c-need">别墅 320㎡ · 法式+日式混搭，二次沟通中，意向较强。</div>
+            <div class="c-foot">
+              <span class="st-chip talking">谈拢中</span>
+              <span class="budget">80w+</span>
+              <span class="src">门店到访</span>
+            </div>
+            <div class="c-foot" style="margin-top:8px;justify-content:flex-end">
+              <button class="btn-sign">✎ 转签约 →</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="sec-head">
+          <span class="cn">已签设计客户</span><span class="en">SIGNED DESIGN CLIENTS</span>
+        </div>
+        <div class="cards">
+          <div class="card">
+            <div class="c-name">王女士 <span class="signed-badge">设计</span></div>
+            <div class="tie">绑定工地 · 云栖玫瑰园 2-301</div>
+            <div class="pbar"><i style="width:67%"></i></div>
+            <div class="p-prog"><span>施工图绘制</span><b>4/6 · 67%</b></div>
+          </div>
+          <div class="card">
+            <div class="c-name">李先生 <span class="signed-badge">设计</span></div>
+            <div class="tie">绑定工地 · 麓谷和苑 8-502</div>
+            <div class="pbar"><i style="width:33%"></i></div>
+            <div class="p-prog"><span>平面方案</span><b>2/6 · 33%</b></div>
+          </div>
+          <div class="card">
+            <div class="c-name">赵总 <span class="signed-badge">设计</span></div>
+            <div class="tie">绑定工地 · 湘江壹号 3-1101</div>
+            <div class="pbar"><i style="width:100%;background:#A8C070"></i></div>
+            <div class="p-prog"><span>已交付</span><b style="color:#5F7520">6/6 · DONE</b></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="tpl-note">特点：与现有三页共用同一套卡片/徽章/进度条语言；「未签」用暖橙系、「已签」用橄榄绿系，看一眼即知状态。</div>
+</div>
+
+<!-- ═══════════ 模板 B ═══════════ -->
+<div class="tpl tpl-b">
+  <div class="tpl-tag"><b>模板 B · 中古档案册</b>暖木底 · 档案编号 · 描边状态章——把客户当「档案」收藏，松弛克制的中古感</div>
+  <div class="ws">
+    <div class="ws-top">
+      <div class="ws-logo">家宅有度 · 居想室成</div>
+      <nav class="ws-tabs">
+        <span class="ws-tab">日历</span>
+        <span class="ws-tab">便签</span>
+        <span class="ws-tab">工地<span class="cnt">5</span></span>
+        <span class="ws-tab active">客户<span class="cnt">7</span></span>
+      </nav>
+      <span class="ws-date"><b>2026年8月14日</b> · 星期五</span>
+    </div>
+    <div class="ws-body">
+      <div class="ws-inner">
+        <div class="sec-head">
+          <span class="cn">未签客户</span><span class="en">POTENTIAL CLIENTS</span>
+          <span class="add">＋ 新建客户</span>
+        </div>
+        <div class="cards">
+          <div class="card" data-no="NO.001">
+            <div class="c-name">陈女士</div>
+            <div class="c-phone">138 0000 1234</div>
+            <div class="c-need">180㎡ 复式 · 中古风全屋设计，客厅挑高想保留，偏好暖木色。</div>
+            <div class="c-foot">
+              <span class="st-chip pending">待跟进</span>
+              <span class="budget">40-50w</span>
+              <span class="src">小红书</span>
+            </div>
+            <div class="c-foot" style="margin-top:8px;justify-content:flex-end">
+              <button class="btn-sign">✎ 转签约 →</button>
+            </div>
+          </div>
+          <div class="card" data-no="NO.002">
+            <div class="c-name">张先生</div>
+            <div class="c-phone">186 2222 8899</div>
+            <div class="c-need">120㎡ 三房 · 奶油风，预算卡得紧，想先看平面方案再定。</div>
+            <div class="c-foot">
+              <span class="st-chip quoted">已报价</span>
+              <span class="budget">20-30w</span>
+              <span class="src">朋友介绍</span>
+            </div>
+            <div class="c-foot" style="margin-top:8px;justify-content:flex-end">
+              <button class="btn-sign">✎ 转签约 →</button>
+            </div>
+          </div>
+          <div class="card" data-no="NO.003">
+            <div class="c-name">刘姐</div>
+            <div class="c-phone">139 5555 6677</div>
+            <div class="c-need">别墅 320㎡ · 法式+日式混搭，二次沟通中，意向较强。</div>
+            <div class="c-foot">
+              <span class="st-chip talking">谈拢中</span>
+              <span class="budget">80w+</span>
+              <span class="src">门店到访</span>
+            </div>
+            <div class="c-foot" style="margin-top:8px;justify-content:flex-end">
+              <button class="btn-sign">✎ 转签约 →</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="sec-head">
+          <span class="cn">已签设计客户</span><span class="en">SIGNED DESIGN CLIENTS</span>
+        </div>
+        <div class="cards">
+          <div class="card" data-no="S.001">
+            <div class="c-name">王女士 <span class="signed-badge">设计</span></div>
+            <div class="tie">绑定工地 · 云栖玫瑰园 2-301</div>
+            <div class="pbar"><i style="width:67%"></i></div>
+            <div class="p-prog"><span>施工图绘制</span><b>4/6 · 67%</b></div>
+          </div>
+          <div class="card" data-no="S.002">
+            <div class="c-name">李先生 <span class="signed-badge">设计</span></div>
+            <div class="tie">绑定工地 · 麓谷和苑 8-502</div>
+            <div class="pbar"><i style="width:33%"></i></div>
+            <div class="p-prog"><span>平面方案</span><b>2/6 · 33%</b></div>
+          </div>
+          <div class="card" data-no="S.003">
+            <div class="c-name">赵总 <span class="signed-badge">设计</span></div>
+            <div class="tie">绑定工地 · 湘江壹号 3-1101</div>
+            <div class="pbar"><i style="width:100%"></i></div>
+            <div class="p-prog"><span>已交付</span><b>6/6 · DONE</b></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="tpl-note">特点：档案编号（NO.xxx / S.xxx）+ 双线分隔 + 硬边卡片，状态用描边章而非实底填充；更安静、更收藏感，与现有页有意拉开一点距离。</div>
+</div>
+
+</div>
+</body>
+</html>
