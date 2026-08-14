@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>便签页改版样张 v2 · 工地主体交互演示</title>
+<style>
+  :root{
+    --shell:#47361C; --shell-deep:#2E2413; --shell-line:rgba(117,97,58,.55);
+    --shell-text:#E8DFC8; --shell-weak:#A89A78;
+    --paper:#F4EEE2; --paper-2:#EBE3D1;
+    --ink:#2E261A; --ink-2:#6E6248; --ink-3:#9A8F77; --line:#C9BCA0;
+    --rust:#C05A2A; --rust-soft:rgba(192,90,42,.12);
+    --olive:#52672A; --olive-soft:rgba(82,103,42,.14);
+    --active:#75613A; --wood:#8A6B4F; --wood-soft:rgba(138,107,79,.16);
+    --mute:#878775; --cream:#FBF8F1;
+    --shadow:0 10px 30px rgba(58,43,21,.22), 0 2px 8px rgba(58,43,21,.10);
+    --shadow-sm:0 2px 10px rgba(58,43,21,.12);
+    --r:10px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--paper);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px;line-height:1.6;}
+  .serif{font-family:"Noto Serif SC","Source Han Serif SC","Songti SC","SimSun",serif}
+  .mono{font-family:ui-monospace,Consolas,"Courier New",monospace}
+
+  /* ═══ 顶栏 ═══ */
+  .topbar{background:var(--shell);color:var(--shell-text);display:flex;align-items:center;gap:26px;padding:13px 40px;}
+  .logo{font-family:var(--serif);font-size:15px;font-weight:700;letter-spacing:.04em;}
+  .logo small{font-family:var(--mono);font-size:9px;letter-spacing:.28em;color:var(--shell-weak);margin-left:8px;}
+  .tabs{display:flex;gap:4px;margin-left:8px;}
+  .tab{padding:6px 16px;border-radius:8px;font-size:12.5px;font-weight:600;color:var(--shell-weak);cursor:pointer;border:1px solid transparent;}
+  .tab.on{background:var(--shell-deep);color:#F2EAD6;}
+  .right{margin-left:auto;display:flex;gap:8px;align-items:center;}
+  .rbtn{padding:5px 12px;border-radius:8px;font-size:12px;color:var(--shell-text);border:1px solid var(--shell-line);cursor:pointer;background:transparent;}
+  .rbtn.solid{background:var(--shell-deep);color:#F2EAD6;border-color:var(--shell-deep);}
+
+  /* ═══ Hero ═══ */
+  .hero{background:var(--paper);padding:26px 40px 16px;display:flex;align-items:flex-end;gap:26px;border-bottom:1px solid var(--line);}
+  .hero .day{font-size:56px;line-height:1;font-weight:700;}
+  .hero .ym{font-size:12px;color:var(--ink-3);letter-spacing:.12em;margin-top:4px;}
+  .hero .stats{margin-left:auto;display:flex;gap:26px;}
+  .stat .n{font-family:var(--mono);font-size:22px;font-weight:700;}
+  .stat .t{font-size:11px;color:var(--ink-3);letter-spacing:.08em;}
+  .stat.hot .n{color:var(--rust);}
+
+  /* ═══ 便签页 ═══ */
+  .page{max-width:1180px;margin:0 auto;padding:22px 24px 60px;}
+
+  .ctrl-bar{display:flex;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap;}
+  .ctrl-bar .lbl{font-family:var(--mono);font-size:10px;letter-spacing:.18em;color:var(--ink-3);font-weight:700;}
+  .seg{padding:6px 16px;border-radius:999px;font-size:12.5px;font-weight:600;cursor:pointer;border:1.5px solid var(--line);background:var(--cream);color:var(--ink-2);transition:all .15s;}
+  .seg.on{background:var(--shell-deep);color:#F2EAD6;border-color:var(--shell-deep);}
+  .seg .tag{font-size:10px;font-weight:700;padding:1px 6px;border-radius:5px;margin-right:5px;background:var(--rust);color:#FBF3E4;}
+  .seg.alt .tag{background:var(--olive);}
+  .seg.lay .tag{background:var(--mute);color:#FBF8F1;}
+
+  /* 新建便签条(工地选择器 + 记录) */
+  .note-add{display:flex;gap:10px;align-items:center;background:var(--cream);border:1px solid var(--line);border-radius:12px;padding:10px 14px;margin-bottom:22px;box-shadow:var(--shadow-sm);}
+  .site-picker{position:relative;flex:none;}
+  .sp-current{display:flex;align-items:center;gap:7px;padding:8px 14px;border-radius:9px;border:1.5px solid var(--line);background:#fff;font-size:13px;font-weight:700;color:var(--ink);cursor:pointer;min-width:150px;justify-content:space-between;}
+  .sp-current.req{border-color:var(--rust);background:var(--rust-soft);}
+  .sp-current .caret{font-size:9px;color:var(--ink-3);transition:transform .15s;}
+  .site-picker.open .sp-current .caret{transform:rotate(180deg);}
+  .sp-current .mini{width:8px;height:8px;border-radius:2px;flex:none;}
+  .sp-current .mini.build{background:var(--rust);}
+  .sp-current .mini.design{background:var(--olive);}
+  .sp-menu{position:absolute;top:calc(100% + 6px);left:0;min-width:220px;background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);padding:6px;z-index:30;display:none;}
+  .site-picker.open .sp-menu{display:block;}
+  .sp-opt{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;color:var(--ink);}
+  .sp-opt:hover{background:var(--paper);}
+  .sp-opt .mini{width:8px;height:8px;border-radius:2px;flex:none;}
+  .sp-opt .mini.build{background:var(--rust);}
+  .sp-opt .mini.design{background:var(--olive);}
+  .sp-opt .meta{margin-left:auto;font-size:10.5px;color:var(--ink-3);font-weight:400;}
+  .sp-opt .add-site{color:var(--rust);font-weight:700;}
+  .note-add input{flex:1;border:none;background:transparent;font-size:13.5px;outline:none;color:var(--ink);min-width:120px;}
+  .note-add input::placeholder{color:var(--ink-3);}
+  .note-add .pic-btn{flex:none;width:32px;height:32px;border-radius:9px;border:1.5px dashed var(--line);background:var(--cream);color:var(--ink-3);font-size:16px;cursor:pointer;}
+  .note-add .pic-btn.on{border-color:var(--rust);background:var(--rust-soft);color:var(--rust);}
+  .note-add .add-btn{padding:8px 18px;border-radius:9px;background:var(--shell-deep);color:#F2EAD6;font-size:12.5px;font-weight:700;border:none;cursor:pointer;flex:none;}
+  .note-add .add-btn:hover{filter:brightness(1.15);}
+  .note-add .hint{flex:none;font-size:11px;color:var(--ink-3);}
+
+  /* 工地区块 */
+  .site-block{background:var(--cream);border:1px solid var(--line);border-radius:14px;margin-bottom:26px;box-shadow:var(--shadow-sm);overflow:hidden;scroll-margin-top:16px;}
+  .site-block.flash{animation:flash 1.6s ease;}
+  @keyframes flash{0%{box-shadow:0 0 0 3px var(--rust);}100%{box-shadow:var(--shadow-sm);}}
+  .site-head{display:flex;align-items:center;gap:10px;padding:13px 18px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,rgba(255,255,255,.5),transparent);cursor:pointer;}
+  .site-head .type-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:5px;color:#FBF3E4;flex:none;}
+  .site-head .type-badge.build{background:var(--rust);}
+  .site-head .type-badge.design{background:var(--olive);}
+  .site-head .type-badge.orphan{background:var(--mute);}
+  .site-head .nm{font-family:var(--serif);font-size:16px;font-weight:700;}
+  .site-head .meta{font-size:12px;color:var(--ink-3);}
+  .site-head .stage-chip{font-size:11px;font-weight:600;padding:2px 10px;border-radius:999px;background:var(--wood-soft);color:var(--wood);flex:none;}
+  .site-head .cnt{margin-left:auto;font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;color:var(--ink-3);flex:none;}
+  .site-head .go{flex:none;font-size:11px;color:var(--rust);font-weight:700;border:1px solid var(--rust);padding:3px 10px;border-radius:8px;}
+  .site-head .go:hover{background:var(--rust-soft);}
+  .site-empty{padding:20px;text-align:center;font-size:12.5px;color:var(--ink-3);}
+
+  /* 瀑布流 */
+  .masonry{column-count:3;column-gap:14px;padding:14px;padding-bottom:8px;}
+  @media (max-width:900px){.masonry{column-count:2;}}
+  @media (max-width:560px){.masonry{column-count:1;}}
+  .masonry.single{column-count:1;}
+  .masonry.single .img-ph{height:240px;}
+  @media (max-width:560px){.masonry.single .img-ph{height:180px;}}
+
+  /* 便签卡 */
+  .note-card{break-inside:avoid;margin-bottom:14px;background:#fff;border:1px solid var(--line);border-radius:11px;overflow:hidden;box-shadow:0 1px 4px rgba(58,43,21,.08);transition:box-shadow .15s,transform .15s;}
+  .note-card:hover{box-shadow:var(--shadow);transform:translateY(-1px);}
+  .note-card.new{animation:pop .35s ease;}
+  @keyframes pop{from{opacity:0;transform:scale(.97);}}
+  .img-ph{position:relative;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.85);font-size:13px;}
+  .img-ph .ph-label{position:absolute;left:9px;bottom:7px;font-size:10.5px;background:rgba(20,14,5,.55);color:#F2EAD6;padding:2px 8px;border-radius:6px;}
+  .ph-warm{background:linear-gradient(140deg,#B08A4E,#6D4020);height:150px;}
+  .ph-tile{background:linear-gradient(160deg,#8A8A82,#4A4A44);height:170px;}
+  .ph-sketch{background:linear-gradient(140deg,#F4EEE2,#D8CDB4);height:210px;color:#6E6248;}
+  .ph-mid{background:linear-gradient(140deg,#A08B6B,#75613A);height:140px;}
+  .ph-photo{background:linear-gradient(140deg,#878775,#49503F);height:160px;}
+  .ph-dark{background:linear-gradient(140deg,#3A3A36,#1E1E1B);height:190px;}
+  .note-card .txt{padding:12px 14px;}
+  .note-card .txt .t{font-size:13px;color:var(--ink);}
+  .note-card .txt .tag-row{display:flex;flex-wrap:wrap;gap:5px;margin-top:9px;}
+  .chip{font-size:10.5px;font-weight:600;padding:1px 8px;border-radius:999px;}
+  .chip.site{background:var(--rust);color:#FBF3E4;}
+  .chip.design{background:var(--olive);color:#F2EAD6;}
+  .chip.ev{background:rgba(117,97,58,.18);color:var(--active);}
+  .note-card .time{font-family:var(--mono);font-size:10px;color:var(--ink-3);margin-top:8px;}
+  .note-card.done .t{color:var(--ink-3);text-decoration:line-through;}
+  .note-card.done .chk{float:right;color:var(--olive);font-weight:700;}
+
+  /* toast */
+  .toast{position:fixed;left:50%;bottom:34px;transform:translateX(-50%);background:var(--shell-deep);color:#F2EAD6;font-size:12.5px;padding:9px 18px;border-radius:999px;box-shadow:var(--shadow);opacity:0;transition:opacity .2s;z-index:99;pointer-events:none;}
+  .toast.show{opacity:1;}
+
+  /* 验收区 */
+  .spec{padding:34px 40px 50px;border-top:1px solid var(--line);background:var(--paper-2);}
+  .spec h2{font-family:var(--serif);font-size:19px;margin-bottom:6px;}
+  .spec .sub{font-size:12px;color:var(--ink-3);margin-bottom:18px;}
+  .swatches{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:26px;}
+  .sw{width:118px;border-radius:10px;overflow:hidden;border:1px solid var(--line);background:#fff;}
+  .sw .c{height:52px;}
+  .sw .m{padding:6px 9px;font-size:10.5px;}
+  .sw .m b{display:block;font-size:11px;}
+  .sw .m span{color:var(--ink-3);font-family:var(--mono);font-size:9.5px;}
+  .comps{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:26px;}
+  .comp{flex:1;min-width:230px;background:var(--cream);border:1px solid var(--line);border-radius:12px;padding:14px;}
+  .comp .cap{font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--ink-3);font-weight:700;margin-bottom:10px;}
+  .checklist{background:#fff;border:1px solid var(--line);border-radius:14px;padding:20px 24px;}
+  .checklist h3{font-family:var(--serif);font-size:15px;margin-bottom:12px;}
+  .checklist .q{margin-bottom:14px;}
+  .checklist .q b{font-size:13px;}
+  .checklist .q p{font-size:12px;color:var(--ink-2);margin:2px 0 6px;}
+  .opt{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;border:1.5px solid var(--line);border-radius:9px;padding:5px 12px;margin:3px 6px 3px 0;cursor:pointer;background:#fff;transition:all .12s;}
+  .opt:hover{border-color:var(--rust);}
+  .opt b{font-family:var(--mono);color:var(--rust);}
+  .demo-btn{margin-left:14px;padding:6px 14px;border-radius:9px;border:1.5px solid var(--olive);background:var(--olive-soft);color:var(--olive);font-size:12px;font-weight:700;cursor:pointer;}
+  .demo-btn:hover{filter:brightness(1.05);}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="logo serif">LUSEM 个人工作站<small>WORKSTATION</small></div>
+  <div class="tabs">
+    <div class="tab">✦ 日历</div>
+    <div class="tab on">便签</div>
+    <div class="tab">工地</div>
+  </div>
+  <div class="right">
+    <div class="rbtn">浅色</div>
+    <div class="rbtn">备份</div>
+    <div class="rbtn solid">AI</div>
+  </div>
+</div>
+
+<div class="hero">
+  <div><div class="day serif">09</div><div class="ym mono">AUGUST ✦ 2026</div></div>
+  <div class="stats">
+    <div class="stat"><div class="n" id="statNote">12</div><div class="t">便签</div></div>
+    <div class="stat hot"><div class="n" id="statSite">3</div><div class="t">工地</div></div>
+    <div class="stat"><div class="n">2</div><div class="t">待办</div></div>
+  </div>
+</div>
+
+<div class="page">
+
+  <div class="ctrl-bar">
+    <span class="lbl">布局形态</span>
+    <span class="seg lay on" data-layout="cols"><span class="tag">A</span>横向三栏瀑布流</span>
+    <span class="seg lay" data-layout="single"><span class="tag">B</span>竖向单列排版</span>
+    <span style="width:16px"></span>
+    <span class="lbl">无工地便签</span>
+    <span class="seg" data-scheme="1"><span class="tag">方案一</span>弹性 · 未分类区</span>
+    <span class="seg alt on" data-scheme="2"><span class="tag">方案二</span>强制 · 必须选工地</span>
+  </div>
+
+  <!-- 新建便签条:工地选择器 + 记录 -->
+  <div class="note-add">
+    <div class="site-picker" id="sitePicker">
+      <div class="sp-current" id="spCurrent"><span id="spLabel">＋ 选工地…</span><span class="caret">▼</span></div>
+      <div class="sp-menu" id="spMenu"></div>
+    </div>
+    <input id="noteInput" placeholder="写点内容,回车保存…(先选工地)" maxlength="200">
+    <button class="pic-btn" id="picBtn" title="本条带图">＋</button>
+    <button class="add-btn" id="addNoteBtn">记录</button>
+    <span class="hint" id="addHint">选工地 → 点「记录」,便签进该工地区块</span>
+  </div>
+
+  <!-- 工地区块由 JS 渲染 -->
+  <div id="siteBlocks"></div>
+
+</div>
+
+<!-- toast -->
+<div class="toast" id="toast"></div>
+
+<!-- ═══ 验收区 ═══ -->
+<div class="spec">
+  <h2>便签改版 · 验收区</h2>
+  <div class="sub">首屏是<b>可交互演示</b>:试试 选工地→记录、点工地名跳转、布局切换、方案切换。下面模拟「工地页新增工地」的联动。</div>
+
+  <div class="comps">
+    <div class="comp">
+      <div class="cap">01 · 试试交互</div>
+      <div style="font-size:12.5px;line-height:2;color:var(--ink-2)">
+        ① 点新建条「＋ 选工地…」→ 选一个工地<br>
+        ② 输入内容 → 点「记录」→ 便签出现在该工地区块<br>
+        ③ 再点新建条上的工地名 → 跳到该工地、高亮聚焦<br>
+        ④ 页面顶切「竖向单列」看另一种排版
+      </div>
+    </div>
+    <div class="comp">
+      <div class="cap">02 · 与工地页联动(演示)</div>
+      <div style="font-size:12.5px;line-height:2;color:var(--ink-2)">
+        工地选择器的选项 = 工地页里的工地。<br>
+        点击下面按钮模拟「在工地页新建了工地」→ 选择器选项和新工地区块自动出现:
+        <div style="margin-top:8px"><button class="demo-btn" id="demoNewSite">＋ 模拟新建工地「陈姐·施工」</button></div>
+      </div>
+    </div>
+    <div class="comp">
+      <div class="cap">03 · 图卡 vs 文卡</div>
+      <div style="column-count:2;column-gap:10px">
+        <div class="note-card"><div class="img-ph ph-tile" style="height:100px">📷<span class="ph-label">图片主视觉</span></div></div>
+        <div class="note-card"><div class="txt"><div class="t">纯文字便签</div><div class="time">08-09 09:00</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="checklist">
+    <h3>请勾选(直接回编号,如「A1 B1 C1 D1 E1」)</h3>
+    <div class="q">
+      <b>A · 布局形态</b>
+      <p>页顶可切换</p>
+      <span class="opt"><b>A1</b> 横向三栏瀑布流</span>
+      <span class="opt"><b>A2</b> 竖向单列排版</span>
+    </div>
+    <div class="q">
+      <b>B · 新建条交互(红框位置)</b>
+      <p>工地选择器显示工地名,点击展开;选后点「记录」便签进该工地区块;点工地名跳到该工地</p>
+      <span class="opt"><b>B1</b> 就这样,好用</span>
+      <span class="opt"><b>B2</b> 要调整(说明)</span>
+    </div>
+    <div class="q">
+      <b>C · 点工地名跳转</b>
+      <p>当前:跳到该工地区块并高亮闪烁</p>
+      <span class="opt"><b>C1</b> 跳转+高亮(当前)</span>
+      <span class="opt"><b>C2</b> 筛选:只显示该工地的便签</span>
+      <span class="opt"><b>C3</b> 直接进工地看板</span>
+    </div>
+    <div class="q">
+      <b>D · 无工地便签</b>
+      <p>方案一/方案二页顶切换</p>
+      <span class="opt"><b>D1</b> 方案一:弹性,未分类区</span>
+      <span class="opt"><b>D2</b> 方案二:强制,必须选工地(当前)</span>
+    </div>
+    <div class="q">
+      <b>E · 其他想法</b>
+      <p>直接写</p>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ═══ 样张数据(正式版将读工地页 PROJECTS + 便签 notesData) ═══ */
+let SITES = [
+  { name:'张宅·施工', client:'张先生 · 云顶小区', type:'build', stage:'泥工阶段' },
+  { name:'李宅·设计', client:'李女士 · 万科城',   type:'design', stage:'量房阶段' },
+  { name:'王姐·施工', client:'王姐 · 保利天汇',   type:'build', stage:'精交底阶段' },
+];
+let NOTES = [
+  { site:'张宅·施工', img:'ph-tile',  label:'卫生间墙砖 · 现场', t:'墙砖 300×600 奶油白,哑光,对缝铺贴', ev:'#泥工', time:'08-09 10:24' },
+  { site:'张宅·施工', img:null, t:'防水闭水 48 小时,楼下无渗漏', ev:'#验收', time:'08-09 09:10', done:true },
+  { site:'张宅·施工', img:null, t:'厨房墙砖到货 80 箱,验货:色差 2 箱,已联系补发', ev:'#材料', time:'08-08 17:42' },
+  { site:'张宅·施工', img:'ph-warm',  label:'选砖 · 花色对比', t:'最终选 02 号砖,暖调,配原木柜门', ev:'#泥工', time:'08-08 15:20' },
+  { site:'张宅·施工', img:null, t:'泥工师傅电话确认:周一到场,先贴厨房', ev:'#交底', time:'08-08 11:05' },
+  { site:'李宅·设计', img:'ph-sketch',label:'量房手稿 · 原始结构', t:'客厅 4.2×5.6m,梁高 2.6m,飘窗可拆', ev:'#量房', time:'08-09 14:30' },
+  { site:'李宅·设计', img:null, t:'客户需求:开放式厨房 + 中岛,不要电视墙', ev:'#设计', time:'08-09 14:18' },
+  { site:'李宅·设计', img:'ph-mid',   label:'灵感 · 中古客厅', t:'柚木柜 + 米白沙发 + 焦糖单人椅', ev:'#软装', time:'08-08 20:11' },
+  { site:'李宅·设计', img:null, t:'预算初步:硬装 25w 内,主材客户自购部分确认', ev:'#预算', time:'08-08 16:47' },
+  { site:null, img:null, t:'学习:灯带色温 3000K 最出氛围,4000K 显高级', ev:'#学习', time:'08-07 22:03' },
+  { site:null, img:'ph-photo', label:'构图参考 · 逆光', t:'逆光 + 大留白,墙面光影层次', ev:'#摄影', time:'08-06 19:22' },
+];
+const PH_CLASSES = ['ph-warm','ph-tile','ph-sketch','ph-mid','ph-photo','ph-dark'];
+
+/* ═══ 状态 ═══ */
+let curSite = null;         // 新建条当前选中的工地
+let withImg = false;        // 本条是否带图
+let scheme = 2;             // 1 弹性 / 2 强制
+let layout = 'cols';        // cols 三栏 / single 竖向
+const esc = s => String(s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let toastTimer;
+function toast(msg){ const t = $('#toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(toastTimer); toastTimer = setTimeout(()=>t.classList.remove('show'), 2200); }
+const $ = s => document.querySelector(s);
+
+/* ═══ 渲染:工地区块 ═══ */
+function renderBlocks(){
+  const box = $('#siteBlocks');
+  const siteList = SITES.filter(s => s.name);
+  const orphans = NOTES.filter(n => !n.site);
+  let html = '';
+  siteList.forEach(s => {
+    const notes = NOTES.filter(n => n.site === s.name);
+    html += `
+    <div class="site-block" data-site="${esc(s.name)}">
+      <div class="site-head" data-role="jump" data-site="${esc(s.name)}">
+        <span class="type-badge ${s.type}">${s.type === 'design' ? '设计' : '施工'}</span>
+        <span class="nm serif">${esc(s.name)}</span>
+        <span class="meta">${esc(s.client)}</span>
+        <span class="stage-chip">${esc(s.stage)}</span>
+        <span class="cnt">${notes.length} 条便签</span>
+        <span class="go">进工地 →</span>
+      </div>
+      <div class="masonry ${layout === 'single' ? 'single' : ''}">
+        ${notes.length ? notes.map(cardHTML).join('') : '<div class="site-empty">还没有便签 · 在顶部选这个工地,记录第一条吧</div>'}
+      </div>
+    </div>`;
+  });
+  if (scheme === 1) {
+    html += `
+    <div class="site-block" data-site="__orphan__">
+      <div class="site-head orphan">
+        <span class="type-badge orphan">未分类</span>
+        <span class="nm serif">未分类便签</span>
+        <span class="meta">灵感 / 学习 / 通用资料</span>
+        <span class="cnt">${orphans.length} 条便签</span>
+      </div>
+      <div class="masonry ${layout === 'single' ? 'single' : ''}">
+        ${orphans.length ? orphans.map(cardHTML).join('') : '<div class="site-empty">没有未分类便签</div>'}
+      </div>
+    </div>`;
+  }
+  box.innerHTML = html;
+  $('#statNote').textContent = NOTES.length;
+  $('#statSite').textContent = SITES.length;
+}
+function cardHTML(n){
+  const img = n.img ? `<div class="img-ph ${n.img}">📷<span class="ph-label">${esc(n.label || '图片')}</span></div>` : '';
+  const chips = `<span class="chip ${n.site ? 'site' : 'ev'}">${esc(n.site || '未分类')}</span>${n.ev ? `<span class="chip ev">${esc(n.ev)}</span>` : ''}`;
+  return `<div class="note-card ${n.done ? 'done' : ''}">
+    ${img}
+    <div class="txt">
+      ${n.done ? '<span class="chk">✓</span>' : ''}
+      <div class="t">${esc(n.t)}</div>
+      <div class="tag-row">${chips}</div>
+      <div class="time">${esc(n.time)}</div>
+    </div>
+  </div>`;
+}
+
+/* ═══ 工地选择器 ═══ */
+function renderPicker(){
+  const menu = $('#spMenu');
+  const opts = SITES.map(s => `<div class="sp-opt" data-site="${esc(s.name)}">
+      <span class="mini ${s.type}"></span><span>${esc(s.name)}</span>
+      <span class="meta">${s.type === 'design' ? '设计' : '施工'} · ${esc(s.stage)}</span>
+    </div>`).join('') +
+    `<div class="sp-opt add-site" data-role="go-site-page">＋ 去工地页新建工地…</div>`;
+  menu.innerHTML = opts;
+  const cur = $('#spCurrent');
+  if (curSite) {
+    const s = SITES.find(x => x.name === curSite);
+    $('#spLabel').innerHTML = `<span class="mini ${s.type}"></span> ${esc(s.name)}`;
+    cur.classList.add('req');
+  } else {
+    $('#spLabel').textContent = '＋ 选工地…';
+    cur.classList.remove('req');
+  }
+}
+function openPicker(){ $('#sitePicker').classList.add('open'); }
+function closePicker(){ $('#sitePicker').classList.remove('open'); }
+document.addEventListener('click', e => {
+  if (!e.target.closest('.site-picker')) closePicker();
+});
+$('#spCurrent').addEventListener('click', e => { e.stopPropagation(); openPicker(); });
+$('#spMenu').addEventListener('click', e => {
+  const opt = e.target.closest('.sp-opt');
+  if (!opt) return;
+  if (opt.dataset.role === 'go-site-page') {
+    closePicker();
+    toast('演示:正式版这里跳到「工地页」新建工地');
+    return;
+  }
+  curSite = opt.dataset.site;
+  closePicker();
+  renderPicker();
+  focusSite(curSite);   // 点工地名 → 展示该工地所有便签(跳转+高亮)
+});
+
+/* ═══ 点工地名 → 展示该工地 ═══ */
+function focusSite(name){
+  const block = document.querySelector(`.site-block[data-site="${CSS.escape(name)}"]`);
+  if (!block) return;
+  block.scrollIntoView({ behavior:'smooth', block:'start' });
+  block.classList.remove('flash');
+  void block.offsetWidth;
+  block.classList.add('flash');
+}
+$('#siteBlocks').addEventListener('click', e => {
+  const head = e.target.closest('[data-role="jump"]');
+  if (head) { focusSite(head.dataset.site); toast(`「${head.dataset.site}」全部便签 · ${NOTES.filter(n=>n.site===head.dataset.site).length} 条`); }
+});
+
+/* ═══ 记录便签 ═══ */
+function addNote(){
+  const text = $('#noteInput').value.trim();
+  if (scheme === 2 && !curSite) { toast('请先选工地,不选不能保存(方案二)'); return; }
+  if (!text) { toast('写点内容再记录'); return; }
+  const now = new Date();
+  const pad = n => String(n).padStart(2,'0');
+  const time = `${pad(now.getMonth()+1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}`;
+  const site = curSite;
+  NOTES.unshift({ site, img: withImg ? PH_CLASSES[NOTES.length % PH_CLASSES.length] : null, label:'新记录图片', t:text, ev:'#新记录', time, fresh:true });
+  $('#noteInput').value = '';
+  withImg = false; $('#picBtn').classList.remove('on');
+  renderBlocks();
+  renderPicker();
+  toast(site ? `已记录到「${site}」✓` : '已记录到未分类 ✓');
+  setTimeout(() => { const card = document.querySelector('.site-block .note-card.new'); if (card) card.classList.remove('new'); }, 700);
+}
+$('#addNoteBtn').addEventListener('click', addNote);
+$('#noteInput').addEventListener('keydown', e => { if (e.key === 'Enter') addNote(); });
+$('#picBtn').addEventListener('click', () => { withImg = !withImg; $('#picBtn').classList.toggle('on', withImg); });
+
+/* ═══ 布局 / 方案切换 ═══ */
+document.querySelectorAll('[data-layout]').forEach(t => {
+  t.addEventListener('click', () => {
+    document.querySelectorAll('[data-layout]').forEach(x => x.classList.remove('on'));
+    t.classList.add('on');
+    layout = t.dataset.layout;
+    renderBlocks();
+  });
+});
+document.querySelectorAll('[data-scheme]').forEach(t => {
+  t.addEventListener('click', () => {
+    document.querySelectorAll('[data-scheme]').forEach(x => x.classList.remove('on'));
+    t.classList.add('on');
+    scheme = +t.dataset.scheme;
+    if (scheme === 1) { curSite = null; }
+    renderBlocks(); renderPicker();
+    $('#addHint').textContent = scheme === 2 ? '选工地 → 点「记录」,便签进该工地区块' : '可不选工地,记录到未分类';
+  });
+});
+
+/* ═══ 模拟:工地页新建工地 → 自动生成 ═══ */
+$('#demoNewSite').addEventListener('click', () => {
+  if (SITES.some(s => s.name === '陈姐·施工')) { toast('陈姐·施工 已存在'); return; }
+  SITES.push({ name:'陈姐·施工', client:'陈姐 · 江湾壹号', type:'build', stage:'开工阶段' });
+  renderBlocks(); renderPicker();
+  toast('模拟:工地页已新建「陈姐·施工」→ 选择器 + 区块自动出现');
+  setTimeout(() => focusSite('陈姐·施工'), 300);
+});
+
+/* ═══ 初始化 ═══ */
+renderBlocks();
+renderPicker();
+</script>
+</body>
+</html>
