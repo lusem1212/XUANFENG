@@ -1,0 +1,28 @@
+LUSEM 个人工作站 · 上传 GitHub 操作说明
+============================================
+
+【做什么】
+把个人工作站(v41)上传到你的 GitHub 仓库 XUANFENG(替换旧内容)。
+
+【家里电脑操作步骤】
+1. 把「XUANFENG上传包.zip」用 QQ 文件传输助手发到家里电脑，解压
+2. 双击里面的「上传到GitHub.bat」
+3. 脚本会自动:
+   - 检查 Git / gh CLI(gh 若未登录会引导网页授权,浏览器输一次性代码)
+   - 找到或新建你的 XUANFENG 仓库(找不到会自动新建私有仓库)
+   - 把当前文件夹内容(主文件/文档/美术样张)全部推上去,覆盖旧内容
+4. 看到「[成功] 已上传到 https://github.com/你的用户名/XUANFENG」即完成
+
+【如果报错】
+- 提示没有 Git: 先装 https://git-scm.com/download/win
+- 提示没有 gh CLI: 管理员 PowerShell 跑 winget install GitHub.cli
+- 推送失败: 确认能打开 https://github.com(网络) 后重试
+
+【包含内容】
+- LUSEM的个人工作站.html   (主文件 v41)
+- 使用说明.md / 项目日志.md / PLAN.md / IDEA.md
+- 美术样张/
+- 上传到GitHub.bat + 本说明
+
+【注意】
+旧版本备份(54个)留在你工作电脑 F 盘,不传 GitHub(仓库轻量)。
