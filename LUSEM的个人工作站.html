@@ -5,9 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>LUSEM 个人工作站 · 日历 / 便签 / 工地</title>
 <style>
-  /* ============ 背景视频（湖畔建筑·电影感推进） ============ */
-  #bg-video { position:fixed; inset:0; width:100%; height:100%; object-fit:cover; z-index:-1; }
-  #bg-mask { position:fixed; inset:0; background:rgba(255,250,240,.88); z-index:-1; }
+  /* ============ 顶部背景视频（湖畔建筑·电影感推进） ============ */
+  #bg-video { position:absolute; top:0; left:0; width:100%; z-index:-1; object-fit:cover; }
+  #bg-mask { position:absolute; top:0; left:0; width:100%; z-index:-1; background:rgba(71,54,28,.40); }
   /* ============ 设计系统 v3 · 网站文字×配色 (美术样张 v3) ============ */
   :root {
     /* ── 深壳 ── */
@@ -80,9 +80,11 @@
   /* ============ 工作站框架 · 深壳 ============ */
   .ws-topbar {
     display:flex; align-items:center; gap:22px; padding:6px 32px;
-    background:var(--shell); color:var(--shell-text);
+    background:rgba(71,54,28,.55); color:var(--shell-text);
     border-bottom:1px solid var(--shell-line); position:sticky; top:0; z-index:30;
+    transition:background .3s;
   }
+  .ws-topbar.scrolled { background:var(--shell); }
   .ws-brand { display:flex; align-items:center; gap:11px; position:relative; z-index:1; }
   .ws-brand .ws-logo {
     height:66px; width:auto; display:block; border-radius:10px; flex:none;
@@ -202,7 +204,7 @@
 
   /* Hero · 暗壳浅心 */
   .hero {
-    background:var(--shell); color:var(--shell-text);
+    background:transparent; color:var(--shell-text);
     padding:26px 32px 22px; display:flex; align-items:flex-end; justify-content:space-between; gap:36px;
     position:relative; overflow:hidden;
   }
@@ -1204,8 +1206,8 @@
 </style>
 </head>
 <body>
-<!-- 背景视频：湖畔建筑·电影感推进（永久链接，自动循环播放） -->
-<video id="bg-video" autoplay muted loop playsinline preload="auto" poster="https://lusem1212.github.io/XUANFENG/湖畔视频/poster.jpg">
+<!-- 顶部背景视频：湖畔建筑·电影感推进（悬停播放/移动端自动循环） -->
+<video id="bg-video" muted loop playsinline preload="auto" poster="https://lusem1212.github.io/XUANFENG/湖畔视频/poster.jpg">
   <source src="https://lusem1212.github.io/XUANFENG/湖畔视频/湖畔建筑_电影感推进_6s.mp4" type="video/mp4">
 </video>
 <div id="bg-mask"></div>
@@ -4267,6 +4269,43 @@ renderSiteHome();
 renderClients();
 renderSitePreview();
 updateHeader();
+</script>
+<script>
+  /* ============ 顶部背景视频交互（湖畔·电影感推进） ============ */
+  (function(){
+    var v = document.getElementById('bg-video');
+    if(!v) return;
+    var mask = document.getElementById('bg-mask');
+    var topbar = document.querySelector('.ws-topbar');
+    var hero = document.querySelector('.hero');
+    var hasHover = window.matchMedia('(hover: hover)').matches;
+
+    function sizeBg(){
+      var h = (topbar?topbar.offsetHeight:0) + (hero?hero.offsetHeight:0) + 2;
+      v.style.height = h + 'px';
+      if(mask) mask.style.height = h + 'px';
+    }
+    sizeBg();
+    window.addEventListener('resize', sizeBg);
+
+    function onScroll(){
+      if(!topbar || !hero) return;
+      topbar.classList.toggle('scrolled', window.scrollY > hero.offsetHeight - 80);
+    }
+    window.addEventListener('scroll', onScroll, {passive:true});
+    onScroll();
+
+    function playV(){ v.play().catch(function(){}); }
+    function stopV(){ v.pause(); try{ v.currentTime = 0; }catch(e){} }
+
+    if(hasHover){
+      v.pause();
+      if(hero){ hero.addEventListener('mouseenter', playV); hero.addEventListener('mouseleave', stopV); }
+      if(topbar){ topbar.addEventListener('mouseenter', playV); topbar.addEventListener('mouseleave', stopV); }
+    } else {
+      playV();
+    }
+  })();
 </script>
 </body>
 </html>
