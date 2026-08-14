@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>美术样张 v4.1 · 工作站 (新粗野主义 · 低对比优化)</title>
+<style>
+  :root{
+    --paper:#F4EFE0;      /* 纸米底(微调更柔) */
+    --card:#FFFFFF;       /* 卡片白 */
+    --ink:rgba(46,43,38,.9);   /* 暖深灰 90% 透明度(原 100%,降 10% 增易读) */
+    --ink-soft:rgba(107,101,89,.85);   /* 次级文字 */
+    --yellow:#D8B24A;     /* 芥末黄(原 #F5D90A 高饱和黄) */
+    --red:#B85C50;        /* 砖红(原 #E63946) */
+    --blue:#6B7BA8;       /* 灰蓝(原 #3B5BDB) */
+    --green:#7A9B7E;      /* 灰绿(原 #2EA64F) */
+    --bw:3px;             /* 粗边框(保留) */
+    --shadow:6px 6px 0 rgba(46,43,38,.75);  /* 硬阴影(原 .85,降 10% 透明度) */
+    --shadow-sm:4px 4px 0 rgba(46,43,38,.7);
+    --shadow-xs:3px 3px 0 rgba(46,43,38,.68);
+    --ink-weak:#8A8478;      /* 弱文字 灰阶1 */
+    --ink-faint:#B9B2A4;     /* 极弱文字 灰阶2 */
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    background:var(--paper);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",sans-serif;
+    font-size:15px;line-height:1.8;
+    background-image:repeating-linear-gradient(0deg,transparent 0 27px,rgba(46,43,38,.03) 27px 28px);
+  }
+  .serif{font-family:"Noto Serif SC","Source Han Serif SC","Songti SC",serif}
+  .mono{font-family:ui-monospace,Consolas,"Courier New",monospace}
+  b,strong{font-weight:800}
+
+  /* ═══ 顶栏 ═══ */
+  .topbar{
+    background:var(--paper);border-bottom:var(--bw) solid var(--ink);
+    display:flex;align-items:center;gap:26px;padding:12px 40px;
+  }
+  .logo{
+    font-size:20px;font-weight:900;letter-spacing:1px;
+    background:var(--ink);color:var(--yellow);padding:6px 14px;
+    box-shadow:4px 4px 0 var(--yellow);border:var(--bw) solid var(--ink);
+  }
+  .logo em{font-style:normal;color:#F4EFE0}
+  .search{
+    flex:1;max-width:320px;background:var(--card);
+    border:var(--bw) solid var(--ink);padding:7px 14px;
+    font-size:13px;color:var(--ink-weak);font-weight:500;
+  }
+  .search::before{content:"🔍 ";font-size:12px}
+  .tabs{display:flex;gap:10px;margin-left:auto}
+  .tab{
+    padding:7px 18px;background:var(--card);border:var(--bw) solid var(--ink);
+    font-size:14px;font-weight:700;cursor:pointer;box-shadow:3px 3px 0 var(--ink);
+    color:var(--ink);
+  }
+  .tab:hover{transform:translate(1px,1px);box-shadow:2px 2px 0 var(--ink)}
+  .tab.on{background:var(--yellow);transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink)}
+
+  /* ═══ Hero ═══ */
+  .hero{
+    padding:40px 40px 36px;display:flex;align-items:flex-end;justify-content:space-between;gap:40px;
+    border-bottom:var(--bw) solid var(--ink);position:relative;
+  }
+  .hero .date{display:flex;align-items:baseline;gap:20px}
+  .hero .day{
+    font-size:104px;font-weight:900;line-height:.85;letter-spacing:1px;
+    background:var(--yellow);border:var(--bw) solid var(--ink);
+    padding:6px 24px 14px;box-shadow:10px 10px 0 rgba(46,43,38,.75);
+    color:var(--ink);
+  }
+  .hero .ym{font-weight:700;font-size:15px;line-height:1.8}
+  .hero .ym .en{font-family:ui-monospace,Consolas,monospace;font-size:11px;letter-spacing:2px;color:var(--ink-weak);font-weight:500}
+  .hero .ym .en b{color:var(--yellow);font-size:12px}
+  .hero .stats{display:flex;gap:14px}
+  .stat{
+    background:var(--card);border:var(--bw) solid var(--ink);box-shadow:var(--shadow-xs);
+    padding:12px 18px;min-width:112px;text-align:center;
+  }
+  .stat .n{font-size:30px;font-weight:900;line-height:1.1}
+  .stat .t{font-size:11px;font-weight:500;letter-spacing:1px;margin-top:2px;color:var(--ink-weak)}
+  .stat.hot .n{color:var(--yellow)}
+  .stat.hot .t{display:inline-block;color:var(--ink-weak)}
+  .slogan{
+    margin-top:26px;font-size:14px;font-weight:700;letter-spacing:3px;
+    border-top:var(--bw) solid var(--ink);padding-top:14px;
+  }
+  .slogan .star{color:var(--yellow)}
+
+  /* ═══ 内容区 ═══ */
+  .main{max-width:1180px;margin:0 auto;padding:36px 40px 60px;display:grid;grid-template-columns:1.6fr 1fr;gap:28px}
+  .panel{background:var(--card);border:var(--bw) solid var(--ink);box-shadow:var(--shadow);padding:22px}
+  .panel h3{font-size:15px;font-weight:900;letter-spacing:1px;margin-bottom:16px;display:flex;align-items:baseline;gap:10px}
+  .panel h3 .tag{background:var(--yellow);border:2px solid var(--ink);padding:1px 8px;font-size:11px;color:var(--ink);font-weight:700}
+  .panel h3 .en{margin-left:auto;font-size:10px;letter-spacing:3px;color:var(--ink-weak);font-family:ui-monospace,Consolas,monospace;font-weight:500}
+
+  /* 日历 */
+  .week{display:grid;grid-template-columns:repeat(7,1fr);gap:8px}
+  .wday{text-align:center;font-size:11px;font-weight:700;letter-spacing:1px;margin-bottom:6px;font-family:ui-monospace,Consolas,monospace;color:var(--ink-weak)}
+  .wcell{
+    aspect-ratio:1;border:2.5px solid var(--ink);background:#fff;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+    font-size:16px;font-weight:800;cursor:pointer;
+  }
+  .wcell .fut{color:var(--ink-faint)}
+  .wcell .dot{width:5px;height:5px;background:var(--yellow)}
+  .wcell.today{background:var(--yellow);box-shadow:3px 3px 0 rgba(46,43,38,.7)}
+  .wcell.today .dot{background:var(--ink)}
+  .wcell.tag{border-style:dashed;border-color:var(--ink-weak)}
+
+  /* 计划 */
+  .plans{margin-top:18px;display:flex;flex-direction:column;gap:10px}
+  .plan{
+    display:flex;align-items:center;gap:14px;background:#fff;
+    border:2.5px solid var(--ink);padding:10px 14px;box-shadow:3px 3px 0 var(--ink);
+    transition:transform .12s, box-shadow .12s;
+  }
+  .plan:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 rgba(46,43,38,.95)}
+  .plan .time{font-family:ui-monospace,Consolas,monospace;font-size:13px;font-weight:500;min-width:70px;background:var(--paper);border:2px solid var(--ink);padding:1px 8px;text-align:center}
+  .plan .txt{flex:1;font-size:15px;font-weight:500}
+  .plan .tag-mini{border:2px solid var(--ink);font-size:10px;font-weight:700;padding:1px 8px;background:var(--paper);letter-spacing:1px;color:var(--ink)}
+  .plan .tag-mini.warn{background:var(--yellow);color:var(--ink)}
+  .ck{width:20px;height:20px;border:2.5px solid var(--ink);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;flex-shrink:0}
+  .plan.done .ck{background:var(--green);color:#fff}
+  .plan.done .txt{color:var(--ink-faint);text-decoration:line-through}
+
+  /* 工地卡 */
+  .sites{display:flex;flex-direction:column;gap:16px}
+  .site{background:#fff;border:var(--bw) solid var(--ink);box-shadow:var(--shadow);overflow:hidden;cursor:pointer;transition:transform .12s, box-shadow .12s}
+  .site:hover{transform:translate(-2px,-2px);box-shadow:7px 7px 0 rgba(46,43,38,.95)}
+  .site .hd{display:flex;align-items:baseline;justify-content:space-between;padding:13px 16px 8px}
+  .site .nm{font-size:16px;font-weight:900}
+  .site .st{font-size:10px;font-weight:700;letter-spacing:1px;border:2px solid var(--ink);padding:1px 8px;background:var(--paper);color:var(--ink-weak)}
+  .site .st b{color:var(--blue);font-weight:900}
+  .site .bd{display:flex;align-items:center;justify-content:space-between;padding:0 16px 12px}
+  .site .rem{display:flex;gap:6px;font-size:11px}
+  .site .rem .b{background:var(--red);color:#F7F1E4;font-weight:700;padding:2px 10px;border:2px solid var(--ink)}
+  .site .rem .b.ok{background:var(--green);color:#fff}
+  /* 阶段条:低饱和撞色 */
+  .stripe{display:grid;grid-template-columns:repeat(7,1fr);height:14px;border-top:2.5px solid var(--ink)}
+  .stripe i{display:block;border-right:2.5px solid var(--ink)}
+  .stripe i:last-child{border-right:none}
+  .stripe .s1{background:#8A6B4F}.stripe .s2{background:#6E7266}.stripe .s3{background:var(--yellow)}
+  .stripe .s4{background:var(--green)}.stripe .s5{background:var(--blue)}.stripe .s6{background:#9C8A6E}.stripe .s7{background:var(--red)}
+  .stripe .f{background:#E2DCCB}
+  .stripe .cur{outline:3px solid var(--ink);outline-offset:-3px;position:relative}
+  .stripe .cur::after{content:"▼";position:absolute;top:-16px;left:50%;transform:translateX(-50%);font-size:11px;color:var(--ink)}
+
+  /* 便签 */
+  .notes{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .note{
+    background:var(--yellow);border:var(--bw) solid var(--ink);box-shadow:var(--shadow-xs);
+    padding:13px 15px;font-size:12.5px;font-weight:500;transform:rotate(-1deg);color:var(--ink);
+  }
+  .note.g{background:#C9D8CA;transform:rotate(1deg)}
+  .note .d{font-size:11px;margin-top:8px;font-weight:400;color:var(--ink-weak)}
+
+  /* B3 阶段名行 + D3 图例 */
+  .stage-note{font-size:11px;font-weight:500;color:var(--ink-weak);padding:6px 16px 10px;letter-spacing:.5px}
+  .legend{display:flex;flex-wrap:wrap;gap:8px 14px;margin:14px 2px 0;padding-top:12px;border-top:2px dashed var(--ink-weak)}
+  .legend span{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:500;color:var(--ink-weak)}
+  .legend i{width:11px;height:11px;border:1.5px solid var(--ink);display:block}
+  .legend .l1{background:#8A6B4F}.legend .l2{background:#6E7266}.legend .l3{background:var(--yellow)}.legend .l4{background:var(--green)}.legend .l5{background:var(--blue)}.legend .l6{background:#9C8A6E}.legend .l7{background:var(--red)}
+
+  /* ═══ 验收区 ═══ */
+  .accept{max-width:1180px;margin:0 auto;padding:10px 40px 80px}
+  .sec-title{font-size:18px;font-weight:900;letter-spacing:2px;margin:48px 0 22px;display:flex;align-items:center;gap:14px}
+  .sec-title::before{content:"■";color:var(--yellow);font-size:14px}
+  .sec-title small{font-size:12px;color:var(--ink-weak);letter-spacing:1px;font-weight:500}
+  .sec-title::after{content:"";flex:1;height:var(--bw);background:var(--ink)}
+
+  .swatch-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px}
+  .swatch{border:var(--bw) solid var(--ink);background:#fff;box-shadow:var(--shadow-xs)}
+  .swatch .c{height:84px;position:relative;border-bottom:var(--bw) solid var(--ink)}
+  .swatch .c .hex{position:absolute;bottom:8px;left:12px;font-size:12px;font-weight:900;font-family:ui-monospace,Consolas,monospace;background:#fff;border:2px solid var(--ink);padding:0 6px}
+  .swatch .m{padding:9px 12px}
+  .swatch .m .n{font-size:13px;font-weight:700}
+  .swatch .m .u{font-size:11px;color:var(--ink-weak);font-weight:400}
+
+  .type-demo{border:var(--bw) solid var(--ink);background:#fff;box-shadow:var(--shadow);padding:30px 34px;display:grid;grid-template-columns:1.1fr 1fr;gap:28px}
+  .type-demo .big{font-size:110px;font-weight:900;line-height:1;background:var(--yellow);border:var(--bw) solid var(--ink);display:inline-block;padding:0 20px 8px;box-shadow:8px 8px 0 rgba(46,43,38,.75);color:var(--ink)}
+  .type-demo .row{margin-bottom:16px}
+  .type-demo .lbl{font-size:11px;color:var(--ink-weak);letter-spacing:2px;margin-bottom:6px;font-weight:500}
+  .td-title{font-size:26px;font-weight:900}
+  .td-body{font-size:15px;color:#524D44;font-weight:500}
+  .td-caps{font-family:ui-monospace,Consolas,monospace;font-size:12px;letter-spacing:3px;font-weight:500;background:var(--ink);color:var(--yellow);display:inline-block;padding:3px 10px}
+
+  .kit{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px}
+  .kitcard{border:var(--bw) solid var(--ink);background:#fff;box-shadow:var(--shadow-xs);padding:20px;display:flex;flex-direction:column;gap:12px}
+  .kitcard .kt{font-size:10px;color:var(--ink-weak);letter-spacing:3px;font-weight:500;margin-bottom:2px;font-family:ui-monospace,Consolas,monospace}
+  .btn{display:inline-flex;align-items:center;gap:8px;padding:9px 20px;border:var(--bw) solid var(--ink);font-size:13.5px;font-weight:700;cursor:pointer;box-shadow:4px 4px 0 var(--ink);background:#fff;color:var(--ink);transition:transform .12s, box-shadow .12s}
+  .btn:hover{transform:translate(1px,1px);box-shadow:3px 3px 0 var(--ink)}
+  .btn.primary{background:var(--ink);color:var(--yellow)}
+  .btn.orange{background:var(--yellow);color:var(--ink)}
+  .btn.ghost{background:var(--yellow);color:var(--ink)}
+  .chip{display:inline-flex;align-items:center;padding:4px 11px;font-size:11.5px;font-weight:700;border:2.5px solid var(--ink);background:#fff;color:var(--ink)}
+  .chip.warn{background:var(--yellow);color:var(--ink)}
+  .chip.done{background:var(--green);color:#fff}
+  .chip.cross{border-style:dashed;color:var(--ink-weak)}
+  .banner{display:flex;align-items:center;gap:12px;background:var(--red);color:#F7F1E4;border:var(--bw) solid var(--ink);box-shadow:var(--shadow-xs);padding:11px 16px;font-size:13px;font-weight:600}
+  .banner b{color:var(--yellow)}
+  .note2{background:var(--yellow);border:var(--bw) solid var(--ink);box-shadow:var(--shadow-xs);padding:13px 15px;font-size:12.5px;font-weight:500;color:var(--ink)}
+  .note2 .d{font-size:11px;margin-top:7px;color:var(--ink-weak);font-weight:400}
+
+  .checklist{margin-top:36px;border:var(--bw) solid var(--ink);background:#fff;box-shadow:var(--shadow);padding:26px 30px}
+  .checklist h4{font-size:16px;font-weight:900;letter-spacing:2px;margin-bottom:14px}
+  .checklist li{list-style:none;font-size:14px;font-weight:500;color:#524D44;padding:7px 0;border-bottom:2px dashed #D8D2C2}
+  .checklist li:last-child{border:none}
+  .checklist li b{color:var(--ink)}
+
+  footer{max-width:1180px;margin:0 auto;padding:20px 40px 50px;text-align:center;font-size:12px;color:var(--ink-weak);font-weight:500;letter-spacing:1px}
+</style>
+</head>
+<body>
+
+<!-- ═══ 顶栏 ═══ -->
+<header class="topbar">
+  <div class="logo">L<em>·</em>工作站</div>
+  <div class="search">搜索工地 / 便签 / 计划…</div>
+  <nav class="tabs">
+    <span class="tab on">日历</span>
+    <span class="tab">便签</span>
+    <span class="tab">工地</span>
+  </nav>
+</header>
+
+<!-- ═══ Hero ═══ -->
+<section class="hero">
+  <div class="date">
+    <div class="day">08</div>
+    <div class="ym">八月 · 星期六<br><span class="en">SATURDAY ✦ AUGUST 2026</span></div>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="n">3</div><div class="t">今日计划</div></div>
+    <div class="stat hot"><div class="n">2</div><div class="t">工地提醒</div></div>
+    <div class="stat"><div class="n">5</div><div class="t">待办便签</div></div>
+  </div>
+</section>
+<div class="slogan" style="max-width:1180px;margin:0 auto;padding:0 40px"><span class="star">■</span> 从图纸到落地的每一站</div>
+
+<main class="main">
+  <!-- 左 -->
+  <div>
+    <div class="panel">
+      <h3><span class="tag">本周</span> 八月 <span class="en">WEEK</span></h3>
+      <div class="week">
+        <div class="wday">一</div><div class="wday">二</div><div class="wday">三</div><div class="wday">四</div><div class="wday">五</div><div class="wday">六</div><div class="wday">日</div>
+        <div class="wcell fut">3</div><div class="wcell tag">4</div><div class="wcell">5</div><div class="wcell tag">6</div><div class="wcell">7</div>
+        <div class="wcell today">8<span class="dot"></span></div><div class="wcell tag">9</div>
+      </div>
+      <div class="plans">
+        <div class="plan done"><span class="ck">✓</span><span class="time">09:00</span><span class="txt">张宅 泥工进场交底</span><span class="tag-mini">SITE</span></div>
+        <div class="plan"><span class="ck"></span><span class="time">14:30</span><span class="txt">李总别墅 水电验收</span><span class="tag-mini warn">重要</span></div>
+        <div class="plan"><span class="ck"></span><span class="time">16:00</span><span class="txt">陈小姐公寓 木工复尺</span><span class="tag-mini">SITE</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 右 -->
+  <div style="display:flex;flex-direction:column;gap:28px">
+    <div>
+      <div class="panel" style="padding:0;background:transparent;border:none;box-shadow:none">
+        <h3 style="padding:0 4px"><span class="tag">速览</span> 工地 <span class="en">SITES</span></h3>
+        <div class="sites">
+          <div class="site">
+            <div class="hd"><span class="nm">张宅 · 装修</span><span class="st">NOW <b>泥工</b></span></div>
+            <div class="bd"><div class="rem"><span class="b">⚠ 2</span></div><span style="font-size:11px;color:var(--ink-weak);font-weight:500">提醒待处理</span></div>
+            <div class="stripe"><i class="s1"></i><i class="s2"></i><i class="s3 cur"></i><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i></div>
+            <div class="stage-note">当前 · 泥工</div>
+          </div>
+          <div class="site">
+            <div class="hd"><span class="nm">李总 · 别墅</span><span class="st">NOW <b>水电</b></span></div>
+            <div class="bd"><div class="rem"><span class="b">⚠ 1</span></div><span style="font-size:11px;color:var(--ink-weak);font-weight:500">水电验收今日</span></div>
+            <div class="stripe"><i class="s1"></i><i class="s2 cur"></i><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i></div>
+            <div class="stage-note">当前 · 水电</div>
+          </div>
+          <div class="site">
+            <div class="hd"><span class="nm">王工 · 商业</span><span class="st" style="background:var(--green);color:#fff">DONE ✓</span></div>
+            <div class="bd"><div class="rem"><span class="b ok">✓ 交付</span></div><span style="font-size:11px;color:var(--ink-weak);font-weight:500">2026-07-28</span></div>
+            <div class="stripe"><i class="s1"></i><i class="s2"></i><i class="s3"></i><i class="s4"></i><i class="s5"></i><i class="s6"></i><i class="s7"></i></div>
+            <div class="stage-note" style="color:var(--green);font-weight:600">已完工 · 全部阶段完成</div>
+          </div>
+        </div>
+        <div class="legend">
+          <span><i class="l1"></i>拆除</span><span><i class="l2"></i>水电</span><span><i class="l3"></i>泥工</span><span><i class="l4"></i>木工</span><span><i class="l5"></i>油漆</span><span><i class="l6"></i>安装</span><span><i class="l7"></i>完工</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3><span class="tag">角</span> 便签 <span class="en">MEMO</span></h3>
+      <div class="notes">
+        <div class="note"><b>防水刷两遍</b><div class="d">泥工阶段 · 07-20</div></div>
+        <div class="note g"><b>客户预算紧张</b><div class="d">全局 · 长期</div></div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- ═══ 验收区 ═══ -->
+<div class="accept">
+
+  <div class="sec-title">配色系统 v2 <small>低对比撞色 · 风格保留</small></div>
+  <div class="swatch-grid">
+    <div class="swatch"><div class="c" style="background:#2E2B26"><span class="hex" style="color:#fff">#2E2B26</span></div><div class="m"><div class="n">暖深灰</div><div class="u">原纯黑 #111 → 降对比,边框/文字/阴影统一</div></div></div>
+    <div class="swatch"><div class="c" style="background:#F4EFE0"><span class="hex">#F4EFE0</span></div><div class="m"><div class="n">纸米</div><div class="u">页面底(微调更柔)</div></div></div>
+    <div class="swatch"><div class="c" style="background:#D8B24A"><span class="hex">#D8B24A</span></div><div class="m"><div class="n">芥末黄</div><div class="u">原 #F5D90A → 降饱和,激活/今天/便签</div></div></div>
+    <div class="swatch"><div class="c" style="background:#B85C50"><span class="hex" style="color:#fff">#B85C50</span></div><div class="m"><div class="n">砖红</div><div class="u">原 #E63946 → 降饱和,重要/提醒</div></div></div>
+    <div class="swatch"><div class="c" style="background:#6B7BA8"><span class="hex" style="color:#fff">#6B7BA8</span></div><div class="m"><div class="n">灰蓝</div><div class="u">原 #3B5BDB → 降饱和,当前阶段字</div></div></div>
+    <div class="swatch"><div class="c" style="background:#7A9B7E"><span class="hex" style="color:#fff">#7A9B7E</span></div><div class="m"><div class="n">灰绿</div><div class="u">原 #2EA64F → 降饱和,已完成</div></div></div>
+  </div>
+
+  <div class="sec-title">保留的风格骨架 <small>what stays</small></div>
+  <div class="type-demo">
+    <div>
+      <div class="lbl">硬阴影(无羽化)</div>
+      <div class="big">08</div>
+      <div class="row" style="margin-top:22px"><div class="lbl">粗黑框 3px</div><div style="font-size:15px;font-weight:900;border:3px solid var(--ink);display:inline-block;padding:6px 16px">结构显形</div></div>
+    </div>
+    <div>
+      <div class="lbl">超大字号 · 900 字重</div>
+      <div class="td-title">张宅 · 装修</div>
+      <div class="row" style="margin-top:14px"><div class="lbl">正文(加深一档保可读)</div><div class="td-body">防水刷两遍 · 瓷砖排版图已确认 · 阳台东侧离地 30cm 多留一个五孔插座。</div></div>
+      <div class="row"><div class="lbl">反精致细节(保留)</div><div style="font-size:13px;font-weight:900;border:3px solid var(--ink);background:var(--yellow);display:inline-block;padding:6px 14px;box-shadow:5px 5px 0 var(--ink);transform:rotate(-1deg)">便签旋转 1° · 虚线待定 · 硬阴影</div></div>
+    </div>
+  </div>
+
+  <div class="sec-title">组件样板 <small>粗框 · 硬阴影 · 低饱和撞色</small></div>
+  <div class="kit">
+    <div class="kitcard">
+      <div class="kt">BUTTON</div>
+      <div><button class="btn primary">+ 新建工地</button></div>
+      <div><button class="btn orange">■ 重要事项</button></div>
+      <div><button class="btn ghost">导出备份</button></div>
+    </div>
+    <div class="kitcard">
+      <div class="kt">CHIP</div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px">
+        <span class="chip">#防水刷两遍</span>
+        <span class="chip warn">#阳台多留插座</span>
+        <span class="chip done">✓ 已确认</span>
+        <span class="chip cross">#待定</span>
+      </div>
+    </div>
+    <div class="kitcard">
+      <div class="kt">BANNER</div>
+      <div class="banner">■ <span><b>#阳台多留插座</b> 已到达 · 泥工阶段执行</span></div>
+    </div>
+    <div class="kitcard">
+      <div class="kt">NOTE</div>
+      <div class="note2"><b>瓷砖排版图已确认</b><div class="d">客户微信确认 · 07-20</div></div>
+    </div>
+  </div>
+
+  <div class="checklist">
+    <h4>v4.2 验收 · 透明度再降 10%</h4>
+    <ul>
+      <li><b>① 透明度</b> —— 边框/文字 100%→90%(rgba .9),阴影 85%→75%,硬阴影结构保留,重量感减轻。</li>
+      <li><b>② 风格保留</b> —— 3px 粗框、硬阴影、扁平、超大字号、便签旋转,一个没少。</li>
+      <li><b>③ 易读性</b> —— 正文/清单文字从 700 降到 600 字重、色值微调,标题依然 900 砸人,粗细对比拉开层级。</li>
+      <li style="border:none;color:var(--ink-weak)">下一步可选项见下方「易读性优化讨论清单」,勾选后我继续调。</li>
+    </ul>
+  </div>
+</div>
+
+<footer>LUSEM 工作站 ▣ 新粗野主义 v4.1 ▣ 粗黑边框 · 硬阴影 · 低饱和撞色 · 易读优化</footer>
+
+</body>
+</html>
