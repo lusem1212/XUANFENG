@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>便签页改版样张 v1 · 工地主体 × 三栏瀑布流</title>
+<style>
+  :root{
+    /* ── 沿用工作站 v3 网站橙 tokens ── */
+    --shell:#47361C; --shell-deep:#2E2413; --shell-line:rgba(117,97,58,.55);
+    --shell-text:#E8DFC8; --shell-weak:#A89A78;
+    --paper:#F4EEE2; --paper-2:#EBE3D1;
+    --ink:#2E261A; --ink-2:#6E6248; --ink-3:#9A8F77; --line:#C9BCA0;
+    --rust:#C05A2A; --rust-soft:rgba(192,90,42,.12);
+    --olive:#52672A; --olive-soft:rgba(82,103,42,.14);
+    --active:#75613A; --wood:#8A6B4F; --wood-soft:rgba(138,107,79,.16);
+    --mute:#878775; --cream:#FBF8F1;
+    --shadow:0 10px 30px rgba(58,43,21,.22), 0 2px 8px rgba(58,43,21,.10);
+    --shadow-sm:0 2px 10px rgba(58,43,21,.12);
+    --r:10px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--paper);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px;line-height:1.6;}
+  .serif{font-family:"Noto Serif SC","Source Han Serif SC","Songti SC","SimSun",serif}
+  .mono{font-family:ui-monospace,Consolas,"Courier New",monospace}
+
+  /* ═══ 顶栏(模拟工作站) ═══ */
+  .topbar{background:var(--shell);color:var(--shell-text);display:flex;align-items:center;gap:26px;padding:13px 40px;}
+  .logo{font-family:var(--serif);font-size:15px;font-weight:700;letter-spacing:.04em;}
+  .logo small{font-family:var(--mono);font-size:9px;letter-spacing:.28em;color:var(--shell-weak);margin-left:8px;}
+  .tabs{display:flex;gap:4px;margin-left:8px;}
+  .tab{padding:6px 16px;border-radius:8px;font-size:12.5px;font-weight:600;color:var(--shell-weak);cursor:pointer;border:1px solid transparent;}
+  .tab.on{background:var(--shell-deep);color:#F2EAD6;}
+  .right{margin-left:auto;display:flex;gap:8px;align-items:center;}
+  .rbtn{padding:5px 12px;border-radius:8px;font-size:12px;color:var(--shell-text);border:1px solid var(--shell-line);cursor:pointer;background:transparent;}
+  .rbtn.solid{background:var(--shell-deep);color:#F2EAD6;border-color:var(--shell-deep);}
+
+  /* ═══ Hero(简化) ═══ */
+  .hero{background:var(--paper);padding:26px 40px 16px;display:flex;align-items:flex-end;gap:26px;border-bottom:1px solid var(--line);}
+  .hero .day{font-size:56px;line-height:1;font-weight:700;}
+  .hero .ym{font-size:12px;color:var(--ink-3);letter-spacing:.12em;margin-top:4px;}
+  .hero .stats{margin-left:auto;display:flex;gap:26px;}
+  .stat .n{font-family:var(--mono);font-size:22px;font-weight:700;}
+  .stat .t{font-size:11px;color:var(--ink-3);letter-spacing:.08em;}
+  .stat.hot .n{color:var(--rust);}
+
+  /* ═══ 便签页主体 ═══ */
+  .page{max-width:1180px;margin:0 auto;padding:22px 24px 60px;}
+
+  /* 方案切换(样张专用:两个无工地方案对比) */
+  .scheme-bar{display:flex;align-items:center;gap:12px;margin-bottom:18px;flex-wrap:wrap;}
+  .scheme-bar .lbl{font-family:var(--mono);font-size:10px;letter-spacing:.18em;color:var(--ink-3);font-weight:700;}
+  .scheme-tab{padding:6px 16px;border-radius:999px;font-size:12.5px;font-weight:600;cursor:pointer;border:1.5px solid var(--line);background:var(--cream);color:var(--ink-2);transition:all .15s;}
+  .scheme-tab.on{background:var(--shell-deep);color:#F2EAD6;border-color:var(--shell-deep);}
+  .scheme-tab .tag{font-size:10px;font-weight:700;padding:1px 6px;border-radius:5px;margin-right:5px;background:var(--rust);color:#FBF3E4;}
+  .scheme-tab.alt .tag{background:var(--olive);}
+  /* 布局切换(三栏瀑布流 / 竖向单列) */
+  .layout-bar{display:flex;align-items:center;gap:12px;margin-bottom:18px;flex-wrap:wrap;}
+  .layout-tab{padding:6px 16px;border-radius:999px;font-size:12.5px;font-weight:600;cursor:pointer;border:1.5px solid var(--line);background:var(--cream);color:var(--ink-2);transition:all .15s;}
+  .layout-tab.on{background:var(--shell-deep);color:#F2EAD6;border-color:var(--shell-deep);}
+  .layout-tab .tag{font-size:10px;font-weight:700;padding:1px 6px;border-radius:5px;margin-right:5px;background:var(--mute);color:#FBF8F1;}
+
+  /* 新建便签条 */
+  .note-add{display:flex;gap:10px;align-items:center;background:var(--cream);border:1px solid var(--line);border-radius:12px;padding:12px 16px;margin-bottom:22px;box-shadow:var(--shadow-sm);}
+  .note-add .sel-wrap{flex:none;display:flex;align-items:center;gap:6px;}
+  .note-add select{padding:7px 12px;border-radius:9px;border:1.5px solid var(--line);background:#fff;font-size:13px;color:var(--ink);font-weight:600;outline:none;}
+  .note-add select.req{border-color:var(--rust);background:var(--rust-soft);}
+  .note-add .req-star{color:var(--rust);font-weight:700;font-size:13px;}
+  .note-add input{flex:1;border:none;background:transparent;font-size:13.5px;outline:none;color:var(--ink);}
+  .note-add input::placeholder{color:var(--ink-3);}
+  .note-add .add-btn{padding:7px 16px;border-radius:9px;background:var(--shell-deep);color:#F2EAD6;font-size:12.5px;font-weight:700;border:none;cursor:pointer;flex:none;}
+  .note-add .pic-btn{flex:none;width:32px;height:32px;border-radius:9px;border:1.5px dashed var(--line);background:var(--cream);color:var(--ink-3);font-size:16px;cursor:pointer;}
+  .note-add .hint{flex:none;font-size:11px;color:var(--ink-3);}
+
+  /* 工地区块 */
+  .site-block{background:var(--cream);border:1px solid var(--line);border-radius:14px;padding:0;margin-bottom:26px;box-shadow:var(--shadow-sm);overflow:hidden;}
+  .site-head{display:flex;align-items:center;gap:10px;padding:13px 18px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,rgba(255,255,255,.5),transparent);cursor:pointer;}
+  .site-head .type-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:5px;color:#FBF3E4;flex:none;}
+  .site-head .type-badge.build{background:var(--rust);}
+  .site-head .type-badge.design{background:var(--olive);}
+  .site-head .nm{font-family:var(--serif);font-size:16px;font-weight:700;}
+  .site-head .meta{font-size:12px;color:var(--ink-3);}
+  .site-head .stage-chip{font-size:11px;font-weight:600;padding:2px 10px;border-radius:999px;background:var(--wood-soft);color:var(--wood);flex:none;}
+  .site-head .cnt{margin-left:auto;font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;color:var(--ink-3);flex:none;}
+  .site-head .go{flex:none;font-size:11px;color:var(--rust);font-weight:700;border:1px solid var(--rust);padding:3px 10px;border-radius:8px;}
+  .site-head .go:hover{background:var(--rust-soft);}
+
+  /* 3 列瀑布流 */
+  .masonry{column-count:3;column-gap:14px;padding:14px;padding-bottom:8px;}
+  @media (max-width:900px){.masonry{column-count:2;}}
+  @media (max-width:560px){.masonry{column-count:1;}}
+  /* 竖向单列排版:区块内便签从上到下一条条排,图片横图大图 */
+  .masonry.single{column-count:1;}
+  .masonry.single .img-ph{height:240px;}
+  @media (max-width:560px){.masonry.single .img-ph{height:180px;}}
+
+  /* 便签卡片 */
+  .note-card{break-inside:avoid;margin-bottom:14px;background:#fff;border:1px solid var(--line);border-radius:11px;overflow:hidden;box-shadow:0 1px 4px rgba(58,43,21,.08);transition:box-shadow .15s,transform .15s;}
+  .note-card:hover{box-shadow:var(--shadow);transform:translateY(-1px);}
+  /* 图卡:图片主视觉 */
+  .img-ph{position:relative;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.85);font-size:13px;}
+  .img-ph .ph-label{position:absolute;left:9px;bottom:7px;font-size:10.5px;background:rgba(20,14,5,.55);color:#F2EAD6;padding:2px 8px;border-radius:6px;}
+  .img-ph .ph-icon{font-size:22px;opacity:.75;}
+  /* 模拟图片:中古暖木 / 瓷砖现场 / 手绘图 / 灵感参考 */
+  .ph-warm{background:linear-gradient(140deg,#B08A4E,#6D4020);height:150px;}
+  .ph-tile{background:linear-gradient(160deg,#8A8A82,#4A4A44);height:170px;}
+  .ph-sketch{background:linear-gradient(140deg,#F4EEE2,#D8CDB4);height:210px;color:#6E6248;}
+  .ph-mid{background:linear-gradient(140deg,#A08B6B,#75613A);height:140px;}
+  .ph-photo{background:linear-gradient(140deg,#878775,#49503F);height:160px;}
+  .ph-dark{background:linear-gradient(140deg,#3A3A36,#1E1E1B);height:190px;}
+  /* 文卡 */
+  .note-card .txt{padding:12px 14px;}
+  .note-card .txt .t{font-size:13px;color:var(--ink);}
+  .note-card .txt .tag-row{display:flex;flex-wrap:wrap;gap:5px;margin-top:9px;}
+  .chip{font-size:10.5px;font-weight:600;padding:1px 8px;border-radius:999px;}
+  .chip.site{background:var(--rust);color:#FBF3E4;}
+  .chip.design{background:var(--olive);color:#F2EAD6;}
+  .chip.ev{background:rgba(117,97,58,.18);color:var(--active);}
+  .note-card .time{font-family:var(--mono);font-size:10px;color:var(--ink-3);margin-top:8px;}
+  .note-card.done .t{color:var(--ink-3);text-decoration:line-through;}
+  .note-card.done .chk{float:right;color:var(--olive);font-weight:700;}
+
+  /* 未分类区(方案一) */
+  #block-orphan{display:block;}
+  .site-head.orphan .type-badge{background:var(--mute);}
+  .site-head.orphan .go{color:var(--ink-3);border-color:var(--line);}
+  .orphan-note{border-style:dashed;}
+
+  /* 强制模式(方案二):隐藏未分类 */
+  body.scheme2 #block-orphan{display:none;}
+  body.scheme2 #orphan-hint{display:block;}
+  #orphan-hint{display:none;}
+
+  /* 验收区 */
+  .spec{padding:34px 40px 50px;border-top:1px solid var(--line);background:var(--paper-2);}
+  .spec h2{font-family:var(--serif);font-size:19px;margin-bottom:6px;}
+  .spec .sub{font-size:12px;color:var(--ink-3);margin-bottom:18px;}
+  .swatches{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:26px;}
+  .sw{width:118px;border-radius:10px;overflow:hidden;border:1px solid var(--line);background:#fff;}
+  .sw .c{height:52px;}
+  .sw .m{padding:6px 9px;font-size:10.5px;}
+  .sw .m b{display:block;font-size:11px;}
+  .sw .m span{color:var(--ink-3);font-family:var(--mono);font-size:9.5px;}
+  .comps{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:26px;}
+  .comp{flex:1;min-width:230px;background:var(--cream);border:1px solid var(--line);border-radius:12px;padding:14px;}
+  .comp .cap{font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--ink-3);font-weight:700;margin-bottom:10px;}
+  .checklist{background:#fff;border:1px solid var(--line);border-radius:14px;padding:20px 24px;}
+  .checklist h3{font-family:var(--serif);font-size:15px;margin-bottom:12px;}
+  .checklist .q{margin-bottom:14px;}
+  .checklist .q b{font-size:13px;}
+  .checklist .q p{font-size:12px;color:var(--ink-2);margin:2px 0 6px;}
+  .opt{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;border:1.5px solid var(--line);border-radius:9px;padding:5px 12px;margin:3px 6px 3px 0;cursor:pointer;background:#fff;transition:all .12s;}
+  .opt:hover{border-color:var(--rust);}
+  .opt b{font-family:var(--mono);color:var(--rust);}
+</style>
+</head>
+<body>
+
+<!-- ═══ 顶栏(模拟工作站) ═══ -->
+<div class="topbar">
+  <div class="logo serif">LUSEM 个人工作站<small>WORKSTATION</small></div>
+  <div class="tabs">
+    <div class="tab">✦ 日历</div>
+    <div class="tab on">便签</div>
+    <div class="tab">工地</div>
+  </div>
+  <div class="right">
+    <div class="rbtn">浅色</div>
+    <div class="rbtn">备份</div>
+    <div class="rbtn solid">AI</div>
+  </div>
+</div>
+
+<!-- ═══ Hero(简化) ═══ -->
+<div class="hero">
+  <div><div class="day serif">09</div><div class="ym mono">AUGUST ✦ 2026</div></div>
+  <div class="stats">
+    <div class="stat"><div class="n">12</div><div class="t">便签</div></div>
+    <div class="stat hot"><div class="n">3</div><div class="t">工地</div></div>
+    <div class="stat"><div class="n">2</div><div class="t">待办</div></div>
+  </div>
+</div>
+
+<!-- ═══ 便签页 ═══ -->
+<div class="page">
+
+  <!-- 布局切换(样张专用:横向三栏 / 竖向单列) -->
+  <div class="layout-bar">
+    <span class="lbl">布局形态</span>
+    <span class="layout-tab on" data-layout="cols"><span class="tag">A</span>横向三栏瀑布流</span>
+    <span class="layout-tab" data-layout="single"><span class="tag">B</span>竖向单列排版</span>
+  </div>
+
+  <!-- 方案切换(样张专用) -->
+  <div class="scheme-bar">
+    <span class="lbl">无工地便签方案对比</span>
+    <span class="scheme-tab on" data-scheme="1"><span class="tag">方案一</span>弹性 · 有「未分类」区</span>
+    <span class="scheme-tab alt" data-scheme="2"><span class="tag">方案二</span>强制 · 必须选工地</span>
+  </div>
+
+  <!-- 新建便签条:方案二显示必选工地 -->
+  <div class="note-add">
+    <div class="sel-wrap">
+      <select class="" id="siteSel">
+        <option value="">＋ 选工地…</option>
+        <option>张宅·施工</option>
+        <option>李宅·设计</option>
+        <option>王姐·施工</option>
+      </select>
+      <span class="req-star" id="reqStar" style="display:none">*</span>
+    </div>
+    <input placeholder="写点内容,回车保存…(先选工地)">
+    <button class="pic-btn">＋</button>
+    <button class="add-btn">记录</button>
+    <span class="hint" id="addHint">选工地后,便签自动归属该工地区块</span>
+  </div>
+
+  <!-- ═══ 工地区块 1:张宅·施工 ═══ -->
+  <div class="site-block">
+    <div class="site-head">
+      <span class="type-badge build">施工</span>
+      <span class="nm serif">张宅·施工</span>
+      <span class="meta">张先生 · 云顶小区</span>
+      <span class="stage-chip">泥工阶段</span>
+      <span class="cnt">5 条便签</span>
+      <span class="go">进工地 →</span>
+    </div>
+    <div class="masonry">
+      <div class="note-card">
+        <div class="img-ph ph-tile">📷<span class="ph-icon"></span><span class="ph-label">卫生间墙砖 · 现场</span></div>
+        <div class="txt">
+          <div class="t">墙砖 300×600 奶油白,哑光,对缝铺贴</div>
+          <div class="tag-row"><span class="chip site">张宅·施工</span><span class="chip ev">#泥工</span></div>
+          <div class="time">08-09 10:24</div>
+        </div>
+      </div>
+      <div class="note-card done">
+        <div class="txt">
+          <span class="chk">✓</span>
+          <div class="t">防水闭水 48 小时,楼下无渗漏</div>
+          <div class="tag-row"><span class="chip site">张宅·施工</span><span class="chip ev">#验收</span></div>
+          <div class="time">08-09 09:10</div>
+        </div>
+      </div>
+      <div class="note-card">
+        <div class="txt">
+          <div class="t">厨房墙砖到货 80 箱,验货:色差 2 箱,已联系补发</div>
+          <div class="tag-row"><span class="chip site">张宅·施工</span><span class="chip ev">#材料</span></div>
+          <div class="time">08-08 17:42</div>
+        </div>
+      </div>
+      <div class="note-card">
+        <div class="img-ph ph-warm">📷<span class="ph-label">选砖 · 花色对比</span></div>
+        <div class="txt">
+          <div class="t">最终选 02 号砖,暖调,配原木柜门</div>
+          <div class="tag-row"><span class="chip site">张宅·施工</span><span class="chip ev">#泥工</span></div>
+          <div class="time">08-08 15:20</div>
+        </div>
+      </div>
+      <div class="note-card">
+        <div class="txt">
+          <div class="t">泥工师傅电话确认:周一到场,先贴厨房</div>
+          <div class="tag-row"><span class="chip site">张宅·施工</span><span class="chip ev">#交底</span></div>
+          <div class="time">08-08 11:05</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 工地区块 2:李宅·设计 ═══ -->
+  <div class="site-block">
+    <div class="site-head">
+      <span class="type-badge design">设计</span>
+      <span class="nm serif">李宅·设计</span>
+      <span class="meta">李女士 · 万科城</span>
+      <span class="stage-chip">量房阶段</span>
+      <span class="cnt">4 条便签</span>
+      <span class="go">进工地 →</span>
+    </div>
+    <div class="masonry">
+      <div class="note-card">
+        <div class="img-ph ph-sketch">✏️<span class="ph-label">量房手稿 · 原始结构</span></div>
+        <div class="txt">
+          <div class="t">客厅 4.2×5.6m,梁高 2.6m,飘窗可拆</div>
+          <div class="tag-row"><span class="chip design">李宅·设计</span><span class="chip ev">#量房</span></div>
+          <div class="time">08-09 14:30</div>
+        </div>
+      </div>
+      <div class="note-card">
+        <div class="txt">
+          <div class="t">客户需求:开放式厨房 + 中岛,不要电视墙</div>
+          <div class="tag-row"><span class="chip design">李宅·设计</span><span class="chip ev">#设计</span></div>
+          <div class="time">08-09 14:18</div>
+        </div>
+      </div>
+      <div class="note-card">
+        <div class="img-ph ph-mid">🛋<span class="ph-label">灵感 · 中古客厅</span></div>
+        <div class="txt">
+          <div class="t">柚木柜 + 米白沙发 + 焦糖单人椅</div>
+          <div class="tag-row"><span class="chip design">李宅·设计</span><span class="chip ev">#软装</span></div>
+          <div class="time">08-08 20:11</div>
+        </div>
+      </div>
+      <div class="note-card">
+        <div class="txt">
+          <div class="t">预算初步:硬装 25w 内,主材客户自购部分确认</div>
+          <div class="tag-row"><span class="chip design">李宅·设计</span><span class="chip ev">#预算</span></div>
+          <div class="time">08-08 16:47</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 未分类区(方案一显示) ═══ -->
+  <div class="site-block" id="block-orphan">
+    <div class="site-head orphan">
+      <span class="type-badge">未分类</span>
+      <span class="nm serif">未分类便签</span>
+      <span class="meta">灵感 / 学习 / 通用资料</span>
+      <span class="cnt">2 条便签</span>
+      <span class="go">不关联工地</span>
+    </div>
+    <div class="masonry">
+      <div class="note-card">
+        <div class="txt">
+          <div class="t">学习:灯带色温 3000K 最出氛围,4000K 显高级</div>
+          <div class="tag-row"><span class="chip ev">#学习</span><span class="chip ev">#灯光</span></div>
+          <div class="time">08-07 22:03</div>
+        </div>
+      </div>
+      <div class="note-card orphan-note">
+        <div class="img-ph ph-photo">📷<span class="ph-label">构图参考 · 逆光</span></div>
+        <div class="txt">
+          <div class="t">逆光 + 大留白,墙面光影层次</div>
+          <div class="tag-row"><span class="chip ev">#摄影</span></div>
+          <div class="time">08-06 19:22</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="note-add" id="orphan-hint" style="border-style:dashed;background:var(--paper)">
+    <span style="font-size:12.5px;color:var(--ink-2)">🔒 方案二:无「未分类」区 —— 不选工地无法保存便签,主体制彻底贯彻</span>
+  </div>
+
+</div>
+
+<!-- ═══ 验收区 ═══ -->
+<div class="spec">
+  <h2>便签改版 · 验收区</h2>
+  <div class="sub">首屏模拟两种方案,切换上方标签对比。下方是 token / 组件 / 勾选清单。</div>
+
+  <div class="swatches">
+    <div class="sw"><div class="c" style="background:#47361C"></div><div class="m"><b>深壳</b><span>#47361C</span></div></div>
+    <div class="sw"><div class="c" style="background:#2E2413"></div><div class="m"><b>激活底</b><span>#2E2413</span></div></div>
+    <div class="sw"><div class="c" style="background:#F4EEE2"></div><div class="m"><b>纸底</b><span>#F4EEE2</span></div></div>
+    <div class="sw"><div class="c" style="background:#C05A2A"></div><div class="m"><b>工地橙</b><span>#C05A2A</span></div></div>
+    <div class="sw"><div class="c" style="background:#52672A"></div><div class="m"><b>设计橄榄</b><span>#52672A</span></div></div>
+    <div class="sw"><div class="c" style="background:#75613A"></div><div class="m"><b>阶段棕</b><span>#75613A</span></div></div>
+  </div>
+
+  <div class="comps">
+    <div class="comp">
+      <div class="cap">01 · 工地区块头</div>
+      <div class="site-block" style="margin-bottom:0;box-shadow:none">
+        <div class="site-head">
+          <span class="type-badge build">施工</span>
+          <span class="nm serif">张宅·施工</span>
+          <span class="meta">张先生 · 云顶小区</span>
+          <span class="stage-chip">泥工阶段</span>
+          <span class="cnt">5 条便签</span>
+          <span class="go">进工地 →</span>
+        </div>
+      </div>
+    </div>
+    <div class="comp">
+      <div class="cap">02 · 图卡 vs 文卡</div>
+      <div style="column-count:2;column-gap:10px">
+        <div class="note-card"><div class="img-ph ph-tile" style="height:100px">📷<span class="ph-label">图片主视觉</span></div></div>
+        <div class="note-card"><div class="txt"><div class="t">纯文字便签,高度按内容</div><div class="time">08-09 09:00</div></div></div>
+      </div>
+    </div>
+    <div class="comp">
+      <div class="cap">03 · 新建条两种形态</div>
+      <div class="note-add" style="margin-bottom:8px;box-shadow:none">
+        <select style="border-color:var(--line)"><option>＋ 选工地…</option></select>
+        <input placeholder="方案一:可不选工地,存未分类">
+      </div>
+      <div class="note-add" style="box-shadow:none">
+        <select style="border-color:var(--rust);background:var(--rust-soft)"><option>张宅·施工</option></select>
+        <span class="req-star">*</span>
+        <input placeholder="方案二:必选工地,否则不能保存">
+      </div>
+    </div>
+  </div>
+
+  <div class="checklist">
+    <h3>请勾选(直接回编号,如「A1 B1 C1 D2」)</h3>
+    <div class="q">
+      <b>A · 布局形态(页顶切换对比)</b>
+      <p>A 横向三栏瀑布流 / B 竖向单列排版(当前两个标签可切换)</p>
+      <span class="opt"><b>A1</b> 竖向单列排版(你要的)</span>
+      <span class="opt"><b>A2</b> 横向三栏瀑布流</span>
+      <span class="opt"><b>A3</b> 还想调整(说明)</span>
+    </div>
+    <div class="q">
+      <b>B · 无工地便签处理(方案一 vs 方案二)</b>
+      <p>切换页顶标签对比</p>
+      <span class="opt"><b>B1</b> 方案一:弹性,有未分类区</span>
+      <span class="opt"><b>B2</b> 方案二:强制,必须选工地</span>
+    </div>
+    <div class="q">
+      <b>C · 新建便签入口</b>
+      <p>顶部固定新建条(当前展示)vs 每个工地区块内单独「＋」</p>
+      <span class="opt"><b>C1</b> 顶部一条,先选工地</span>
+      <span class="opt"><b>C2</b> 每个工地区块内「＋ 新建该工地便签」</span>
+      <span class="opt"><b>C3</b> 两个都要</span>
+    </div>
+    <div class="q">
+      <b>D · 卡片形态</b>
+      <p>图片主视觉 + 文字卡自然高度(当前展示)</p>
+      <span class="opt"><b>D1</b> 就这样</span>
+      <span class="opt"><b>D2</b> 文字卡统一高度,图片卡更高</span>
+    </div>
+    <div class="q">
+      <b>E · 其他想法</b>
+      <p>比如:区块排序、要不要显示已勾选、工地色条…直接写</p>
+    </div>
+  </div>
+</div>
+
+<script>
+/* 样张专用:方案切换(不影响正式功能) */
+document.querySelectorAll('.scheme-tab').forEach(t => {
+  t.addEventListener('click', () => {
+    document.querySelectorAll('.scheme-tab').forEach(x => x.classList.remove('on'));
+    t.classList.add('on');
+    document.body.classList.toggle('scheme2', t.dataset.scheme === '2');
+    const sel = document.getElementById('siteSel');
+    const star = document.getElementById('reqStar');
+    const hint = document.getElementById('addHint');
+    if (t.dataset.scheme === '2') {
+      sel.classList.add('req'); star.style.display = 'inline';
+      hint.textContent = '必须先选工地,否则不能保存';
+    } else {
+      sel.classList.remove('req'); star.style.display = 'none';
+      hint.textContent = '选工地后,便签自动归属该工地区块';
+    }
+  });
+});
+/* 样张专用:布局切换(横向三栏 / 竖向单列) */
+document.querySelectorAll('.layout-tab').forEach(t => {
+  t.addEventListener('click', () => {
+    document.querySelectorAll('.layout-tab').forEach(x => x.classList.remove('on'));
+    t.classList.add('on');
+    document.querySelectorAll('.masonry').forEach(m => m.classList.toggle('single', t.dataset.layout === 'single'));
+  });
+});
+</script>
+</body>
+</html>
