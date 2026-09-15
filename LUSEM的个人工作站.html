@@ -4488,8 +4488,8 @@ $('#sitePreview').addEventListener('click', e => {
 const THEME_KEY = 'workstation-theme';
 const THEMES = ['light', 'dark', 'brutal', 'cyber', 'apple'];
 const THEME_NAMES = { light: '浅色', dark: '深色', brutal: '粗野', cyber: '赛博', apple: 'Apple' };
-let theme = load(THEME_KEY, 'light');
-if (!THEMES.includes(theme)) theme = 'light';
+let theme = load(THEME_KEY, 'apple');
+if (!THEMES.includes(theme)) theme = 'apple';
 function applyTheme() {
   document.documentElement.setAttribute('data-theme', theme);
   save(THEME_KEY, theme);
