@@ -461,12 +461,12 @@
   .cal-cell.today { border-color:var(--wood-deep); background:var(--wood-soft); }
   .cal-cell.today .d { color:var(--wood-deep); font-weight:700; }
   .cal-cell.selected { border-color:var(--amber); box-shadow:0 0 0 3px rgba(192,123,69,.15); }
-  .cal-cell .dots { position:absolute; bottom:6px; left:9px; right:9px; display:flex; gap:3px; flex-wrap:wrap; }
+  .cal-cell .dots { position:absolute; bottom:6px; left:9px; right:9px; display:flex; gap:3px; align-items:center; }
   .cal-cell .dot { width:6px; height:6px; border-radius:50%; background:var(--amber); flex:none; }
   .cal-cell .dot.note { background:var(--olive); }
   .cal-cell .cnt-tag {
-    position:absolute; top:6px; right:7px; font-size:10px; font-weight:700;
-    color:var(--amber); background:rgba(192,123,69,.12); border-radius:99px; padding:0 6px; line-height:15px;
+    margin-left:auto; font-size:7px; font-weight:700;
+    color:var(--amber); background:rgba(192,123,69,.12); border-radius:99px; padding:0 5px; line-height:15px;
   }
 
   .cal-daypanel { background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow-sm); overflow:hidden; }
@@ -558,7 +558,6 @@
     opacity:0; transition:opacity var(--dur-quick) var(--ease-apple-out); z-index:2; cursor:pointer;
   }
   .cal-cell:hover .cell-add { opacity:1; }
-  .cal-cell:hover .cnt-tag { opacity:0; }
   /* 完整记录浮层(双击日期格) */
   .modal-mask {
     position:fixed; inset:0; background:rgba(20,14,5,.55); z-index:70;
@@ -2508,7 +2507,7 @@ function renderCal() {
     if (key===calSelected) cls.push('selected');
     const dots = (visItems.length?'<span class="dot"></span>':'') + (dayNotes.length?'<span class="dot note"></span>':'');
     const cnt = visItems.length ? `<span class="cnt-tag">${visItems.length}</span>` : '';
-    html += `<div class="${cls.join(' ')}" data-date="${key}"><div class="d">${d}</div>${cnt}<span class="cell-add" data-date="${key}" title="记录计划">＋</span><div class="dots">${dots}</div></div>`;
+    html += `<div class="${cls.join(' ')}" data-date="${key}"><div class="d">${d}</div><span class="cell-add" data-date="${key}" title="记录计划">＋</span><span class="dots">${dots}${cnt}</span></div>`;
   }
   const total = startDow + daysInMonth;
   const trailing = (7 - total%7)%7;
