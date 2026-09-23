@@ -38,7 +38,7 @@
     --ink: #2E261A;
     --note-ink: #8A3A12;    /* 便签正文 深锈棕(适配暖木底+红色工地标签) */
     --ink-2: #6E6248;
-    --ink-3: #9A8F77;
+    --ink-3: #6B6149;
     --line: #C9BCA0;
     /* ── 语义 ── */
     --wood: #75613A;         /* 橄榄棕 当前阶段/常规激活 */
@@ -49,7 +49,7 @@
     --rust: #C05A2A;         /* 网站暖橙 重要/提醒/✦星标 */
     --rust-soft: rgba(192,90,42,.12);
     --amber: #B08A4E;        /* 琥珀 点缀 */
-    --mute: #878775;
+    --mute: #665C45;
     /* ── 阶段色条 ── */
     --s1:#7A4A22; --s2:#6D4020; --s3:#49503F; --s4:#75613A; --s5:#52672A; --s6:#878775; --s7:#8A6B4F; --s8:#B08A4E;
     --shadow: 0 10px 30px rgba(58,43,21,.14), 0 2px 8px rgba(58,43,21,.08);
@@ -67,7 +67,8 @@
     --ink: #E6DCC6;
     --note-ink: var(--ink);
     --ink-2: #B7AB91;
-    --ink-3: #8A7E67;
+    --ink-3: #968A72;
+    --mute: #9E9279;
     --line: #4A3B28;
     --shell: #3A2B15;
     --shell-deep: #221A0D;
@@ -233,7 +234,7 @@
   /* Hero · 暗壳浅心 */
   .hero {
     background:var(--shell); color:var(--shell-text);
-    padding:26px 32px 22px; display:flex; align-items:flex-end; justify-content:space-between; gap:36px;
+    padding:26px 32px 22px; display:flex; align-items:flex-start; justify-content:space-between; gap:36px;
     position:relative; overflow:hidden;
   }
   .hero-date { display:flex; align-items:baseline; gap:18px; position:relative; z-index:1; }
@@ -415,6 +416,14 @@
   .site-prev .rem .b.ok { background:var(--olive-soft); color:var(--olive); }
   .site-prev .stripe { border-radius:0; margin-top:0; }
 
+  /* 工地速览空状态(anydesign 审计 2026-09-23 ④) */
+  .cal-sites-empty { background:var(--surface); border:1px dashed var(--line); border-radius:var(--radius); padding:26px 16px 22px; text-align:center; color:var(--ink-3); }
+  .cal-sites-empty svg { stroke:currentColor; width:26px; height:26px; margin-bottom:8px; }
+  .cal-sites-empty .t { font-family:var(--serif); font-size:14px; font-weight:700; color:var(--ink-2); margin-bottom:5px; }
+  .cal-sites-empty .d { font-size:11.5px; line-height:1.65; margin-bottom:14px; padding:0 6px; }
+  .cal-sites-empty button { border:1px solid var(--line); background:var(--surface-2); color:var(--ink-2); font-size:12px; font-weight:600; padding:7px 16px; border-radius:8px; cursor:pointer; transition:var(--t-ui); font-family:inherit; }
+  .cal-sites-empty button:hover { background:var(--wood-soft); color:var(--wood-deep); border-color:var(--wood-deep); }
+
   .ws-pages { flex:1; min-height:0; display:flex; flex-direction:column; }
   .ws-page { display:none; flex:1; min-height:0; overflow-y:auto; }
   .ws-page.active { display:block; }
@@ -424,7 +433,7 @@
   .cal-layout { display:grid; grid-template-columns:300px minmax(0,1fr) 320px; gap:20px; align-items:start; }
   .cal-dayaside { display:flex; flex-direction:column; gap:11px; position:sticky; top:14px; }
   @media (max-width: 1120px) { .cal-layout { grid-template-columns:minmax(0,1fr) 320px; } .cal-dayaside { position:static; } }
-  @media (max-width: 980px) { .cal-layout { grid-template-columns:1fr; } .cal-sites { display:none; } .cal-dayaside { order:2; } }
+  @media (max-width: 980px) { .cal-layout { grid-template-columns:1fr; } .cal-sites { display:flex; position:static; order:3; } .cal-dayaside { order:2; } }
   .cal-head { display:flex; align-items:center; gap:14px; margin-bottom:16px; }
   .cal-head h2 { font-family:var(--serif); font-size:22px; font-weight:700; letter-spacing:.02em; }
   .cal-head .nav-btn {
@@ -457,7 +466,7 @@
   .cal-cell.blank { background:transparent; cursor:default; }
   .cal-cell.blank:hover { background:transparent; }
   .cal-cell .d { font-size:13px; font-weight:600; color:var(--ink-2); font-variant-numeric:tabular-nums; }
-  .cal-cell.other-month .d { color:var(--ink-3); opacity:.55; }
+  .cal-cell.other-month .d { color:var(--ink-3); }
   .cal-cell.today { border-color:var(--wood-deep); background:var(--wood-soft); }
   .cal-cell.today .d { color:var(--wood-deep); font-weight:700; }
   .cal-cell.selected { border-color:var(--amber); box-shadow:0 0 0 3px rgba(192,123,69,.15); }
@@ -1014,6 +1023,18 @@
   .fade-in { animation:fadeIn var(--dur-base) var(--ease-apple) both; }
   @media (prefers-reduced-motion: reduce) { * { animation:none !important; transition:none !important; } }
 
+  /* ── 小屏(≤600px):hero 纵向堆叠 + 统计卡 3 列等宽 + 图例换行(anydesign 审计 2026-09-23 ②⑦) ── */
+  @media (max-width:600px) {
+    .hero { flex-direction:column; align-items:stretch; gap:14px; padding:20px 18px 16px; }
+    .hero-date { gap:14px; }
+    .hero-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+    .stat { min-width:0; padding:9px 4px; }
+    .stat .t { font-size:9px; letter-spacing:.5px; }
+    .cal-head { flex-wrap:wrap; }
+    .cal-head .cal-legend { margin-left:0; width:100%; gap:6px 14px; flex-wrap:wrap; }
+    .cal-legend .lg { white-space:nowrap; }
+  }
+
   /* ── 深色模式元素级适配 ── */
   html[data-theme="dark"] .overlay { background:rgba(0,0,0,.55); }
   html[data-theme="dark"] .cal-cell.selected { box-shadow:0 0 0 3px rgba(192,90,42,.3); }
@@ -1285,7 +1306,6 @@
   html[data-theme="apple"] .cal-legend .lg .sw.has { background:var(--wood); }
   html[data-theme="apple"] .cal-legend .lg .sw.note { background:var(--olive); }
   html[data-theme="apple"] .cal-legend .lg .sw.today { background:var(--ink); }
-  html[data-theme="apple"] .cal-cell.other-month .d { opacity:.38; }
   html[data-theme="apple"] .cal-cell.today { background:var(--surface-2); border-color:transparent; }
   html[data-theme="apple"] .cal-cell.today .d {
     background:var(--wood); color:#fff; font-weight:600;
@@ -1834,7 +1854,7 @@
   /* ============ 主题 2:粗野主义 (v4.3) ============ */
   html[data-theme="brutal"] {
     --bg:#F4EFE0; --surface:#FFFFFF; --surface-2:#EFE9D8;
-    --ink:#2E2B26; --ink-2:#6B6559; --ink-3:#8A8478;
+    --ink:#2E2B26; --ink-2:#6B6559; --ink-3:#6F6A5C;
     --note-ink:var(--ink);
     --line:#2E2B26;
     --shell:#2E2B26; --shell-deep:#201E1A;
@@ -1842,7 +1862,7 @@
     --wood:#D8B24A; --wood-deep:#C09E3C; --wood-soft:rgba(216,178,74,.22);
     --olive:#7A9B7E; --olive-soft:rgba(122,155,126,.22);
     --rust:#B85C50; --rust-soft:rgba(184,92,80,.14);
-    --amber:#D8B24A; --mute:#8A8478;
+    --amber:#D8B24A; --mute:#6F6A5C;
     --s1:#9A6A3A; --s2:#8A6B4F; --s3:#6E7266; --s4:#D8B24A; --s5:#7A9B7E; --s6:#6B7BA8; --s7:#9C8A6E; --s8:#B85C50;
     --radius:0px;
     --shadow:5px 5px 0 rgba(46,43,38,.75);
@@ -1889,7 +1909,7 @@
   /* ============ 主题 3:赛博朋克 (v5.1) ============ */
   html[data-theme="cyber"] {
     --bg:#070A14; --surface:#0D1220; --surface-2:#111830;
-    --ink:#D8E4FF; --ink-2:#8FA0C8; --ink-3:#5A6B96;
+    --ink:#D8E4FF; --ink-2:#8FA0C8; --ink-3:#7C8DC0;
     --note-ink:var(--ink);
     --line:#24304E;
     --shell:#0A0E1A; --shell-deep:#05070F;
@@ -1897,7 +1917,7 @@
     --wood:#00F0FF; --wood-deep:#00C8D6; --wood-soft:rgba(0,240,255,.12);
     --olive:#00FF9C; --olive-soft:rgba(0,255,156,.10);
     --rust:#FF2A6D; --rust-soft:rgba(255,42,109,.12);
-    --amber:#F9F002; --mute:#5A6B96;
+    --amber:#F9F002; --mute:#7C8DC0;
     --s1:#FF8A3D; --s2:#9D4EDD; --s3:#00F0FF; --s4:#00FF9C; --s5:#F9F002; --s6:#FF9E00; --s7:#FF2A6D; --s8:#FF71CE;
     --radius:2px;
     --shadow:0 0 20px rgba(0,240,255,.10);
@@ -2448,7 +2468,7 @@ function lunarTodayText(date) {
   const yi = JC_YI[jcIdx].slice(0, 3).join(' ');
   const monthStr = (L.isLeap ? '闰' : '') + L_MONTHS[L.m - 1] + '月';
   const dateStr = (L.m === 1 && L.d === 1) ? '正月初一' : (L.d === 1 ? monthStr + '初一' : monthStr + L_DAYS[L.d - 1]);
-  return `${dateStr} · ${JIANCHU[jcIdx]}日 ${gzStr} · 宜 <span class="v">${yi}</span> · 吉时 <span class="v">${JC_JISHI[jcIdx]}点</span>`;
+  return `${dateStr} · ${JIANCHU[jcIdx]}日 ${gzStr}<br>宜 <span class="v">${yi}</span> · 吉时 <span class="v">${JC_JISHI[jcIdx]}点</span>`;
 }
 
 /* ==================================================================
@@ -2847,7 +2867,7 @@ function renderGlobalTagbar() {
   });
   const entries = Object.entries(agg).sort((a,b) => b[1].count - a[1].count || a[0].localeCompare(b[0],'zh'));
   const bar = $('#globalTagbar');
-  if (!entries.length) { bar.innerHTML = '<span class="gt-label">TAGS</span><span style="font-size:11px;color:var(--tagbar-dim, var(--ink-3))">暂无标签 · 在便签/计划/工地里打上 #标签 后自动汇聚</span>'; return; }
+  if (!entries.length) { bar.innerHTML = '<span class="gt-label">TAGS</span><span style="font-size:11px;color:var(--tagbar-dim, var(--ink-3));white-space:normal;max-width:300px;text-wrap:balance">暂无标签 · 在便签/计划/工地里打上 #标签 后自动汇聚</span>'; return; }
   bar.innerHTML = '<span class="gt-label">TAGS</span>' + entries.map(([t,v]) => {
     const dots = [...v.sources].map(s => `<i class="s-${s}"></i>`).join('');
     return `<span class="gt-pill" data-tag="${esc(t)}" data-src="${[...v.sources].join(',')}" data-role="gt-tag">${dots ? `<span class="src">${dots}</span>` : ''}#${esc(t)}</span>`;
@@ -4453,6 +4473,10 @@ document.addEventListener('keydown', e => { if (e.key==='Escape') { $('#overlay'
 function renderSitePreview() {
   const box = $('#sitePreview');
   if (!box) return;
+  if (!PROJECTS.length) {
+    box.innerHTML = '<div class="cal-sites-empty"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/><path d="M10 18h4"/></svg><div class="t">还没有工地</div><div class="d">新建项目后,进度和提醒会在这里速览</div><button type="button" data-role="go-new-site">&#43; 新建项目</button></div>';
+    return;
+  }
   const alertsTotal = PROJECTS.reduce((n,p)=>n+projectAlerts(p),0);
   $('#sitePrevCnt').textContent = alertsTotal ? `SITES · ${alertsTotal} ALERT` : 'SITES';
   const siteSortKey = p => (p.type === PROJ_TYPE_DESIGN ? 1 : 0);   // 施工组在前、设计组在后(2026-08-14 客户大类)
@@ -4476,6 +4500,7 @@ function renderSitePreview() {
   }).join('');
 }
 $('#sitePreview').addEventListener('click', e => {
+  if (e.target.closest('[data-role="go-new-site"]')) { switchPage('site'); return; }
   const card = e.target.closest('[data-role="site-prev"]');
   if (!card) return;
   siteState.projectId = card.dataset.id;
