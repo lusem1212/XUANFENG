@@ -31,9 +31,52 @@
 - **备份**：JSON 导入导出、自动备份、图片压缩
 - **☁ 同步**：Chrome 扩展 + 坚果云 WebDAV，多设备数据同步
 
+## 在线版
+
+https://lusem1212.github.io/XUANFENG/ —— GitHub Pages 直接打开（由本仓库 `main` 分支根目录发布）。
+
 ## 使用
 
 直接双击 `LUSEM的个人工作站.html` 即可打开，无需安装任何依赖。
+
+## V4 · 数据服务版（本地服务 + bot 写入）
+
+主文件已升级为 **V4（数据服务版）**：数据真源从浏览器 localStorage 挪到磁盘 `data/data.json`，
+并暴露 HTTP 接口让 bot / 脚本直接写计划——「发条消息就自动进日历」已经跑通（bot 写入 → 页面 3.5 秒内出现）。
+
+```bash
+node server/ws-server.mjs          # 零依赖，绑 127.0.0.1:8787
+# 浏览器打开 http://127.0.0.1:8787/
+```
+
+服务没起时页面自动降级回纯 localStorage，保存照常生效；`file://` 直接打开也能用。
+
+| 接口 | 用途 |
+|---|---|
+| `GET /api/health` | 健康检查 |
+| `GET /api/state` | 读全量 |
+| `PUT /api/state` | 页面保存（rev 乐观锁，冲突返 409） |
+| `GET /api/rev` | 只回版本号（页面 8 秒轮询） |
+| `POST /api/plan` | bot 追加计划 |
+
+详细说明见 `说明-V4数据服务版.md`。
+
+> ⚠️ `data/` 里是真实数据，已在 `.gitignore` 中排除，不入库。
+
+## 文件说明
+
+| 路径 | 说明 |
+|---|---|
+| `LUSEM的个人工作站.html` | **主正本**：V4 数据服务版（单文件应用） |
+| `index.html` | Pages 入口，跳转到主正本 |
+| `server/` | V4 本地数据服务（`ws-server.mjs` 主服务、`ws-mirror.mjs` 镜像、`ws-webdav.mjs` WebDAV 桥） |
+| `tools/` | 数据迁移 / 坚果云配置脚本 |
+| `原生版/` | Tauri 桌面 App 用的页面副本（含手机端适配：Hero 折叠、长按 ＋、刘海安全区） |
+| `extensions/` | 坚果云同步 Chrome 扩展 |
+| `previews/` | 五套主题预览截图 |
+| `说明-V4数据服务版.md` | V4 接口与设计要点 |
+| `使用说明.md` | 面向使用的完整说明 |
+| `项目日志.md` | 逐版改动记录 |
 
 ## 多设备同步
 
