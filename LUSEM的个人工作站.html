@@ -2519,6 +2519,10 @@
       linear-gradient(180deg, rgba(4,6,10,.42) 0px, rgba(4,6,10,.34) 100%);
   }
 
+  /* v55: 关掉角标过渡 —— CSS transition 会生成 WAAPI 动画,后台标签页时间轴不推进,
+   会卡住 opacity 让内联 !important 都输掉(实测卡死) */
+  .cell-add { transition:none !important; }
+
   /* v55: 角标 ＋ 只在「点选该格」时出现 —— hover / 长按都不显示;
      点选后格内日期数字与标记圆点让位,只留 ＋ */
   .cal-cell.selected .cell-add {
@@ -3947,8 +3951,14 @@ function renderCal() {
     if (key===calSelected) cls.push('selected');
     const dots = (visItems.length?'<span class="dot"></span>':'') + (dayNotes.length?'<span class="dot note"></span>':'');
     const cnt = visItems.length ? `<span class="cnt-tag">${visItems.length}</span>` : '';
-    html += `<div class="${cls.join(' ')}" data-date="${key}"><div class="d">${d}</div><span class="cell-add" data-date="${key}" title="记录计划">＋</span><span class="dots">${dots}${cnt}</span></div>`;
+    /* v55: ＋ 只在点选该格时出现 —— 直接写内联样式,绕开样式表里对 opacity/transform 的压制 */
+    const isSel = (key === calSelected);
+    const addStyle = isSel ? ' style="opacity:1;transform:scale(1);pointer-events:auto"' : '';
+    const dStyle = isSel ? ' style="visibility:hidden"' : '';
+    const dotsStyle = isSel ? ' style="opacity:0"' : '';
+    html += `<div class="${cls.join(' ')}" data-date="${key}"><div class="d"${dStyle}>${d}</div><span class="cell-add" data-date="${key}" title="记录计划"${addStyle}>＋</span><span class="dots"${dotsStyle}>${dots}${cnt}</span></div>`;
   }
+  syncCellAdd();
   const total = startDow + daysInMonth;
   const trailing = (7 - total%7)%7;
   for (let i=1; i<=trailing; i++) {
@@ -4215,7 +4225,37 @@ function selectDate(key) {
   document.querySelectorAll('.cal-cell.selected').forEach(el => el.classList.remove('selected'));
   const el = document.querySelector(`.cal-cell[data-date="${key}"]`);
   if (el) el.classList.add('selected');
+  syncCellAdd();   /* v55: 点击只切 class 不重渲染,这里同步内联样式让 ＋ 出现、日期让位 */
   renderDayPanel();
+}
+
+/* v55: 角标 ＋ 只在「点选的那一格」显示 —— 用内联样式直接控制,
+   避免样式表里 .cell-add(基础 opacity:0) 与 .selected 规则打架;
+   选中格:＋ 显示、日期数字与圆点让位;其余格:全部还原 */
+function syncCellAdd() {
+  document.querySelectorAll('.cal-cell').forEach(cell => {
+    const add = cell.querySelector('.cell-add');
+    const d = cell.querySelector('.d');
+    const dots = cell.querySelector('.dots');
+    const on = cell.classList.contains('selected');
+    if (add) {
+      /* 必须先掐掉 .cell-add 上 opacity/transform 的过渡动画:
+         页面不可见时 WAAPI 时间轴不推进,动画会永远停在 opacity:0 上,
+         内联样式会被它盖住(实测卡死 1.5s 不动) */
+      if (add.getAnimations) add.getAnimations().forEach(a => { try { a.cancel(); } catch(e){} });
+      if (on) {
+        add.style.setProperty('opacity','1','important');
+        add.style.setProperty('transform','scale(1)','important');
+        add.style.setProperty('pointer-events','auto','important');
+      } else {
+        add.style.setProperty('opacity','0','important');
+        add.style.setProperty('transform','scale(.7)','important');
+        add.style.setProperty('pointer-events','none','important');
+      }
+    }
+    if (d) d.style.visibility = on ? 'hidden' : '';
+    if (dots) dots.style.opacity = on ? '0' : '';
+  });
 }
 $('#calFilterBar').addEventListener('click', e => {
   if (e.target.id === 'calFilterClear') { calTagFilter = []; renderCal(); }
