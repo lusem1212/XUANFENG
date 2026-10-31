@@ -2452,6 +2452,38 @@
   @media (max-width:600px) {
     .cal-legend { justify-content:flex-start; margin-top:8px; gap:6px 14px; }
   }
+
+  /* ══ 中等宽度布局修复(2026-10-31)═════════════════════════════════
+     问题①:981~1120px 时 .cal-layout 变 2 列却挂 3 个子项 → 日历主体被塞进
+            320px 窄列(日历网格只剩 320px 宽),「当日计划」独占 711px 大列。
+     修法:显式指定 grid 归属 —— 日历占 1fr 大列、工地速览占 320px 列、
+           当日计划跨两列换到第二行(与原有 aside{order:2} 意图一致)。
+     问题②:761~1020px 顶栏(品牌+tabs+四个带文字按钮+日期)横向溢出
+            (900px 时溢出 89px,820px 时 169px,770px 时 219px)。
+     修法:与手机端一致——四个按钮收成纯图标、隐藏日期。
+     ══════════════════════════════════════════════════════════════ */
+  @media (min-width:981px) and (max-width:1120px) {
+    .cal-layout > .cal-main     { grid-column:1; grid-row:1; }
+    .cal-layout > .cal-sites    { grid-column:2; grid-row:1; }
+    .cal-layout > .cal-dayaside { grid-column:1 / -1; grid-row:2; }
+  }
+  @media (min-width:761px) and (max-width:1020px) {
+    .ws-topbar { gap:8px; padding:6px 14px; }
+    .ws-btns { gap:6px; }
+    .theme-btn .btn-label, .backup-btn .btn-label { display:none; }
+    .theme-btn.ico, .backup-btn.ico { padding:7px; gap:0; }
+    .theme-btn svg, .backup-btn svg { width:17px; height:17px; }
+    .theme-btn, .backup-btn { padding:6px 8px; font-size:11px; }
+    .ws-date { display:none; }
+    .ws-tab { padding:8px 10px; }
+  }
+  @media (min-width:761px) and (max-width:820px) {
+    .ws-tab { padding:8px 6px; }
+    .ws-brand .ws-logo { height:40px; }
+  }
+  @media (min-width:761px) and (max-width:790px) {
+    .ws-brand { display:none; }
+  }
 </style>
 </head>
 <body>
@@ -2735,7 +2767,7 @@
           <div class="cal-sites-title"><span class="bar"></span>当日计划<span class="en" id="dayPanelCnt"></span></div>
           <div class="cal-daypanel" id="calDayPanel"></div>
         </aside>
-        <div>
+        <div class="cal-main">
           <div class="cal-head">
             <button class="nav-btn" id="calPrev"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
             <h2 id="calTitle">2026年8月</h2>
