@@ -2484,6 +2484,41 @@
   @media (min-width:761px) and (max-width:790px) {
     .ws-brand { display:none; }
   }
+
+  /* ══ 细节打磨(2026-10-31)═════════════════════════════════════════
+     ① 标题左右视觉间距不等:标题带 letter-spacing(.02em),末字后多出约 3.5px
+        尾部留白,加右侧字面边距 → 实测字面间距左 12.9px / 右 21.3px。
+        修:margin-left:+2px / margin-right:-2px(负值抵消,后续元素位置不变)
+     ② 图例圆点与日历标记不一致且轻重悬殊:apple 主题里「今天」用 --ink
+        (近白 #F2F2F7)画成白点,而日历里「今天」是蓝圆盘 #0071E3;
+        「有计划」又用 --wood(#0A84FF 亮蓝),与「今天」的蓝撞色。
+        修:图例/格子统一语义色 —— 有计划=琥珀 #FF9F0A、有便签=绿、
+            今天=Apple Blue #0071E3(与 today 圆盘/徽标同色)
+     ③ 背景是动态视频,顶部小字区对比度随帧波动(scrim 原为 0.34 均一值)。
+        修:顶部 scrim 加深到 .44,340px 处渐回 .32,底部 .34 —— 小字更稳
+     ══════════════════════════════════════════════════════════════ */
+  #calTitle { margin-left:2px; margin-right:-2px; }
+
+  /* ② 图例圆点:语义色统一(各主题通用语义)—— 有计划=琥珀 */
+  .cal-legend .lg .sw.has { background:var(--amber); }
+  .cal-legend .lg .sw.note { background:var(--olive); }
+
+  /* ② apple 主题:今天=蓝圆盘同色,有计划=琥珀,避免白点与蓝撞色 */
+  html[data-theme="apple"] .cal-legend .lg .sw.has   { background:var(--amber); }
+  html[data-theme="apple"] .cal-legend .lg .sw.today { background:#0071E3; }
+  html[data-theme="apple"] .cal-cell .dot            { background:var(--amber); }
+  html[data-theme="apple"] .cal-legend .lg .sw { box-shadow:inset 0 0 0 1px rgba(255,255,255,.18); }
+
+  /* ③ 背景视频亮度不均:固定帧 A/B 实测(视频 t=6s)头部文字带
+     原版左 30.3 / 右 2.9(差 27.4),白色小字对比度左右悬殊。
+     方案 F(实测最优):左侧补暗 .20 渐隐到 55% + 垂直 .42→.34 + 视频提暗 .85
+     → 左右差 27.4 → 18.7(降 32%),网格带 32.5→23.5,文字对比更均匀 */
+  html[data-theme="apple"] .ws-videobg video { filter:brightness(.85) saturate(.95); }
+  html[data-theme="apple"] .ws-videobg .scrim {
+    background:
+      linear-gradient(90deg, rgba(4,6,10,.20) 0%, rgba(4,6,10,0) 55%),
+      linear-gradient(180deg, rgba(4,6,10,.42) 0px, rgba(4,6,10,.34) 100%);
+  }
 </style>
 </head>
 <body>
