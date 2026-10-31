@@ -2433,6 +2433,25 @@
   }
   html.kb-open .ws-pages { padding-bottom:16px; }
   .ws-tabs { transition:opacity .18s ease, transform .18s ease; }
+
+  /* ══ 日历头部排版修复(2026-10-31)═════════════════════════════════
+     问题:日历中心列仅 320~524px(300px | 日历 | 320px 三栏夹击),
+     #calTitle 与 .today-btn 未设 nowrap → 被压成竖排(标题折 3 行、按钮折 4 行)
+     修法 A:标题/按钮 nowrap + .cal-head 全程允许整体换行(放不下就换行,不竖排)
+     修法 B:图例(有计划/有便签/今天)移到日历网格下方,不再占用标题行
+     ══════════════════════════════════════════════════════════════ */
+  .cal-head { flex-wrap:wrap; row-gap:10px; }
+  .cal-head h2 { white-space:nowrap; }
+  .cal-head .today-btn { white-space:nowrap; }
+  .cal-legend {
+    display:flex; align-items:center; justify-content:flex-end;
+    gap:6px 16px; flex-wrap:wrap;
+    margin-top:10px; font-size:11px; color:var(--ink-3);
+  }
+  .cal-legend .lg { display:flex; align-items:center; gap:5px; white-space:nowrap; }
+  @media (max-width:600px) {
+    .cal-legend { justify-content:flex-start; margin-top:8px; gap:6px 14px; }
+  }
 </style>
 </head>
 <body>
@@ -2723,14 +2742,14 @@
             <button class="nav-btn" id="calNext"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
             <button class="today-btn" id="calToday">回到今天</button>
             <button class="cal-add-btn" id="calAddBtn" title="给这天记一笔">＋ 记一笔</button>
-            <div class="cal-legend">
-              <span class="lg"><span class="sw has"></span>有计划</span>
-              <span class="lg"><span class="sw note"></span>有便签</span>
-              <span class="lg"><span class="sw today"></span>今天</span>
-            </div>
           </div>
           <div class="cal-filterbar" id="calFilterBar"></div>
           <div class="cal-grid" id="calGrid"></div>
+          <div class="cal-legend" id="calLegend">
+            <span class="lg"><span class="sw has"></span>有计划</span>
+            <span class="lg"><span class="sw note"></span>有便签</span>
+            <span class="lg"><span class="sw today"></span>今天</span>
+          </div>
         </div>
         <aside class="cal-sites">
           <div class="cal-sites-title"><span class="bar"></span>工地速览<span class="en" id="sitePrevCnt"></span></div>
