@@ -33,11 +33,26 @@
 
 ## 在线版
 
-https://lusem1212.github.io/XUANFENG/ —— GitHub Pages 直接打开（由本仓库 `main` 分支根目录发布）。
+**推荐（国内直连可用，CDN）**
+
+- 短链：https://cdn.jsdelivr.net/gh/lusem1212/XUANFENG@main/app.html
+- 直链：https://cdn.jsdelivr.net/gh/lusem1212/XUANFENG@main/LUSEM%E7%9A%84%E4%B8%AA%E4%BA%BA%E5%B7%A5%E4%BD%9C%E7%AB%99.html
+
+**GitHub Pages**（由本仓库 `main` 根目录发布，国内直连常被卡到打不开，仅作备份入口）
+
+- https://lusem1212.github.io/XUANFENG/
+
+> jsDelivr 对 `@main` 有缓存，仓库更新后可访问 https://purge.jsdelivr.net/gh/lusem1212/XUANFENG@main/app.html 立即刷新。
 
 ## 使用
 
 直接双击 `LUSEM的个人工作站.html` 即可打开，无需安装任何依赖。
+
+`video.mp4`（Apple 主题的动态背景，664KB）需与 HTML **放在同一目录**；缺失时页面自动退回 CSS 渐变 + 海报兜底，功能不受影响。
+
+## 体积
+
+主文件 **471KB**（CSS 169KB + JS 216KB + 图片 46KB）。背景视频已从 base64 内嵌改为独立 `video.mp4` 惰性加载——首屏 HTML 从 1.34MB 降到 471KB，手机加载快 3 倍。
 
 ## V4 · 数据服务版（本地服务 + bot 写入）
 
@@ -67,7 +82,9 @@ node server/ws-server.mjs          # 零依赖，绑 127.0.0.1:8787
 
 | 路径 | 说明 |
 |---|---|
-| `LUSEM的个人工作站.html` | **主正本**：V4 数据服务版（单文件应用） |
+| `LUSEM的个人工作站.html` | **主正本**：V4 数据服务版（单文件应用，471KB） |
+| `video.mp4` | Apple 主题动态背景（惰性加载，缺失自动兜底） |
+| `app.html` | **短链入口**：ASCII 文件名，跳转到主正本（好记好发） |
 | `index.html` | Pages 入口，跳转到主正本 |
 | `server/` | V4 本地数据服务（`ws-server.mjs` 主服务、`ws-mirror.mjs` 镜像、`ws-webdav.mjs` WebDAV 桥） |
 | `tools/` | 数据迁移 / 坚果云配置脚本 |
@@ -120,7 +137,7 @@ node server/ws-server.mjs          # 零依赖，绑 127.0.0.1:8787
 
 ## 技术
 
-- 纯 HTML + CSS + JavaScript，单文件 ~1.2MB（含内嵌视频背景）
+- 纯 HTML + CSS + JavaScript，单文件 471KB（背景视频已外置为 `video.mp4`）
 - CSS 变量驱动的 5 套主题，一键切换
 - localStorage 持久化，数据仅存本地
 - Chrome Extension Manifest V3 + WebDAV 同步
