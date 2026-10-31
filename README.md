@@ -33,16 +33,14 @@
 
 ## 在线版
 
-**推荐（国内直连可用，CDN）**
+- **短链**：https://lusem1212.github.io/XUANFENG/app.html
+- **直链**：https://lusem1212.github.io/XUANFENG/LUSEM%E7%9A%84%E4%B8%AA%E4%BA%BA%E5%B7%A5%E4%BD%9C%E7%AB%99.html
 
-- 短链：https://cdn.jsdelivr.net/gh/lusem1212/XUANFENG@main/app.html
-- 直链：https://cdn.jsdelivr.net/gh/lusem1212/XUANFENG@main/LUSEM%E7%9A%84%E4%B8%AA%E4%BA%BA%E5%B7%A5%E4%BD%9C%E7%AB%99.html
+由本仓库 `main` 根目录发布（GitHub Pages）。
 
-**GitHub Pages**（由本仓库 `main` 根目录发布，国内直连常被卡到打不开，仅作备份入口）
-
-- https://lusem1212.github.io/XUANFENG/
-
-> jsDelivr 对 `@main` 有缓存，仓库更新后可访问 https://purge.jsdelivr.net/gh/lusem1212/XUANFENG@main/app.html 立即刷新。
+> **国内网络注意**：github.io 直连不稳定——实测同一地址有时 0.5 秒打开，有时 TLS 握手被卡到 30~40 秒超时。页面已瘦身到 471KB（gzip 传输约 150KB）大幅缓解，仍打不开时刷新一次或开代理即可。
+>
+> **jsDelivr 不能当页面入口**：它对 `.html` 返回 `content-type: text/plain`（防钓鱼策略），浏览器会显示源码而不是页面。只适合取静态资源（如 `video.mp4` 返回 `video/mp4`）。
 
 ## 使用
 
