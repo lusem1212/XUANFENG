@@ -2523,13 +2523,11 @@
    会卡住 opacity 让内联 !important 都输掉(实测卡死) */
   .cell-add { transition:none !important; }
 
-  /* v55: 角标 ＋ 只在「点选该格」时出现 —— hover / 长按都不显示;
-     点选后格内日期数字与标记圆点让位,只留 ＋ */
+  /* v56: 角标 ＋ 只在「点选该格」时出现 —— hover / 长按都不显示;
+     日期数字与标记圆点始终照常显示(用户明确:要藏的是 ＋,不是日期) */
   .cal-cell.selected .cell-add {
     opacity:1 !important; transform:scale(1) !important; pointer-events:auto !important;
   }
-  .cal-cell.selected .d { visibility:hidden !important; }
-  .cal-cell.selected .dots { opacity:0 !important; }
 </style>
 </head>
 <body>
@@ -3954,9 +3952,7 @@ function renderCal() {
     /* v55: ＋ 只在点选该格时出现 —— 直接写内联样式,绕开样式表里对 opacity/transform 的压制 */
     const isSel = (key === calSelected);
     const addStyle = isSel ? ' style="opacity:1;transform:scale(1);pointer-events:auto"' : '';
-    const dStyle = isSel ? ' style="visibility:hidden"' : '';
-    const dotsStyle = isSel ? ' style="opacity:0"' : '';
-    html += `<div class="${cls.join(' ')}" data-date="${key}"><div class="d"${dStyle}>${d}</div><span class="cell-add" data-date="${key}" title="记录计划"${addStyle}>＋</span><span class="dots"${dotsStyle}>${dots}${cnt}</span></div>`;
+    html += `<div class="${cls.join(' ')}" data-date="${key}"><div class="d">${d}</div><span class="cell-add" data-date="${key}" title="记录计划"${addStyle}>＋</span><span class="dots">${dots}${cnt}</span></div>`;
   }
   syncCellAdd();
   const total = startDow + daysInMonth;
@@ -4253,8 +4249,9 @@ function syncCellAdd() {
         add.style.setProperty('pointer-events','none','important');
       }
     }
-    if (d) d.style.visibility = on ? 'hidden' : '';
-    if (dots) dots.style.opacity = on ? '0' : '';
+    /* v56: 日期与圆点恒常显示,这里只清掉旧版本残留的内联样式 */
+    if (d) d.style.visibility = '';
+    if (dots) dots.style.opacity = '';
   });
 }
 $('#calFilterBar').addEventListener('click', e => {
