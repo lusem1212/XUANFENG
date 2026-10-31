@@ -647,27 +647,22 @@
     transition:opacity .14s ease, transform .14s ease;
     z-index:3; cursor:pointer; user-select:none; -webkit-user-select:none;
   }
-  @media (hover:hover) and (pointer:fine) {
-    .cal-cell:hover .cell-add { opacity:1; transform:scale(1); pointer-events:auto; }
-  }
-  /* 长按选中的日期格:显示 ＋ */
-  .cal-cell.lp .cell-add { opacity:1; transform:scale(1); pointer-events:auto; }
+  /* v55: 桌面 hover 不再显示 ＋(用户要求只有点击才显示) */
+  /* v55: 长按不再亮 ＋(只有点选才显示) */
   /* 已选中的日期格也显示 ＋ —— 长按之外的第二条路径。
      长按在 iOS 上会被系统手势接管(且经 iPhone Mirroring 转发时不稳定),
      所以同时保留「点选日期 → 出现 ＋」这条最朴素的路径,保证功能一定可达。 */
   .cal-cell.selected .cell-add { opacity:1; transform:scale(1); pointer-events:auto; }
   .cal-cell.lp { box-shadow:0 0 0 3px rgba(192,90,42,.28); border-color:var(--rust); }
   /* v54: 长按激活该格时,日期数字与标记圆点让位,格内只亮出 ＋ */
-.cal-cell.lp .d { visibility:hidden; }
-.cal-cell.lp .dots { opacity:0; }
-.cal-cell.lp .cell-add { opacity:1; transform:scale(1); pointer-events:auto; }
 .cal-cell.lp::after {
     content:"松开记一笔"; position:absolute; inset:auto 0 -1px 0; background:var(--rust); color:var(--on-light);
     font-size:10px; text-align:center; border-radius:0 0 10px 10px; padding:2px 0; z-index:2;
     pointer-events:none; -webkit-touch-callout:none;
   }
   /* 长按中给一点触觉反馈样式(描边加亮) */
-  .cal-cell.lp .d { color:var(--rust); }
+  /* v55: 长按态不再让位(＋ 只在点选后出现),改为日期变色提示 */
+.cal-cell.lp .d { color:var(--rust); font-weight:700; }
   .cal-cell.selected .d { color:var(--rust); }
   /* 完整记录浮层(双击日期格) */
   .modal-mask {
@@ -2524,12 +2519,13 @@
       linear-gradient(180deg, rgba(4,6,10,.42) 0px, rgba(4,6,10,.34) 100%);
   }
 
-  /* v54-fix: 长按/选中该格时必定亮出 ＋ 并让日期让位(置于样式表末尾,避免被前序规则覆盖) */
-  .cal-cell.lp .cell-add, .cal-cell.selected .cell-add {
+  /* v55: 角标 ＋ 只在「点选该格」时出现 —— hover / 长按都不显示;
+     点选后格内日期数字与标记圆点让位,只留 ＋ */
+  .cal-cell.selected .cell-add {
     opacity:1 !important; transform:scale(1) !important; pointer-events:auto !important;
   }
-  .cal-cell.lp .d { visibility:hidden !important; }
-  .cal-cell.lp .dots { opacity:0 !important; }
+  .cal-cell.selected .d { visibility:hidden !important; }
+  .cal-cell.selected .dots { opacity:0 !important; }
 </style>
 </head>
 <body>
