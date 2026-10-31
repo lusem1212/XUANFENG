@@ -193,6 +193,7 @@
     background-image:linear-gradient(45deg,transparent 50%,var(--shell-weak) 50%),linear-gradient(135deg,var(--shell-weak) 50%,transparent 50%);
     background-position:calc(100% - 14px) 50%,calc(100% - 9px) 50%; background-size:5px 5px,5px 5px; background-repeat:no-repeat; }
   select.menu-input option { background:#fff; color:#111; }
+  .nut-freq-label { font-size:11.5px; color:var(--shell-weak); white-space:nowrap; }
   .ai-key-input {
     width:100%; box-sizing:border-box; padding:8px 10px; border-radius:8px; font-size:12.5px;
     border:1px solid var(--shell-line); background:rgba(0,0,0,.18); color:var(--shell-text); outline:none;
@@ -205,6 +206,18 @@
   .ai-status.err { color:#E8835A; }
   .ai-note { margin-top:12px; padding-top:10px; border-top:1px dashed var(--shell-line); font-size:11px; line-height:1.7; color:var(--shell-weak); }
   .ai-note b { color:var(--shell-text); }
+  /* ── 坚果云同步菜单 ── */
+  .nut-menu { width:300px; padding:14px; }
+  .nut-menu-head { font-size:12px; font-weight:700; letter-spacing:.08em; color:var(--shell-text); margin-bottom:10px; }
+  .nut-note { font-size:11px; line-height:1.6; color:var(--shell-weak); margin-bottom:8px; }
+  .nut-note.ok { color:#7EC850; }
+  .nut-note.err { color:#E8835A; }
+  .nut-menu .ai-key-input { margin-bottom:7px; }
+  .nut-menu .ai-menu-row { flex-wrap:wrap; }
+  .nut-auto-row { align-items:center; margin-top:2px; }
+  .nut-auto-row .ai-key-input { margin-bottom:0; flex:1; min-width:92px; }
+  .nut-auto-label { display:flex; align-items:center; gap:5px; font-size:12px; color:var(--shell-weak); white-space:nowrap; cursor:pointer; user-select:none; }
+  .nut-auto-label input { accent-color:var(--rust); }
   .n-ai {
     width:26px; height:26px; border-radius:8px; display:flex; align-items:center; justify-content:center;
     font-size:13px; color:var(--ink-3); border:none; background:transparent; transition:var(--t-ui); flex:none;
@@ -275,6 +288,34 @@
     border-top:1px solid var(--shell-line); padding-top:12px; font-family:"Times New Roman", var(--serif);
   }
   .slogan .star { color:var(--rust); margin-right:14px; }
+
+  /* ── Hero 滚动折叠:下滑压缩成细条,回顶展开 ──
+     折叠后腾出的高度以 --fold-delta 还给滚动容器(见 JS 折叠 IIFE),
+     否则容器可视高度变化会把 scrollTop 钳回去 → 折叠/展开来回翻转。 */
+  .hero { transition:padding .28s cubic-bezier(.3,.7,.3,1); }
+  .hero-date .day { transition:font-size .28s cubic-bezier(.3,.7,.3,1); }
+  .hero-date .ym { transition:opacity .22s ease, font-size .28s cubic-bezier(.3,.7,.3,1); }
+  .stat { transition:padding .28s cubic-bezier(.3,.7,.3,1), min-width .28s cubic-bezier(.3,.7,.3,1); }
+  .stat .n { transition:font-size .28s cubic-bezier(.3,.7,.3,1); }
+  .stat .t { transition:opacity .2s ease, margin .28s ease; }
+  .slogan {
+    max-height:60px; overflow:hidden;
+    transition:max-height .28s cubic-bezier(.3,.7,.3,1), opacity .2s ease,
+               padding .28s cubic-bezier(.3,.7,.3,1), border-color .28s ease;
+  }
+  /* 折叠态:日期一行小字 + 紧凑统计,腾出主体空间 */
+  .hero.mini { padding:8px 32px 8px; align-items:center; gap:14px; }
+  .hero.mini .hero-date { gap:10px; align-items:baseline; flex-wrap:nowrap; overflow:hidden; }
+  .hero.mini .hero-date .day { font-size:26px; line-height:1; letter-spacing:0; }
+  .hero.mini .hero-date .ym { opacity:1; max-width:none; font-size:11px; line-height:1.3; letter-spacing:1px; white-space:nowrap; }
+  .hero.mini .hero-date .ym > br { display:none; }
+  .hero.mini .hero-date .ym .lunar { display:none; }
+  .hero.mini .hero-date .ym .en { display:none; }
+  .hero.mini .hero-stats { gap:8px; }
+  .hero.mini .stat { padding:4px 12px; min-width:0; }
+  .hero.mini .stat .n { font-size:16px; }
+  .hero.mini .stat .t { opacity:0; margin-top:0; height:0; }
+  .slogan.mini { max-height:0; opacity:0; padding-top:0; padding-bottom:0; border-top-color:transparent; }
 
   /* 全站标签栏(三页共用 · 同步关联) */
   .global-tagbar {
@@ -442,7 +483,8 @@
   .cal-sites-empty button:hover { background:var(--wood-soft); color:var(--wood-deep); border-color:var(--wood-deep); }
 
   .ws-pages { flex:1; min-height:0; display:flex; flex-direction:column; }
-  .ws-page { display:none; flex:1; min-height:0; overflow-y:auto; }
+  .ws-page { display:none; flex:1; min-height:0; overflow-y:auto;
+             padding-bottom:var(--fold-delta,0px); }
   .ws-page.active { display:block; }
 
   /* ============ 第一页 · 日历 ============ */
@@ -478,6 +520,8 @@
     min-height:74px; border-radius:10px; padding:7px 9px; cursor:pointer;
     border:1px solid transparent; background:var(--surface-2); position:relative;
     transition:var(--t-ui);
+    /* iOS 长按会弹系统文本菜单(选择/查找),这里禁用,长按留给 ＋ */
+    -webkit-touch-callout:none; -webkit-user-select:none; user-select:none;
   }
   .cal-cell:hover { background:var(--wood-soft); }
   .cal-cell.blank { background:transparent; cursor:default; }
@@ -502,6 +546,23 @@
   .cal-daypanel .dp-week { font-size:11px; color:var(--ink-3); font-family:var(--mono); letter-spacing:1px; }
   .cal-daypanel .dp-head .dp-hint { font-size:12px; color:var(--ink-3); }
   .cal-daypanel .dp-head .today-chip { margin-left:auto; font-size:11px; font-weight:700; color:var(--wood-deep); background:var(--wood-soft); padding:2px 10px; border-radius:999px; }
+  /* 日面板「＋ 记一笔」:手机上长按手势不稳,这里给一个永远可点的入口 */
+  /* 日历头部常驻「＋ 记一笔」:手机上长按手势不稳,这是永远够得到的主入口 */
+  .cal-head .cal-add-btn {
+    font-family:inherit; font-size:12.5px; font-weight:700; white-space:nowrap;
+    color:var(--rust); background:var(--rust-soft); border:1px solid rgba(192,90,42,.32);
+    padding:6px 13px; border-radius:999px; cursor:pointer;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .cal-head .cal-add-btn:active { transform:scale(.95); }
+  .cal-daypanel .dp-head .dp-add {
+    margin-left:auto; font-family:inherit; font-size:12.5px; font-weight:700;
+    color:var(--rust); background:var(--rust-soft); border:1px solid rgba(192,90,42,.30);
+    padding:6px 12px; border-radius:999px; cursor:pointer; white-space:nowrap;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .cal-daypanel .dp-head .dp-add:active { transform:scale(.95); }
+  .cal-daypanel .dp-head .dp-add + .dp-hint { margin-left:0; }
   .dp-list { padding:8px 16px; }
   .dp-item {
     padding:9px 4px; border-bottom:1px dashed var(--line);
@@ -578,12 +639,32 @@
   .pm-tags { display:flex; flex-wrap:wrap; gap:7px 14px; }
   /* 极简快速条(一行回车即存) */
   /* 日期格 hover ＋ 角标(打开完整记录浮层) */
+  /* 日期格 ＋ 角标:默认隐藏 · 桌面 hover 显示 · 触屏长按调出 */
   .cell-add {
-    position:absolute; top:5px; right:6px; width:18px; height:18px; border-radius:6px;
-    background:var(--rust); color:var(--on-light); font-size:12px; line-height:18px; text-align:center;
-    opacity:0; transition:opacity var(--dur-quick) var(--ease-apple-out); z-index:2; cursor:pointer;
+    position:absolute; top:4px; right:5px; width:20px; height:20px; border-radius:7px;
+    background:var(--rust); color:var(--on-light); font-size:13px; line-height:20px; text-align:center;
+    opacity:0; pointer-events:none; transform:scale(.7);
+    transition:opacity .14s ease, transform .14s ease;
+    z-index:3; cursor:pointer; user-select:none; -webkit-user-select:none;
   }
-  .cal-cell:hover .cell-add { opacity:1; }
+  @media (hover:hover) and (pointer:fine) {
+    .cal-cell:hover .cell-add { opacity:1; transform:scale(1); pointer-events:auto; }
+  }
+  /* 长按选中的日期格:显示 ＋ */
+  .cal-cell.lp .cell-add { opacity:1; transform:scale(1); pointer-events:auto; }
+  /* 已选中的日期格也显示 ＋ —— 长按之外的第二条路径。
+     长按在 iOS 上会被系统手势接管(且经 iPhone Mirroring 转发时不稳定),
+     所以同时保留「点选日期 → 出现 ＋」这条最朴素的路径,保证功能一定可达。 */
+  .cal-cell.selected .cell-add { opacity:1; transform:scale(1); pointer-events:auto; }
+  .cal-cell.lp { box-shadow:0 0 0 3px rgba(192,90,42,.28); border-color:var(--rust); }
+  .cal-cell.lp::after {
+    content:"松开记一笔"; position:absolute; inset:auto 0 -1px 0; background:var(--rust); color:var(--on-light);
+    font-size:10px; text-align:center; border-radius:0 0 10px 10px; padding:2px 0; z-index:2;
+    pointer-events:none; -webkit-touch-callout:none;
+  }
+  /* 长按中给一点触觉反馈样式(描边加亮) */
+  .cal-cell.lp .d { color:var(--rust); }
+  .cal-cell.selected .d { color:var(--rust); }
   /* 完整记录浮层(双击日期格) */
   .modal-mask {
     position:fixed; inset:0; background:rgba(20,14,5,.55); z-index:70;
@@ -2001,6 +2082,13 @@
   html[data-theme="cyber"] .hero-date .day { color:var(--wood); text-shadow:0 0 14px rgba(0,240,255,.85), 0 0 44px rgba(0,240,255,.35); font-family:var(--mono); font-weight:700; letter-spacing:4px; transform:skewX(-3deg); }
   html[data-theme="cyber"] .hero-date .ym .en { color:var(--wood); text-shadow:0 0 8px rgba(0,240,255,.5); }
   html[data-theme="cyber"] .hero-date .ym .en b { color:var(--rust); text-shadow:0 0 8px rgba(255,42,109,.6); }
+  /* Hero 折叠态在各主题下的表现 */
+  html[data-theme="brutal"] .hero.mini .hero-date .day { font-size:22px; padding:1px 8px 3px; border-width:2px; box-shadow:3px 3px 0 rgba(46,43,38,.75); }
+  html[data-theme="brutal"] .hero.mini .stat { border-width:2px; box-shadow:2px 2px 0 rgba(46,43,38,.6); }
+  html[data-theme="cyber"] .hero.mini .hero-date .day { font-size:22px; transform:none; letter-spacing:2px; }
+  html[data-theme="cyber"] .hero.mini .stat { border-radius:0; }
+  html[data-theme="apple"] .hero.mini { padding:8px 32px 8px; }
+  html[data-theme="apple"] .hero.mini .hero-date .day { font-size:26px; letter-spacing:-1px; }
   html[data-theme="cyber"] .stat { border-radius:0; background:rgba(13,18,32,.85); clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,10px 100%,0 calc(100% - 10px)); }
   html[data-theme="cyber"] .stat .n { color:var(--wood); text-shadow:0 0 10px rgba(0,240,255,.6); }
   html[data-theme="cyber"] .stat.hot .n { color:var(--rust); text-shadow:0 0 10px rgba(255,42,109,.7); }
@@ -2079,7 +2167,30 @@
      .ws-tab .cnt, .ws-date { display:none; }
      .ws-btns { gap:6px; }
      .theme-btn, .backup-btn { padding:6px 8px; font-size:11px; }
+     /* 顶栏右侧四个按钮(主题/备份/云/AI)只留图标,文字隐藏,避免显示不全 */
+     .theme-btn .btn-label, .backup-btn .btn-label { display:none; }
+     .theme-btn.ico, .backup-btn.ico { padding:7px; gap:0; }
+     .theme-btn svg, .backup-btn svg { width:17px; height:17px; }
+     /* 下拉菜单改屏幕底部弹出,避免贴右溢出 */
+     .menu {
+       position:fixed; left:0; right:0; top:auto; bottom:calc(16px + env(safe-area-inset-bottom));
+       transform:none; margin:0 auto; width:min(320px,88vw); max-width:88vw; min-width:0;
+     }
+     .menu-item { font-size:14px; padding:12px; }
+     .menu-item svg { width:17px; height:17px; }
      .ws-pages { padding-bottom:calc(62px + env(safe-area-inset-bottom)); }
+
+     /* 客户页:消除横向溢出(原来 .cl-cards 是 minmax(280px,1fr),375px 屏必溢出) */
+     .cl-wrap { padding:16px 12px 50px; }
+     .cl-topbar { flex-wrap:wrap; gap:10px; }
+     .cl-topbar .site-title { font-size:17px; width:100%; }
+     .cl-topbar .search-wrap { margin-left:0; flex:1 1 140px; min-width:0; }
+     .cl-topbar .search-wrap input { width:100%; }
+     .cl-topbar .mini-btn { flex:none; }
+     .cl-cards { grid-template-columns:1fr; gap:10px; }
+     .client-pipeline-bar { grid-template-columns:repeat(2,minmax(0,1fr)); gap:6px; }
+     .client-pipeline-bar button { padding:8px 9px; }
+     .client-status-bar { gap:5px; }
      .ov-wrap { padding:20px 16px 36px; }
      .ov-head h1 { font-size:22px; }
      .ov-metrics { grid-template-columns:repeat(2,minmax(0,1fr)); }
@@ -2294,11 +2405,12 @@
   @media (hover: none) and (pointer: coarse) {
     /* ① 悬停控件常显（原来 opacity:0 靠 :hover 触发，触摸端永远看不到） */
     .dp-item .del, .dp-item .edit, .note-card .n-del,
-    .cl-act, .cl-tag .x, .tp-x, .cell-add, .n-img .x { opacity:1 !important; }
+    .cl-act, .cl-tag .x, .tp-x, .n-img .x { opacity:1 !important; }
+    /* .cell-add 不再常显:日历 ＋ 改为长按日期格才调出(见 .cal-cell.lp) */
     /* 命中区放大到手指可用尺寸 */
     .dp-item .del, .dp-item .edit { min-width:34px; min-height:34px; }
     .note-card .n-del { min-width:34px; min-height:34px; }
-    .cell-add { width:26px; height:26px; line-height:26px; font-size:15px; top:3px; right:4px; }
+    .cell-add { width:20px; height:20px; line-height:20px; font-size:12px; top:3px; right:3px; }
     .n-img .x { width:22px; height:22px; font-size:13px; top:1px; right:1px; }
     .tp-x, .cl-tag .x { font-size:13px; padding:1px 3px; }
     .cl-act { gap:8px; }
@@ -2334,8 +2446,8 @@
   <span class="scrim"></span>
 </div>
 <script>
-/* 视频背景惰性加载:页面解析完成后再取 ./video.mp4(独立文件),
-   首屏 HTML 从 1.34MB 降到 ~500KB;文件缺失时保留 CSS 渐变+海报兜底 */
+/* 视频背景惰性加载:页面解析完成后再取 ./video.mp4(独立文件),首屏 HTML 减少 664KB;
+   文件缺失时保留 CSS 渐变 + 海报兜底,不影响功能 */
 (function(){
   var v=document.getElementById('wsVideoBg');
   if(!v||!v.dataset||!v.dataset.src) return;
@@ -2385,7 +2497,7 @@
     <div class="menu-wrap">
       <button class="theme-btn" id="themeBtn" title="切换主题">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
-        <span id="themeName">主题</span>
+        <span id="themeName" class="btn-label">主题</span>
       </button>
       <div class="menu" id="themeMenu">
         <button class="menu-item" data-theme-opt="light"><span class="t-ico">☀</span>日常 · 浅色</button>
@@ -2398,7 +2510,7 @@
     <div class="menu-wrap">
       <button class="backup-btn" id="backupBtn">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
-        备份
+        <span class="btn-label">备份</span>
       </button>
       <div class="menu" id="backupMenu">
         <div class="menu-status" id="autoBkStatus">每日首次打开自动备份 · 今日尚未备份</div>
@@ -2426,9 +2538,41 @@
       </div>
     </div>
     <div class="menu-wrap">
+      <button class="backup-btn" id="nutBtn" title="坚果云同步(Mac / iPhone 跨设备)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19a4.5 4.5 0 0 0 .5-8.97A6 6 0 0 0 6.1 9.4 4 4 0 0 0 6.5 19h11z"/></svg>
+        <span class="btn-label">云</span>
+      </button>
+      <div class="menu nut-menu" id="nutMenu">
+        <div class="nut-menu-head">☁ 坚果云同步</div>
+        <div class="nut-note" id="nutState">读取配置中…</div>
+        <div class="nut-note">「备份频率」在顶栏<b>「备份」</b>菜单里设置(每天首次打开 / 每天定时 / 关闭)。</div>
+        <input class="ai-key-input" id="nutUserInput" placeholder="坚果云账号(邮箱)" spellcheck="false" autocomplete="off">
+        <input class="ai-key-input" id="nutPassInput" type="password" placeholder="应用密码(不是登录密码)" spellcheck="false" autocomplete="off">
+        <input class="ai-key-input" id="nutDeviceInput" placeholder="本机名称,如 Mac / iPhone" spellcheck="false" autocomplete="off">
+        <div class="ai-menu-row nut-auto-row">
+          <label class="nut-auto-label" title="自动把改动上传到云端、并把云端改动拉回来"><input type="checkbox" id="nutAutoChk"><span>自动同步</span></label>
+          <span class="nut-freq-label">同步频率</span>
+          <input class="ai-key-input" id="nutIntervalInput" type="number" min="1" max="720" step="1" placeholder="每 N 分钟" title="自动同步间隔(分钟),自己定">
+        </div>
+        <div class="ai-menu-row">
+          <button class="mini-btn" id="nutSave">保存并测试</button>
+          <button class="mini-btn ghost" id="nutSyncNow">立即同步</button>
+          <button class="mini-btn ghost" id="nutSeed">上传本机数据</button>
+        </div>
+        <div class="ai-menu-row">
+          <button class="mini-btn ghost" id="nutDisconnect">断开</button>
+        </div>
+        <div class="ai-status" id="nutStatus"></div>
+        <div class="ai-note">
+          在坚果云网页版 → 账户信息 → 安全选项 → <b>第三方应用授权</b> → 添加应用(勾选 WebDAV) → 生成<b>应用密码</b>,填到上面。<br>
+          密码只存在本机,不会上传到任何地方。Mac 和 iPhone 填<b>同一个账号</b>即可互相同步。
+        </div>
+      </div>
+    </div>
+    <div class="menu-wrap">
       <button class="backup-btn" id="aiBtn" title="AI 助手设置(DeepSeek)">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/><path d="M20 3v4"/><path d="M22 5h-4"/></svg>
-        AI
+        <span class="btn-label">AI</span>
       </button>
       <div class="menu ai-menu" id="aiMenu">
         <div class="ai-menu-head">✨ DeepSeek AI 助手</div>
@@ -2578,6 +2722,7 @@
             <h2 id="calTitle">2026年8月</h2>
             <button class="nav-btn" id="calNext"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
             <button class="today-btn" id="calToday">回到今天</button>
+            <button class="cal-add-btn" id="calAddBtn" title="给这天记一笔">＋ 记一笔</button>
             <div class="cal-legend">
               <span class="lg"><span class="sw has"></span>有计划</span>
               <span class="lg"><span class="sw note"></span>有便签</span>
@@ -2826,10 +2971,242 @@ const WS_SYNC = {
   metaKey: 'lusem-sync-rev',   // ⚠️ 刻意不用 workstation-v2- 前缀:那是业务数据域,元信息混进去会被同步走、造成版本号自我污染
   dirtyAt: 0,           // 本地最近一次改动的 epoch ms;与远端 updatedAt 仲裁「谁更新」
   dirtyAtKey: 'lusem-sync-dirty-at',
+  /* ⚠️ 本机是否成功跟云端对齐过(everSynced)。
+   *   这是防「空占位数据清空云端」的关键标记,不能省。
+   *   场景:新装的 iPhone 上,页面启动时会写下一批**空占位**
+   *   (clients:"[]"、projects:"[]" —— 内存里还没有任何记录),
+   *   而文档级时间戳用的是「现在」→ 仲裁会判「本地更新」→
+   *   把云端真实的客户表/项目表覆盖成空数组。
+   *   表现:同步提示「成功」,云端数据被清空,另一台设备上的数据全没了。
+   *   所以第一次同步时,本机一律以云端为准,同步成功后才置 true。 */
+  everSynced: false,
+  everSyncedKey: 'lusem-sync-ever-synced',
   pushTimer: null,
   pollTimer: null,
 };
 const SYNC_PREFIX = 'workstation-v2-';
+/* ===================================================================
+   坚果云通道(原生 App 内置)
+   -------------------------------------------------------------------
+   为什么需要它:浏览器里直连坚果云会被同源策略拦(坚果云不返 CORS 头),
+   当初才要写 Chrome 扩展。但原生层(桌面 App / iOS App)没有同源策略,
+   WebDAV 可以直接在 Rust 侧做 —— 于是 Mac 和 iPhone 都能直连坚果云,
+   不再依赖「Mac 开着 + 手机连局域网」。
+
+   页面这一侧只做三件事:
+     1. 把本地数据打包成 MirrorDoc(keys: key → JSON 字符串)
+     2. 调 nutstore_sync_full(拉取→仲裁→回推 一条龙,Rust 侧完成)
+     3. 采纳返回的合并结果并重渲染
+   仲裁规则不在这里另写一份 —— 规则只有 Rust 和 Node 两侧那一份。
+   =================================================================== */
+const IS_TAURI = !!(window.__TAURI__ && window.__TAURI__.core && window.__TAURI__.core.invoke);
+const WS_NUT = {
+  configured: false,      // 是否已配置坚果云账号
+  username: '',
+  deviceName: '',
+  online: false,          // 最近一次同步是否成功
+  lastAction: '',
+  lastAt: 0,
+  lastError: '',
+  busy: false,
+  /* 同步进行中又来了一次同步请求(改动防抖推送 / 轮询撞车):
+   * 不能直接丢掉 —— 丢掉就等于「这次改动永远没上传」。
+   * 记下来,当前这轮结束后补跑一次。 */
+  pending: false,
+  /* 连续「本地在同步期间又变了」的快速重试次数,防止无限打转 */
+  quickRetry: 0,
+};
+async function nutInvoke(cmd, args) {
+  if (!IS_TAURI) throw new Error('非原生环境');
+  return window.__TAURI__.core.invoke(cmd, args || {});
+}
+
+/** 读回本机的坚果云配置(不包含密码) */
+async function nutLoadConfig() {
+  if (!IS_TAURI) return null;
+  try {
+    const r = await nutInvoke('nutstore_config_load');
+    WS_NUT.configured = !!(r && r.configured);
+    WS_NUT.username = (r && r.username) || '';
+    WS_NUT.deviceName = (r && r.deviceName) || '';
+    return r;
+  } catch (e) {
+    WS_NUT.lastError = (e && e.message) || String(e);
+    return null;
+  }
+}
+
+/** 本地数据 → MirrorDoc */
+function nutBuildDoc() {
+  return {
+    version: 1,
+    rev: WS_SYNC.rev || 0,
+    /* 本地最后改动时间:仲裁靠它,不能填「现在」——
+     * 填现在会让每次同步都判成「本地更新」,把云端另一台设备的改动盖掉。 */
+    updatedAt: new Date(WS_SYNC.dirtyAt || Date.now()).toISOString(),
+    updatedBy: '本机',
+    deviceId: '',
+    deviceName: WS_NUT.deviceName || '本机',
+    /* ⚠️ false = 本机还没跟云端对齐过 → Rust 侧一律以云端为准。
+     *   新装设备上的空占位数据(clients:"[]")绝不能去覆盖云端真数据。 */
+    everSynced: !!WS_SYNC.everSynced,
+    keys: collectSyncPayload(),
+  };
+}
+
+/**
+ * 走坚果云做一次完整同步(拉取 → 仲裁 → 回推,Rust 侧一条龙)。
+ * 返回 true 表示同步成功并已采纳。
+ */
+async function nutSyncOnce(reason) {
+  if (!IS_TAURI || !WS_NUT.configured) return false;
+  /* 正在同步又来一次请求(轮询撞上改动推送):不能直接丢掉。
+   * 丢掉 = 这次改动永远没上传,而且本地也已经被上一轮的旧快照盖掉了。
+   * 记下来,这一轮结束后补跑一次(那一轮的本地快照是新的)。 */
+  if (WS_NUT.busy) { WS_NUT.pending = true; return false; }
+  WS_NUT.busy = true;
+  /* 本轮同步开始时的本地版本号。同步期间任何一次 save() 都会让它 +1,
+   * 于是能判断出「本轮返回的合并结果已经过期」。 */
+  const revAtStart = dataRevision;
+  let changedDuring = false;
+  try {
+    const r = await nutInvoke('nutstore_sync_full', { doc: nutBuildDoc() });
+    if (!r || !r.ok) {
+      WS_NUT.online = false;
+      WS_NUT.lastError = (r && r.error) || '同步失败';
+      syncToast('坚果云同步失败:' + WS_NUT.lastError, 'err');
+      return false;
+    }
+    WS_NUT.online = true;
+    WS_NUT.lastError = '';
+    WS_NUT.lastAction = r.action || '';
+    WS_NUT.lastAt = Date.now();
+
+    /* 同步期间本地又改了吗?(比如用户刚在日历里点了「保存记录」)
+     * 这一轮带上去的本地快照是**改动之前**的,Rust 侧合并出来的结果里
+     * 没有刚写的那条计划 → 这一轮返回的 keys 已经是过期的,
+     * 直接采纳会把刚记的东西冲掉。
+     * 表现就是用户说的「日历上写好了点确定,不一定成功」——
+     * 撞上同步窗口的那几次,计划会凭空消失。 */
+    changedDuring = (dataRevision !== revAtStart);
+
+    /* 采纳 Rust 侧返回的合并结果(Rust 已经做过日历并集,这里不要再合一次) */
+    if (r.keys && Object.keys(r.keys).length) {
+      const before = collectSyncPayload();
+      const same = Object.keys(r.keys).length === Object.keys(before).length
+        && Object.keys(r.keys).every(k => r.keys[k] === before[k]);
+      if (changedDuring) {
+        console.info('[nutstore] 同步期间本地有改动,本轮结果已过期 → 不采纳,紧接着重跑一轮');
+      } else if (!same) {
+        syncApplyRemote(syncSanitize(r.keys));
+        try { syncRerenderAll(); } catch (e) { console.warn('[nutstore] 重渲染失败', e); }
+      }
+    }
+
+    if (r.rev) {
+      WS_SYNC.rev = r.rev;
+      try { localStorage.setItem(WS_SYNC.metaKey, JSON.stringify(r.rev)); } catch (_) {}
+    }
+    /* ⚠️ 同步成功一次之后,本机才算「云端的一份」。
+     *   之前一直没置这个标记 → 每台设备都永远被当成「第一次接入」
+     *   → 本机自己的改动永远推不上去(每次都被云端无条件盖掉)。
+     *   置位后,本机才按时间戳参与「谁更新」的仲裁。 */
+    if (!WS_SYNC.everSynced) {
+      WS_SYNC.everSynced = true;
+      try { localStorage.setItem(WS_SYNC.everSyncedKey, '1'); } catch (_) {}
+    }
+    /* 本地时间戳对齐到云端:不对齐的话,下一轮仲裁又会判「本地更新」→ 反复覆盖。
+     * ⚠️ 但同步期间本地又改过的时候**不能**对齐 —— 本地时间戳必须保持
+     *   「比云端新」,否则下一轮仲裁又判成云端更新,本地改动推不上去。 */
+    if (r.updatedAt && !changedDuring) {
+      const at = Date.parse(r.updatedAt) || Date.now();
+      WS_SYNC.dirtyAt = at;
+      try { localStorage.setItem(WS_SYNC.dirtyAtKey, JSON.stringify(at)); } catch (_) {}
+    }
+    /* 本地在同步期间改过 → 还有改动没推上去,dirty 必须留着,
+     * 下一轮(紧接着的重跑)才会把它带走。 */
+    WS_SYNC.dirty = changedDuring ? true : false;
+
+    const act = r.action === 'pushed' ? '已上传到坚果云'
+      : r.action === 'pulled' ? ('已从坚果云拉取' + (r.addedLocal ? ',保留本地 ' + r.addedLocal + ' 条计划' : ''))
+      : r.action === 'seeded' ? '已初始化云端数据'
+      : '已是最新';
+    if (reason !== 'poll' && reason !== 'retry') syncToast(act, 'ok');
+    try { window.__wsPaintSyncStatus && window.__wsPaintSyncStatus(); } catch (_) {}
+    return true;
+  } catch (e) {
+    WS_NUT.online = false;
+    WS_NUT.lastError = (e && e.message) || String(e);
+    return false;
+  } finally {
+    WS_NUT.busy = false;
+    /* 补跑:有人在我同步期间点了同步,或者本地在同步期间又变了。
+     * 两种情况都必须让「最新的一次本地状态」真的走完一轮,否则改动会丢。 */
+    if (WS_NUT.pending || changedDuring) {
+      WS_NUT.pending = false;
+      if (WS_NUT.quickRetry < 5) {
+        WS_NUT.quickRetry += 1;
+        setTimeout(() => { nutSyncOnce('retry'); }, 400);
+      } else {
+        WS_NUT.quickRetry = 0;
+      }
+    } else {
+      WS_NUT.quickRetry = 0;
+    }
+  }
+}
+
+/** 启动时:读了配置就立刻同步一次 */
+async function nutBoot() {
+  if (!IS_TAURI) return;
+  const cfg = await nutLoadConfig();
+  if (!cfg || !cfg.configured) {
+    console.info('[nutstore] 尚未配置坚果云账号,当前为纯本地模式');
+    return;
+  }
+  /* 读回「本机是否已跟云端对齐过」。这个标记决定第一次同步时
+   * 本机是「以云端为准」还是「参与时间戳仲裁」——
+   * 见 WS_SYNC.everSynced 的注释。 */
+  try { WS_SYNC.everSynced = localStorage.getItem(WS_SYNC.everSyncedKey) === '1'; } catch (_) {}
+  await nutSyncOnce('boot');
+  nutStartPolling();
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) nutSyncOnce('poll');
+  });
+}
+
+/* ===== 自动同步:开关 + 间隔(分钟),用户自己定 =====
+ * ⚠️ 这个设置是**本机偏好**,不能进同步域:按前缀扫描收集数据时,
+ *   放进 workstation-v2- 前缀就会被当成业务数据同步到云端,
+ *   另一台设备的间隔设置会被这台覆盖。用独立 key(避开业务前缀)。 */
+const LS_NUT_AUTO = 'lusem-nut-autosync';
+const NUT_AUTO_DEFAULT = { enabled: true, minutes: 2 };
+function nutAutoCfg() {
+  let v = {};
+  try { v = JSON.parse(localStorage.getItem(LS_NUT_AUTO) || '{}') || {}; } catch (_) {}
+  const enabled = v.enabled === undefined ? NUT_AUTO_DEFAULT.enabled : !!v.enabled;
+  let minutes = Number(v.minutes);
+  if (!isFinite(minutes) || minutes <= 0) minutes = NUT_AUTO_DEFAULT.minutes;
+  minutes = Math.min(720, Math.max(1, Math.round(minutes)));
+  return { enabled, minutes };
+}
+function nutAutoSave(cfg) {
+  try { localStorage.setItem(LS_NUT_AUTO, JSON.stringify(cfg)); } catch (_) {}
+}
+/** 按当前设置重启轮询(改设置后立刻生效,不用重启 App) */
+function nutStartPolling() {
+  if (WS_NUT.pollTimer) { clearInterval(WS_NUT.pollTimer); WS_NUT.pollTimer = null; }
+  const cfg = nutAutoCfg();
+  if (!cfg.enabled) { console.info('[nutstore] 自动同步已关闭'); return; }
+  /* 轮询间隔比 HTTP 服务长:坚果云有请求频率限制,而且每次都是完整往返。
+   * 8 秒一次会把配额烧光,默认 2 分钟一次足够及时;用户可自己调。 */
+  WS_NUT.pollTimer = setInterval(() => {
+    if (document.hidden) return;
+    nutSyncOnce('poll');
+  }, cfg.minutes * 60000);
+  console.info('[nutstore] 自动同步已开启,间隔 ' + cfg.minutes + ' 分钟');
+}
+
 /* 不上服务端同步的 key:主题是设备偏好(手机不该被电脑改),Key 是密钥 */
 const SYNC_LOCAL_ONLY = new Set([SYNC_PREFIX + 'theme', SYNC_PREFIX + 'ai-key']);
 /* 纯本地运行时状态:版本号由各设备自行推进,自动备份时间戳只在触发它的设备上有意义 */
@@ -2877,6 +3254,14 @@ function syncMarkDirty() {
   WS_SYNC.dirty = true;
   WS_SYNC.dirtyAt = Date.now();
   try { localStorage.setItem(WS_SYNC.dirtyAtKey, JSON.stringify(WS_SYNC.dirtyAt)); } catch (_) {}
+  /* 原生 App 里,坚果云才是同步通道:本地一改就防抖推一次。
+   * 注意不能像下面那样被 !WS_SYNC.online 挡住 —— 原生 App 通常没有
+   * 跑 HTTP 数据服务(online 恒为 false),挡住就等于坚果云永远不同步。 */
+  if (IS_TAURI && WS_NUT.configured) {
+    clearTimeout(WS_SYNC.pushTimer);
+    WS_SYNC.pushTimer = setTimeout(() => nutSyncOnce('dirty'), 1200);
+    return;
+  }
   if (!WS_SYNC.online) return;          // 服务还没上线,改动只记时间戳,等 syncBoot 推送
   clearTimeout(WS_SYNC.pushTimer);
   WS_SYNC.pushTimer = setTimeout(syncPush, 800);
@@ -2915,14 +3300,23 @@ function syncMergeRemote(remoteKeys) {
   return { keys: out, addedLocal: addedLocal };
 }
 
-/** 把服务端 keys 写进 localStorage(同步缓存),删掉服务端已不存在的同步 key */
+/* 把服务端 keys 写进 localStorage(同步缓存),删掉服务端已不存在的同步 key */
 function syncApplyRemote(keys) {
   const next = {};
   Object.keys(keys).forEach(k => { next[k] = keys[k]; });
   try {
     for (let i = localStorage.length - 1; i >= 0; i--) {
       const k = localStorage.key(i);
-      if (k && k.indexOf(SYNC_PREFIX) === 0 && syncExcluded(k) && !next[k]) localStorage.removeItem(k);
+      /* ⚠️ 这里原来写的是 syncExcluded(k) —— 条件是反的。
+       * syncExcluded 为 true 的正是「主题 / AI Key / 数据版本号」这些
+       * **本机专属**的 key,它们永远不会出现在远端 keys 里,所以
+       * `syncExcluded(k) && !next[k]` 恒成立 → 每同步一次就把
+       * 主题和 AI Key 从 localStorage 删掉。
+       * 后果:AI Key 同步一次就消失(内存变量还在,刷新后彻底没),
+       * 而主题被 applyTheme() 顺手写回,所以只有 AI Key 在悄悄丢。
+       * 正确语义:删掉的是「同步域内、但远端已经没有」的 key。
+       * 本机专属的 key 必须原样保留。 */
+      if (k && k.indexOf(SYNC_PREFIX) === 0 && !syncExcluded(k) && !next[k]) localStorage.removeItem(k);
     }
   } catch (_) {}
   Object.keys(next).forEach(k => { try { localStorage.setItem(k, next[k]); } catch (_) {} });
@@ -2979,7 +3373,7 @@ function syncSanitize(keys) {
 
 /** 拉取全量并采纳,然后整页刷新(刷新是唯一能保证所有派生状态重建干净的办法) */
 async function syncPull(reason) {
-  const r = await fetch(WS_SYNC.base + '/api/state', { headers: syncHeaders() });
+  const r = await fetch(WS_SYNC.base + '/api/state');
   const s = await r.json();
   if (!s.ok) throw new Error('state 返回异常');
   const merged = syncMergeRemote(s.keys || {});
@@ -3035,7 +3429,7 @@ async function syncPush() {
   try {
     r = await fetch(WS_SYNC.base + '/api/state', {
       method: 'PUT',
-      headers: syncHeaders({ 'Content-Type': 'application/json' }),
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
     });
     s = await r.json();
@@ -3050,7 +3444,7 @@ async function syncPush() {
     syncApplyRemote(syncSanitize(merged.keys));
     try { r = await fetch(WS_SYNC.base + '/api/state', {
       method: 'PUT',
-      headers: syncHeaders({ 'Content-Type': 'application/json' }),
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ baseRev: s.rev, by: '页面(合并)', keys: collectSyncPayload() }),
     }); s = await r.json(); }
     catch (e) { WS_SYNC.online = false; return; }
@@ -3069,7 +3463,7 @@ async function syncPoll() {
   if (!WS_SYNC.online || WS_SYNC.dirty || document.hidden) return;
   try { window.__wsPaintSyncStatus && window.__wsPaintSyncStatus(); } catch (_) {}
   try {
-    const r = await fetch(WS_SYNC.base + '/api/rev', { headers: syncHeaders() });
+    const r = await fetch(WS_SYNC.base + '/api/rev');
     const s = await r.json();
     if (!s.ok) return;
     if (s.rev !== WS_SYNC.rev) await syncPull('poll');
@@ -3095,48 +3489,9 @@ async function syncPoll() {
  * .local 走 mDNS,DHCP 变了 IP 也不影响;手填项优先级最高。
  */
 const SYNC_BASE_KEY = 'workstation-v2-sync-base';
-/* ---- token(2026-10-21)----
- * 服务绑到 Tailscale 尾网地址后,必须带 token 才放行。
- * token 从地址栏 ?t=xxx 读一次,存进 localStorage,之后所有 fetch 带上
- * X-WS-Token 头。存 localStorage 而不是每次手输,是因为手机上要反复打开。
- * ⚠️ 刻意不用 workstation-v2- 前缀 —— 那是业务数据域,token 混进去会被
- * collectSyncPayload 当业务数据同步上去(密钥泄露)。用独立 key。 */
-const SYNC_TOKEN_KEY = 'lusem-sync-token';
-function syncToken() {
-  try {
-    const saved = (localStorage.getItem(SYNC_TOKEN_KEY) || '').trim();
-    if (saved) return saved;
-  } catch (_) {}
-  /* 地址栏 ?t=xxx */
-  try {
-    const q = new URLSearchParams(location.search).get('t');
-    if (q) {
-      const v = q.trim();
-      if (v) {
-        try { localStorage.setItem(SYNC_TOKEN_KEY, v); } catch (_) {}
-        /* 用完即从地址栏抹掉,避免 token 留在截图/历史记录里 */
-        try {
-          const u = new URL(location.href);
-          u.searchParams.delete('t');
-          history.replaceState(null, '', u.pathname + u.search + u.hash);
-        } catch (_) {}
-        return v;
-      }
-    }
-  } catch (_) {}
-  return '';
-}
-/** 所有对数据服务的请求都要带 token 头 */
-function syncHeaders(extra) {
-  const h = Object.assign({}, extra || {});
-  const t = syncToken();
-  if (t) h['X-WS-Token'] = t;
-  return h;
-}
 const SYNC_CANDIDATES = [
   'http://lusems-macbook-air-3.local:8787',
   'http://192.168.0.103:8787',
-  'http://100.70.123.115:8787',   // Tailscale 尾网地址
   'http://127.0.0.1:8787',
 ];
 function syncCandidateList() {
@@ -3170,7 +3525,7 @@ async function syncBoot() {
   try {
     const ctl = new AbortController();
     const t = setTimeout(() => ctl.abort(), 3000);
-    const r = await fetch(WS_SYNC.base + '/api/state', { signal: ctl.signal, headers: syncHeaders() });
+    const r = await fetch(WS_SYNC.base + '/api/state', { signal: ctl.signal });
     clearTimeout(t);
     s = await r.json();
   } catch (e) {
@@ -3275,6 +3630,63 @@ function fitNoteTextareas() {
     if (sh > 0) ta.style.height = sh + 'px';
   });
 }
+
+/* ══════════════════════════════════════════════════════════
+   Hero 滚动折叠(2026-10-22 · iPhone 端优化 ①)
+   下滑时顶部大日期压缩成一条细条,回顶展开。
+   ══════════════════════════════════════════════════════════ */
+(function(){
+  const hero = document.querySelector('.hero');
+  const slogan = document.querySelector('.slogan');
+  if (!hero) return;
+
+  /* 迟滞:折叠阈值 56px,展开阈值 24px。 */
+  const FOLD_AT = 56, UNFOLD_AT = 24;
+  let mini = false, ticking = false;
+
+  /* ── 滚动余量补偿(折叠来回翻转的根因修复)──
+     hero / slogan 在滚动容器 .ws-page 之外。折叠后 flex 把省下的高度分给
+     .ws-page → 容器可视区变高 → 浏览器 scrollTop 上限变小 → 把 scrollTop
+     钳回去 → 跌破阈值 → 又展开 → 高度变回 → 又被推下去 → 无限翻转。
+     解法:把省下的高度以 padding-bottom 还给 .ws-page。可视高度因此不变,
+     scrollTop 不再被钳制;内容整体上移(折叠腾出空间),底部多一段空白。 */
+  const heads = [hero, slogan].filter(Boolean);
+  const headH = () => heads.reduce((n, el) => n + (el.offsetHeight || 0), 0);
+  let baseH = headH();
+  function applyDelta(){
+    const d = Math.max(0, baseH - headH());
+    document.documentElement.style.setProperty('--fold-delta', d + 'px');
+  }
+  applyDelta();
+  if (window.ResizeObserver) {
+    const ro = new ResizeObserver(applyDelta);
+    heads.forEach(el => ro.observe(el));
+  }
+  // 主题切换 / 旋转屏幕会改 hero 高度 → 重新取基准
+  window.addEventListener('resize', () => { baseH = headH(); applyDelta(); }, { passive:true });
+
+  function setMini(on){
+    if (on === mini) return;
+    mini = on;
+    hero.classList.toggle('mini', on);
+    if (slogan) slogan.classList.toggle('mini', on);
+  }
+  function check(){
+    ticking = false;
+    const page = document.querySelector('.ws-page.active');
+    const y = Math.max(window.scrollY || 0, page ? page.scrollTop : 0);
+    if (mini) { if (y < UNFOLD_AT) setMini(false); }
+    else { if (y > FOLD_AT) setMini(true); }
+  }
+  function onScroll(){ if (!ticking) { ticking = true; requestAnimationFrame(check); } }
+  window.addEventListener('scroll', onScroll, { passive:true });
+  document.querySelectorAll('.ws-page').forEach(p => p.addEventListener('scroll', onScroll, { passive:true }));
+  window.addEventListener('resize', onScroll, { passive:true });
+  // 切页后重新判定(每页滚动位置独立)
+  document.querySelectorAll('.ws-tab').forEach(b =>
+    b.addEventListener('click', () => setTimeout(check, 60)));
+  check();
+})();
 document.querySelectorAll('.ws-tab').forEach(t => t.addEventListener('click', () => switchPage(t.dataset.page)));
 document.addEventListener('click', e => {
   const navAction = e.target.closest('[data-go-page]');
@@ -3501,6 +3913,7 @@ function renderDayPanel() {
       </div>
       ${isToday?'<span class="today-chip">今天</span>':''}
       <span class="dp-hint">${items.length ? `${doneCount}/${items.length} 已完成` : ''}</span>
+      <button class="dp-add" data-role="dp-add" title="给这天记一笔">＋ 记一笔</button>
     </div>
     <div class="dp-list">${listHtml}</div>`;
 }
@@ -3635,6 +4048,10 @@ $('#calNext').addEventListener('click', () => { calView.m++; if(calView.m>11){ca
 $('#calToday').addEventListener('click', () => {
   const t = new Date(); calView = { y:t.getFullYear(), m:t.getMonth() }; calSelected = todayStr(); renderCal();
 });
+$('#calAddBtn').addEventListener('click', () => {
+  if (!calSelected) { const t=new Date(); calSelected=todayStr(); }
+  openPlanModal(calSelected);
+});
 $('#calGrid').addEventListener('click', e => {
   const addBtn = e.target.closest('.cell-add');
   if (addBtn) { openPlanModal(addBtn.dataset.date); return; }
@@ -3645,6 +4062,64 @@ $('#calGrid').addEventListener('dblclick', e => {
   const cell = e.target.closest('.cal-cell[data-date]');
   if (cell) openPlanModal(cell.dataset.date);
 });
+/* 日期格长按 → 调出 ＋(触屏 2026-10-22 优化 ②)
+   触摸端不再常显一个大 ＋ 占位,改为长按日期格才亮起 ＋ 并直接打开记录浮层。
+
+   iOS 上有三个坑(都是真机实测撞出来的):
+   ① iOS 识别到原生长按手势时会发 pointercancel 把指针流打断
+      → 不能在 pointercancel 里清掉已生效的长按状态,否则 ＋ 一闪即灭;
+   ② iOS 接管长按时 pointerup / touchend 未必送达
+      → 所以浮层不靠"抬手"触发,长按成立的瞬间直接打开,不依赖后续事件;
+   ③ iOS 会弹系统文本菜单(选择/查找)抢走长按
+      → 用 -webkit-touch-callout:none + 阻止 contextmenu 解决。
+   另外:不能用 e.pointerType === 'mouse' 判断桌面 —— iPhone Mirroring 模拟出来的
+   指针事件 pointerType 也是 mouse,会被误判成桌面而跳过长按。正确判据是
+   设备是否支持 hover(matchMedia)。 */
+(function(){
+  const grid = $('#calGrid');
+  if (!grid) return;
+  const canHover = window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  let timer = null, lpCell = null;
+
+  function stopTimer(){ if (timer) { clearTimeout(timer); timer = null; } }
+  function clearLp(){
+    stopTimer();
+    if (lpCell) { lpCell.classList.remove('lp'); lpCell = null; }
+  }
+
+  function startLP(e){
+    if (canHover) return;                            // 桌面走 hover 显示 ＋
+    if (e.target.closest('.cell-add')) return;       // 直接点 ＋ 不必等
+    const cell = e.target.closest('.cal-cell[data-date]');
+    if (!cell) return;
+    clearLp();
+    timer = setTimeout(() => {
+      timer = null;
+      lpCell = cell;
+      cell.classList.add('lp');                       // ＋ 亮起
+      if (navigator.vibrate) navigator.vibrate(12);
+      // 长按成立即刻打开浮层(不等抬手,规避 iOS 抢走 pointerup)
+      const d = cell.dataset.date;
+      clearLp();
+      if (d) openPlanModal(d);
+    }, 420);
+  }
+
+  // touch 与 pointer 两条路都接:iOS 上 pointerdown 先于 touchstart 到达,
+  // 重复调用 startLP 只是重启定时器,无害。
+  grid.addEventListener('touchstart', startLP, { passive:true });
+  grid.addEventListener('pointerdown', startLP, { passive:true });
+
+  // 抬手 / 移动 / 滚动 / 打断 → 取消「尚未成立」的长按。
+  // ⚠️ pointerup / touchend 必须在这里:漏了它会导致轻点日期格 420ms 后
+  //    照样弹出记录浮层,把「点选看当日」的功能顶掉(真机实测踩到)。
+  ['pointerup','touchend','pointermove','touchmove','touchcancel','mouseleave'].forEach(ev =>
+    grid.addEventListener(ev, () => { if (!lpCell) stopTimer(); }, { passive:true }));
+  // iOS 接管长按 → 打断指针流,但别清掉已生效的状态
+  grid.addEventListener('pointercancel', () => { stopTimer(); }, { passive:true });
+  // 阻止 iOS 原生长按系统菜单
+  grid.addEventListener('contextmenu', e => e.preventDefault());
+})();
 function selectDate(key) {
   calSelected = key;
   document.querySelectorAll('.cal-cell.selected').forEach(el => el.classList.remove('selected'));
@@ -3656,6 +4131,8 @@ $('#calFilterBar').addEventListener('click', e => {
   if (e.target.id === 'calFilterClear') { calTagFilter = []; renderCal(); }
 });
 $('#calDayPanel').addEventListener('click', e => {
+  const dpAdd = e.target.closest('[data-role="dp-add"]');
+  if (dpAdd) { openPlanModal(calSelected); return; }
   const pi = e.target.closest('[data-role="plan-img"]');
   if (pi) { openLightbox(pi.querySelector('img').src); return; }
   const pia = e.target.closest('[data-role="plan-img-add"]');
@@ -6563,7 +7040,74 @@ $('#backupBtn').addEventListener('click', e => {
   autoBkSyncUi();
   $('#backupMenu').classList.toggle('show');
 });
-document.addEventListener('click', () => { $('#themeMenu').classList.remove('show'); $('#backupMenu').classList.remove('show'); $('#aiMenu').classList.remove('show'); });
+/* 每日自动备份时间:留空 = 每天首次打开就备份;填 22:00 = 每天 22:00 自动备份 */
+/* ===== 备份频率(v45):三选一 —— 每天首次打开 / 每天定时 / 关闭 =====
+ * 之前只有一个裸输入框(靠 placeholder 提示),几乎没人找得到;
+ * 现在做成带标签的下拉,两个菜单里都能看到、都能改。 */
+const LS_AUTOBK_FREQ = 'lusem-autobk-freq';
+/** 读回备份频率;旧版只存了时间 -> 有时间按 daily 兼容,没时间按 open */
+function autoBkFreq() {
+  let v = '';
+  try { v = String(localStorage.getItem(LS_AUTOBK_FREQ) || '').trim(); } catch (_) {}
+  if (v === 'daily' || v === 'off' || v === 'open') return v;
+  return autoBkTime() ? 'daily' : 'open';
+}
+function autoBkFreqSave(v) {
+  try { localStorage.setItem(LS_AUTOBK_FREQ, v); } catch (_) {}
+}
+/** 把频率/时间同步到所有控件(备份菜单 + 云菜单各一份) */
+function autoBkSyncUi() {
+  const f = autoBkFreq(), t = autoBkTime();
+  document.querySelectorAll('[data-autobk-freq]').forEach(sel => { sel.value = f; });
+  document.querySelectorAll('[data-autobk-time]').forEach(inp => {
+    inp.value = t;
+    inp.style.display = (f === 'daily') ? '' : 'none';
+  });
+}
+/* 频率下拉:每天首次打开 / 每天定时 / 关闭 */
+document.querySelectorAll('[data-autobk-freq]').forEach(sel => {
+  sel.addEventListener('change', e => {
+    const f = e.target.value;
+    if (f === 'daily' && !autoBkTime()) autoBkTimeSave('22:00');
+    autoBkFreqSave(f);
+    autoBkSyncUi();
+    updateAutoBackupStatus();
+    scheduleFirstOpenBackup();
+    showToast(f === 'off' ? '已关闭自动备份(需要时点「导出 JSON」)'
+      : f === 'daily' ? ('已设为每天 ' + autoBkTime() + ' 自动备份(App 开着就会跑,错过了下次打开补上)')
+      : '已设为「每天首次打开时自动备份」', 'ok');
+  });
+});
+/* 时间输入:留空 = 回到「每天首次打开」 */
+document.querySelectorAll('[data-autobk-time]').forEach(inp => {
+  inp.addEventListener('change', e => {
+    const v = (e.target.value || '').trim();
+    if (v && !/^([01]\d|2[0-3]):[0-5]\d$/.test(v)) {
+      showToast('时间格式不对,写成 22:00 这种', 'err');
+      e.target.value = autoBkTime();
+      return;
+    }
+    autoBkTimeSave(v);
+    if (v) autoBkFreqSave('daily');   /* 手动填时间 = 想按点备份 */
+    autoBkSyncUi();
+    updateAutoBackupStatus();
+    scheduleFirstOpenBackup();
+    showToast(v
+      ? ('每日自动备份时间已设为 ' + v + ' · 到点自动备份(App 开着就会跑,错过了下次打开补上)')
+      : '已改回「每天首次打开时自动备份」', 'ok');
+  });
+});
+/* 点空白处收起所有下拉菜单。
+ * ⚠️ 之前只收了 主题/备份/AI 三个,漏了「云」(坚果云)菜单 ——
+ * Mac 上点开云端菜单后,点任何空白处都关不掉,只能再点一次按钮。
+ * 改成「点谁关谁,除非点的就是它自己内部」:坚果云菜单里有账号/密码
+ * 输入框,点内部不该把菜单点没了。 */
+document.addEventListener('click', e => {
+  document.querySelectorAll('.menu.show').forEach(m => {
+    if (e.target && e.target.closest && e.target.closest('.menu') === m) return;
+    m.classList.remove('show');
+  });
+});
 // AI 菜单内有输入框/按钮,内部点击不得冒泡触发全局关闭(否则一点就消失)
 $('#aiMenu').addEventListener('click', e => e.stopPropagation());
 
@@ -6580,7 +7124,7 @@ async function deliverBackup(payload, filename) {
       const ctl = new AbortController();
       const t = setTimeout(() => ctl.abort(), 6000);
       const r = await fetch(base + '/api/backup', {
-        method: 'POST', headers: syncHeaders({ 'Content-Type': 'application/json' }),
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ filename, payload }), signal: ctl.signal,
       });
       clearTimeout(t);
@@ -6660,15 +7204,15 @@ $('#exportBtn').addEventListener('click', async () => {
   else showToast('备份失败:连不上数据服务(离线),请回到电脑端导出', 'err');
 });
 
-/* ===== 自动备份(v43→v45):备份频率可自选 =====
- * v43:每天第一次打开时自动下载一次 JSON,当天不重复;
- * v44:可填 22:00 改成每天定时(App 开着就会跑,错过了下次打开补上);
- * v45:三选一 —— 每天首次打开 / 每天定时 / 关闭(与原生版一致)。 */
+/* ===== 自动备份(v43):每天第一次打开时自动下载一次 JSON,当天不重复 =====
+ * v44(2026-10-24):备份时间改成**用户自己定** ——
+ *   留空 = 保持老行为(每天第一次打开就备份);
+ *   填 22:00 = 每天到 22:00 自动备份(App 开着就会跑;
+ *   如果到点时 App 关着,下次打开会立刻补上,不会整天漏掉)。 */
 const LS_AUTOBK = 'workstation-v2-auto-backup';
 /* 备份时间是本机偏好,不能进同步域:放 workstation-v2- 前缀会被当成
    业务数据同步到云端,另一台设备的时间设置会被这台覆盖。 */
 const LS_AUTOBK_TIME = 'lusem-autobk-time';
-const LS_AUTOBK_FREQ = 'lusem-autobk-freq';
 const AUTOBK_START_DELAY = 350;
 let autoBkTimer = null;
 let autoBkTickerStarted = false;
@@ -6682,16 +7226,6 @@ function autoBkTime() {
 function autoBkTimeSave(v) {
   try { localStorage.setItem(LS_AUTOBK_TIME, String(v || '')); } catch (_) {}
 }
-/** 备份频率:open=每天首次打开 / daily=每天定时 / off=关闭 */
-function autoBkFreq() {
-  let v = '';
-  try { v = String(localStorage.getItem(LS_AUTOBK_FREQ) || '').trim(); } catch (_) {}
-  if (v === 'daily' || v === 'off' || v === 'open') return v;
-  return autoBkTime() ? 'daily' : 'open';
-}
-function autoBkFreqSave(v) {
-  try { localStorage.setItem(LS_AUTOBK_FREQ, v); } catch (_) {}
-}
 /** 现在是否已经过了设定的时间点(没设时间 = 随时可备份) */
 function autoBkTimeReached(t) {
   if (!t) return true;
@@ -6700,12 +7234,11 @@ function autoBkTimeReached(t) {
 }
 function scheduleFirstOpenBackup() {
   clearTimeout(autoBkTimer);
-  /* 频率=off 时不排首次备份;ticker 仍留着,用户随时能改回来 */
   if (autoBkFreq() !== 'off') {
     autoBkTimer = setTimeout(() => { autoBkTimer = null; runAutoBackup(); }, AUTOBK_START_DELAY);
   }
   /* 每 30 秒看一眼有没有到点。到点且今天还没备份 → 自动备份。
-     浏览器/App 关着没关系:下次打开时「已经过点 + 今天没备」→ 立刻补上。 */
+     App 关着没关系:下次打开时「已经过点 + 今天没备」→ 立刻补上。 */
   if (!autoBkTickerStarted) {
     autoBkTickerStarted = true;
     setInterval(() => {
@@ -6725,7 +7258,7 @@ async function runAutoBackup() {
   const pad = n => String(n).padStart(2, '0');
   const today = d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
   if (rec.date === today) return;
-  /* 「每天定时」模式下还没到点 → 先不备份,等 ticker 到点叫它 */
+  /* 设了时间点而还没到 → 先不备份,等 ticker 到点叫它 */
   if (autoBkFreq() === 'daily') {
     const t = autoBkTime();
     if (t && !autoBkTimeReached(t)) return;
@@ -6763,50 +7296,6 @@ function updateAutoBackupStatus() {
     if (x.quota && el) el.textContent += ' · 本地存储 ' + Math.round((x.usage || 0) / x.quota * 100) + '%';
   }).catch(() => {});
 }
-
-/* ===== 备份频率控件(与原生版完全一致) ===== */
-/** 把频率/时间同步到界面控件 */
-function autoBkSyncUi() {
-  const f = autoBkFreq(), t = autoBkTime();
-  document.querySelectorAll('[data-autobk-freq]').forEach(sel => { sel.value = f; });
-  document.querySelectorAll('[data-autobk-time]').forEach(inp => {
-    inp.value = t;
-    inp.style.display = (f === 'daily') ? '' : 'none';
-  });
-}
-/* 频率下拉:每天首次打开 / 每天定时 / 关闭 */
-document.querySelectorAll('[data-autobk-freq]').forEach(sel => {
-  sel.addEventListener('change', e => {
-    const f = e.target.value;
-    if (f === 'daily' && !autoBkTime()) autoBkTimeSave('22:00');
-    autoBkFreqSave(f);
-    autoBkSyncUi();
-    updateAutoBackupStatus();
-    scheduleFirstOpenBackup();
-    showToast(f === 'off' ? '已关闭自动备份(需要时点「导出 JSON」)'
-      : f === 'daily' ? ('已设为每天 ' + autoBkTime() + ' 自动备份(页面开着就会跑,错过了下次打开补上)')
-      : '已设为「每天首次打开时自动备份」', 'ok');
-  });
-});
-/* 时间输入:留空 = 回到「每天首次打开」 */
-document.querySelectorAll('[data-autobk-time]').forEach(inp => {
-  inp.addEventListener('change', e => {
-    const v = (e.target.value || '').trim();
-    if (v && !/^([01]\d|2[0-3]):[0-5]\d$/.test(v)) {
-      showToast('时间格式不对,写成 22:00 这种', 'err');
-      e.target.value = autoBkTime();
-      return;
-    }
-    autoBkTimeSave(v);
-    if (v) autoBkFreqSave('daily');   /* 手动填时间 = 想按点备份 */
-    autoBkSyncUi();
-    updateAutoBackupStatus();
-    scheduleFirstOpenBackup();
-    showToast(v
-      ? ('每日自动备份时间已设为 ' + v + ' · 到点自动备份(页面开着就会跑,错过了下次打开补上)')
-      : '已改回「每天首次打开时自动备份」', 'ok');
-  });
-});
 
 /* 导入清洗:把一份【已通过 validateBackupPayload 的备份】归一化成可直接落库的五类数据。
    纯函数 —— 不碰内存 / localStorage / 渲染,所以能被回归网直接调用。
@@ -7262,11 +7751,163 @@ $('#planModal').addEventListener('keydown', e => {
   if (e.key === 'Escape') { closePlanModal(); return; }
   if (e.key === 'Enter' && e.target.id === 'planModalText' && !e.shiftKey) { e.preventDefault(); savePlanModal(); }
 });
+/* 坚果云菜单 */
+$('#nutBtn').addEventListener('click', e => {
+  e.stopPropagation();
+  $('#themeMenu').classList.remove('show');
+  $('#backupMenu').classList.remove('show');
+  $('#aiMenu').classList.remove('show');
+  $('#nutMenu').classList.toggle('show');
+  nutPaintState();
+});
+/** 把当前坚果云状态画到菜单顶部 */
+function nutPaintState() {
+  const el = $('#nutState');
+  if (!el) return;
+  if (!IS_TAURI) { el.textContent = '当前不是原生 App,坚果云同步不可用'; el.className = 'nut-note err'; return; }
+  if (!WS_NUT.configured) { el.textContent = '未配置账号 · 当前为纯本地模式'; el.className = 'nut-note'; return; }
+  const when = WS_NUT.lastAt ? new Date(WS_NUT.lastAt).toLocaleTimeString('zh-CN', { hour12: false }) : '—';
+  const act = WS_NUT.lastAction === 'pushed' ? '已上传'
+    : WS_NUT.lastAction === 'pulled' ? '已拉取'
+    : WS_NUT.lastAction === 'seeded' ? '已初始化'
+    : WS_NUT.lastAction === 'in-sync' ? '已一致' : '待同步';
+  if (WS_NUT.lastError) {
+    el.textContent = '账号 ' + WS_NUT.username + ' · ' + WS_NUT.lastError;
+    el.className = 'nut-note err';
+  } else {
+    const au = nutAutoCfg();
+    el.textContent = '账号 ' + WS_NUT.username + ' · 本机 ' + (WS_NUT.deviceName || '本机') + ' · 上次 ' + act + ' ' + when
+      + ' · 自动同步' + (au.enabled ? ' 每 ' + au.minutes + ' 分钟' : ' 已关');
+    el.className = 'nut-note ok';
+  }
+}
+/** 填回已保存的账号/设备名(密码不保存明文回显,留空即可) */
+async function nutFillForm() {
+  if (!IS_TAURI) return;
+  /* 自动同步的开关/间隔先填 —— 还没配账号也要显示真实设置,
+     否则第一次打开菜单看到的是「关着」,其实只是没账号。 */
+  nutAutoFill();
+  const cfg = await nutLoadConfig();
+  if (!cfg) return;
+  if ($('#nutUserInput')) $('#nutUserInput').value = cfg.username || '';
+  if ($('#nutDeviceInput')) $('#nutDeviceInput').value = cfg.deviceName || (IS_TAURI ? '本机' : '');
+  nutPaintState();
+}
+/** 把自动同步设置填回界面 */
+function nutAutoFill() {
+  const cfg = nutAutoCfg();
+  if ($('#nutAutoChk')) $('#nutAutoChk').checked = cfg.enabled;
+  if ($('#nutIntervalInput')) $('#nutIntervalInput').value = cfg.minutes;
+}
+/* 自动同步开关 */
+$('#nutAutoChk').addEventListener('change', e => {
+  const cfg = nutAutoCfg();
+  cfg.enabled = e.target.checked;
+  nutAutoSave(cfg);
+  if (WS_NUT.configured) nutStartPolling();
+  showToast(cfg.enabled
+    ? ('自动同步已开启 · 每 ' + cfg.minutes + ' 分钟自动上传/下载一次')
+    : '自动同步已关闭(需要时点「立即同步」)', 'ok');
+});
+/* 自动同步间隔(分钟) */
+$('#nutIntervalInput').addEventListener('change', e => {
+  const cfg = nutAutoCfg();
+  const m = parseInt(e.target.value, 10);
+  cfg.minutes = (isFinite(m) && m > 0) ? Math.min(720, m) : NUT_AUTO_DEFAULT.minutes;
+  e.target.value = cfg.minutes;
+  nutAutoSave(cfg);
+  if (WS_NUT.configured) nutStartPolling();
+  showToast('自动同步间隔已改为 ' + cfg.minutes + ' 分钟', 'ok');
+});
+$('#nutSave').addEventListener('click', async () => {
+  const st = $('#nutStatus');
+  st.className = 'ai-status';
+  st.textContent = '测试连接中…';
+  const cfg = {
+    username: ($('#nutUserInput').value || '').trim(),
+    appPassword: ($('#nutPassInput').value || '').trim(),
+    deviceName: ($('#nutDeviceInput').value || '').trim() || '本机',
+  };
+  if (!cfg.username || !cfg.appPassword) {
+    st.className = 'ai-status err';
+    st.textContent = '账号和应用密码都要填';
+    return;
+  }
+  try {
+    const r = await nutInvoke('nutstore_config_save', { config: cfg });
+    if (!r || !r.ok) {
+      st.className = 'ai-status err';
+      st.textContent = (r && r.error) || '保存失败';
+      return;
+    }
+    WS_NUT.configured = true;
+    WS_NUT.username = r.username || cfg.username;
+    WS_NUT.deviceName = r.deviceName || cfg.deviceName;
+    /* 密码不留在输入框里:它已经在 Rust 侧落盘,留在 DOM 里只是多一份暴露面 */
+    $('#nutPassInput').value = '';
+    st.className = 'ai-status ok';
+    st.textContent = '已保存并连接成功 ✓';
+    nutPaintState();
+    await nutSyncOnce('save');
+  } catch (e) {
+    st.className = 'ai-status err';
+    st.textContent = '连接失败:' + ((e && e.message) || e);
+  }
+});
+$('#nutSyncNow').addEventListener('click', async () => {
+  const st = $('#nutStatus');
+  st.className = 'ai-status';
+  st.textContent = '同步中…';
+  if (!WS_NUT.configured) {
+    st.className = 'ai-status err';
+    st.textContent = '还没配置账号';
+    return;
+  }
+  const ok = await nutSyncOnce('manual');
+  st.className = 'ai-status ' + (ok ? 'ok' : 'err');
+  st.textContent = ok ? '同步完成 ✓' : (WS_NUT.lastError || '同步失败');
+  nutPaintState();
+});
+$('#nutSeed').addEventListener('click', async () => {
+  const st = $('#nutStatus');
+  st.className = 'ai-status';
+  st.textContent = '上传本机数据中…';
+  try {
+    const r = await nutInvoke('nutstore_seed_default');
+    if (!r || !r.ok) {
+      st.className = 'ai-status err';
+      st.textContent = (r && r.error) || '上传失败';
+      return;
+    }
+    st.className = 'ai-status ok';
+    st.textContent = '已上传 ' + r.keys + ' 项数据 ✓';
+    await nutSyncOnce('seed');
+  } catch (e) {
+    st.className = 'ai-status err';
+    st.textContent = '上传失败:' + ((e && e.message) || e);
+  }
+});
+$('#nutDisconnect').addEventListener('click', async () => {
+  const st = $('#nutStatus');
+  try {
+    await nutInvoke('nutstore_config_clear');
+    WS_NUT.configured = false;
+    WS_NUT.username = '';
+    WS_NUT.lastError = '';
+    st.className = 'ai-status ok';
+    st.textContent = '已断开坚果云 ✓';
+    nutPaintState();
+  } catch (e) {
+    st.className = 'ai-status err';
+    st.textContent = '断开失败:' + ((e && e.message) || e);
+  }
+});
 /* AI 菜单 */
 $('#aiBtn').addEventListener('click', e => {
   e.stopPropagation();
   $('#themeMenu').classList.remove('show');
   $('#backupMenu').classList.remove('show');
+  $('#nutMenu').classList.remove('show');
   $('#aiMenu').classList.toggle('show');
 });
 $('#aiKeySave').addEventListener('click', () => {
@@ -7302,6 +7943,14 @@ updateHeader();
 try { autoBkSyncUi(); } catch (_) {}
 scheduleFirstOpenBackup();
 syncBoot();   // V4:与本地数据服务对齐(服务未启动则静默降级为纯本地模式)
+/* 坚果云通道(仅原生 App):读配置 → 首次同步 → 起轮询。
+ * 与 syncBoot 并行存在:原生 App 里没有 HTTP 数据服务,syncBoot 会
+ * 直接判定「不可达」返回,坚果云才是真正生效的那条通道。 */
+nutAutoFill();   // 自动同步的开关/间隔:不管是不是原生环境都先填对
+if (IS_TAURI) {
+  nutFillForm();
+  nutBoot();
+}
 
   /* ══ P0 触摸端:软键盘与点击细节 ══════════════════════════
      · visualViewport 收缩即判定键盘弹出 → 隐藏底部标签栏、滚动聚焦框到可视区
