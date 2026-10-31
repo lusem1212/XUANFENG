@@ -641,8 +641,8 @@
   /* 日期格 hover ＋ 角标(打开完整记录浮层) */
   /* 日期格 ＋ 角标:默认隐藏 · 桌面 hover 显示 · 触屏长按调出 */
   .cell-add {
-    position:absolute; top:4px; right:5px; width:20px; height:20px; border-radius:7px;
-    background:var(--rust); color:var(--on-light); font-size:13px; line-height:20px; text-align:center;
+    position:absolute; top:3px; right:4px; width:16px; height:16px; border-radius:5px;
+    background:var(--rust); color:var(--on-light); font-size:11px; line-height:16px; text-align:center;
     opacity:0; pointer-events:none; transform:scale(.7);
     transition:opacity .14s ease, transform .14s ease;
     z-index:3; cursor:pointer; user-select:none; -webkit-user-select:none;
@@ -657,7 +657,11 @@
      所以同时保留「点选日期 → 出现 ＋」这条最朴素的路径,保证功能一定可达。 */
   .cal-cell.selected .cell-add { opacity:1; transform:scale(1); pointer-events:auto; }
   .cal-cell.lp { box-shadow:0 0 0 3px rgba(192,90,42,.28); border-color:var(--rust); }
-  .cal-cell.lp::after {
+  /* v54: 长按激活该格时,日期数字与标记圆点让位,格内只亮出 ＋ */
+.cal-cell.lp .d { visibility:hidden; }
+.cal-cell.lp .dots { opacity:0; }
+.cal-cell.lp .cell-add { opacity:1; transform:scale(1); pointer-events:auto; }
+.cal-cell.lp::after {
     content:"松开记一笔"; position:absolute; inset:auto 0 -1px 0; background:var(--rust); color:var(--on-light);
     font-size:10px; text-align:center; border-radius:0 0 10px 10px; padding:2px 0; z-index:2;
     pointer-events:none; -webkit-touch-callout:none;
@@ -2410,7 +2414,7 @@
     /* 命中区放大到手指可用尺寸 */
     .dp-item .del, .dp-item .edit { min-width:34px; min-height:34px; }
     .note-card .n-del { min-width:34px; min-height:34px; }
-    .cell-add { width:20px; height:20px; line-height:20px; font-size:12px; top:3px; right:3px; }
+    .cell-add { width:17px; height:17px; line-height:17px; font-size:11px; top:2px; right:3px; }
     .n-img .x { width:22px; height:22px; font-size:13px; top:1px; right:1px; }
     .tp-x, .cl-tag .x { font-size:13px; padding:1px 3px; }
     .cl-act { gap:8px; }
@@ -2519,6 +2523,13 @@
       linear-gradient(90deg, rgba(4,6,10,.20) 0%, rgba(4,6,10,0) 55%),
       linear-gradient(180deg, rgba(4,6,10,.42) 0px, rgba(4,6,10,.34) 100%);
   }
+
+  /* v54-fix: 长按/选中该格时必定亮出 ＋ 并让日期让位(置于样式表末尾,避免被前序规则覆盖) */
+  .cal-cell.lp .cell-add, .cal-cell.selected .cell-add {
+    opacity:1 !important; transform:scale(1) !important; pointer-events:auto !important;
+  }
+  .cal-cell.lp .d { visibility:hidden !important; }
+  .cal-cell.lp .dots { opacity:0 !important; }
 </style>
 </head>
 <body>
@@ -2808,7 +2819,7 @@
             <h2 id="calTitle">2026年8月</h2>
             <button class="nav-btn" id="calNext"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
             <button class="today-btn" id="calToday">回到今天</button>
-            <button class="cal-add-btn" id="calAddBtn" title="给这天记一笔">＋ 记一笔</button>
+            <button class="cal-add-btn" id="calAddBtn" title="给今天加一笔计划">＋ 今日计划</button>
           </div>
           <div class="cal-filterbar" id="calFilterBar"></div>
           <div class="cal-grid" id="calGrid"></div>
@@ -4134,10 +4145,7 @@ $('#calNext').addEventListener('click', () => { calView.m++; if(calView.m>11){ca
 $('#calToday').addEventListener('click', () => {
   const t = new Date(); calView = { y:t.getFullYear(), m:t.getMonth() }; calSelected = todayStr(); renderCal();
 });
-$('#calAddBtn').addEventListener('click', () => {
-  if (!calSelected) { const t=new Date(); calSelected=todayStr(); }
-  openPlanModal(calSelected);
-});
+$('#calAddBtn').addEventListener('click', () => openPlanModal(todayStr())); /* v54: 永远记到今天,与翻到哪个月/选中哪天无关 */
 $('#calGrid').addEventListener('click', e => {
   const addBtn = e.target.closest('.cell-add');
   if (addBtn) { openPlanModal(addBtn.dataset.date); return; }
